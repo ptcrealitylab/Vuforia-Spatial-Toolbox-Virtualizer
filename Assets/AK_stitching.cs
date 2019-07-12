@@ -20,6 +20,7 @@ public class AK_stitching : MonoBehaviour {
     List<akplay.camInfo> camInfoList;
     public ComputeShader textureCubeCompute;
     public ComputeShader voxelCompute;
+    public ComputeShader marchUVCompute;
 
     //debugging:
     public GameObject debugCube;
@@ -30,6 +31,10 @@ public class AK_stitching : MonoBehaviour {
     public float distortion_multiplier = 1.0f;
     public float distortion_dimension = 1.0f; //positive is x, negative is y
     public float position_multiplier = 1.0f;
+    public bool clearBuffer = false;
+    public bool useWireframe = false;
+    public float wireframeVal = 0.1f;
+    public float play = 0.0f;
 
 
     //internal stuff
@@ -40,6 +45,7 @@ public class AK_stitching : MonoBehaviour {
     RenderTexture normal_tex_cube;
     ComputeBuffer voxelBuffer;
     ComputeBuffer camInfoBuffer;
+    public Texture2D freeze;
 
     bool render_ready = false;
 
@@ -127,6 +133,97 @@ public class AK_stitching : MonoBehaviour {
 
 
     }
+
+    void OnRenderObject()
+    {
+
+        //int width = 512;
+        //int height = 512;
+        if (render_ready)
+        {
+            int width = 1280;
+            int height = 720;
+
+            RenderTexture prev = RenderTexture.active;
+            RenderTexture rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+            rt.enableRandomWrite = true;
+            rt.Create();
+
+
+            if (clearBuffer)
+            {
+                int voxelFillKH = voxelCompute.FindKernel("CSVoxelFill");
+                voxelCompute.SetBuffer(voxelFillKH, "VoxelsFill", voxelBuffer);
+                voxelCompute.Dispatch(voxelFillKH, numVoxels * numVoxels * numVoxels / 64, 1, 1);
+            }
+
+            int kernelHandle = marchUVCompute.FindKernel("CSMarchUV");
+            marchUVCompute.SetTexture(kernelHandle, "Result", rt);
+            //marchCompute.SetBuffer(kernelHandle, "Voxels", buffer);
+            marchUVCompute.SetBuffer(kernelHandle, "Voxels", voxelBuffer);
+            //marchUVCompute.SetBuffer(kernelHandle, "Voxels", voxelEMABuffer);
+            marchUVCompute.SetMatrix("cameraToWorld", Camera.current.cameraToWorldMatrix);
+            marchUVCompute.SetMatrix("worldToCamera", Camera.current.cameraToWorldMatrix.inverse);
+            marchUVCompute.SetMatrix("cameraProjection", Camera.current.projectionMatrix);
+            marchUVCompute.SetFloat("_CubeWidth", cubeWidth);
+            marchUVCompute.SetInt("_NumVoxels", numVoxels);
+            marchUVCompute.SetInt("width", width);
+            marchUVCompute.SetInt("height", height);
+            marchUVCompute.SetBool("use_wireframe", useWireframe);
+            marchUVCompute.SetFloat("wireframe_val", wireframeVal);
+
+            marchUVCompute.SetFloat("play", play);
+
+            marchUVCompute.SetBuffer(kernelHandle, "_CamInfoBuffer", camInfoBuffer);
+            marchUVCompute.SetTexture(kernelHandle, "color_cube", color_tex_cube);
+            marchUVCompute.SetTexture(kernelHandle, "normal_cube", normal_tex_cube);
+
+            marchUVCompute.Dispatch(kernelHandle, width / 8, height / 8, 1);
+
+
+
+            RenderTexture.active = rt;
+            if(freeze == null)
+            {
+                freeze = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
+            }
+            if(freeze.width != rt.width || freeze.height != rt.height)
+            {
+                Texture2D.DestroyImmediate(freeze, true);
+                freeze = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
+            }
+
+            freeze.ReadPixels(new UnityEngine.Rect(0, 0, rt.width, rt.height), 0, 0);
+            freeze.Apply();
+
+            RenderTexture.active = prev;
+
+
+            GL.PushMatrix();
+            GL.LoadOrtho();
+
+            /*
+            Graphics.DrawTexture(
+                new Rect(0, 0, 1, 1),
+                gameObject.GetComponent<Renderer>().material.mainTexture);
+            */
+
+
+            Graphics.DrawTexture(
+                new Rect(0, 0, 1, 1),
+                freeze);
+            GL.PopMatrix();
+
+            //Texture2D.DestroyImmediate(freeze, true);
+            //Texture2D.DestroyImmediate(fake, true);
+            RenderTexture.DestroyImmediate(rt, true);
+
+
+        }
+        
+    }
+
+
 
     void setup()
     {

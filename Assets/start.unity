@@ -232,6 +232,7 @@ MonoBehaviour:
   AK_receiver: {fileID: 1640398109}
   textureCubeCompute: {fileID: 7200000, guid: fdb6f9bd6ba5a5d48a2c5c18dd88c258, type: 3}
   voxelCompute: {fileID: 7200000, guid: 20b3993c7f015374491e1b2fca772f2d, type: 3}
+  marchUVCompute: {fileID: 7200000, guid: 405fbe2252d87a142bec3825358fe217, type: 3}
   debugCube: {fileID: 1057938908}
   debugTexture: {fileID: 0}
   test_idx: 0
@@ -239,6 +240,11 @@ MonoBehaviour:
   distortion_multiplier: 1
   distortion_dimension: 1
   position_multiplier: 1
+  clearBuffer: 0
+  useWireframe: 0
+  wireframeVal: 0.1
+  play: 0
+  freeze: {fileID: 0}
 --- !u!4 &1055434986
 Transform:
   m_ObjectHideFlags: 0

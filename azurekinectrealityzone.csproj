@@ -557,6 +557,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AKPlugin_result.txt" />
+    <None Include="Assets\AK_marchUV.compute" />
     <None Include="Assets\AK_pointCloud.shader" />
     <None Include="Assets\AK_textureCube.compute" />
     <None Include="Assets\AK_voxel.compute" />
