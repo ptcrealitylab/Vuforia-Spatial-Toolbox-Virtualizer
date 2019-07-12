@@ -764,7 +764,7 @@ public class akplay : MonoBehaviour {
     float lastTime = 0.0f;
 	// Update is called once per frame
 	void Update () {
-        Debug.Log("************* setting cameras ready to true");
+        //Debug.Log("************* setting cameras ready to true");
         camerasReady = true;
         //return;
         if((Time.time-lastTime) > (1.0f / fps))

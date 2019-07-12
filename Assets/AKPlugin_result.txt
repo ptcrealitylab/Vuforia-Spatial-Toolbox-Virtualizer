@@ -45,24 +45,24 @@ depth_translation 2: [0,0,0]
 depth_intrinsics 2: [315.3314,326.368,504.8382,504.997,1.463733,0.8661339,0.04749157,1.799672,1.305596,0.2436519,0,0,4.759368E-05,-0.0001286664,0]
 Attempting to get XYZMap
 Attempting to start all the camera threads
-AKPlugin Thread 1: starting grab thread: 1
 AKPlugin Thread 0: starting grab thread: 0
 AKPlugin Thread 2: starting grab thread: 2
-AKPlugin Thread 1: camera config color format: 3
+AKPlugin Thread 1: starting grab thread: 1
 AKPlugin Thread 0: camera config color format: 3
 AKPlugin Thread 2: camera config color format: 3
-AKPlugin Thread 1: camera config color resolution: 1
+AKPlugin Thread 1: camera config color format: 3
 AKPlugin Thread 0: camera config color resolution: 1
 AKPlugin Thread 2: camera config color resolution: 1
-AKPlugin Thread 1: camera config depth mode: 2
+AKPlugin Thread 1: camera config color resolution: 1
 AKPlugin Thread 0: camera config depth mode: 2
 AKPlugin Thread 2: camera config depth mode: 2
+AKPlugin Thread 1: camera config depth mode: 2
 cleaning up!
 joining thread: 0 with joinablility: 1
-AKPlugin Thread 1: completed grab thread: 1
-AKPlugin Thread 2: completed grab thread: 2
 AKPlugin Thread 0: completed grab thread: 0
 completed joining thread: 0
+AKPlugin Thread 2: completed grab thread: 2
+AKPlugin Thread 1: completed grab thread: 1
 joining thread: 1 with joinablility: 1
 completed joining thread: 1
 joining thread: 2 with joinablility: 1

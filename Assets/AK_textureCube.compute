@@ -9,7 +9,7 @@ Texture2D<float4> color_tex;
 void CSColor(uint3 id : SV_DispatchThreadID)
 {
 	uint3 loc = uint3(id.x, id.y, uint(color_idx));
-	color_cube[loc.xyz] = color_tex[color_loc.xy].xyzw;
+	color_cube[loc.xyz] = color_tex[loc.xy].xyzw;
 }
 
 //---------------------------------------------------
@@ -35,8 +35,8 @@ void CSDepth(uint3 id : SV_DispatchThreadID)
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSDistortion
 int distortion_idx;
-RWTexture3D<float> distortion_cube;
-Texture2D<float> distortion_tex;
+RWTexture3D<float2> distortion_cube;
+Texture2D<float2> distortion_tex;
 
 [numthreads(8, 8, 1)]
 void CSDistortion(uint3 id : SV_DispatchThreadID)
@@ -44,7 +44,8 @@ void CSDistortion(uint3 id : SV_DispatchThreadID)
 	// TODO: insert actual code here!
 	uint3 loc = uint3(id.x, id.y, uint(distortion_idx));
 	//uint3 loc = uint3(id.x, id.y, id.z);
-	distortion_cube[loc.xyz] = float(distortion_tex[id.xy]);
+	float2 val = distortion_tex[id.xy].xy;
+	distortion_cube[loc.xyz] = val;
 }
 
 
@@ -55,9 +56,15 @@ void CSDistortion(uint3 id : SV_DispatchThreadID)
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 int normal_idx;
+
+//i forget why i need these two:
+float4x4 depthToWorld;
+float4x4 worldToDepth;
+
 RWTexture3D<float4> normal_cube;
 //Texture2D<float> depth_tex_for_normal_cube;
 Texture3D<float> depth_cube_for_normal_cube; //only one of these will work at a time. todo: comment this better.
+Texture3D<float2> distortion_cube_for_normal_cube; //only one of these will work at a time. todo: comment this better.
 int _filter_size;
 
 [numthreads(8, 8, 1)]
@@ -87,15 +94,16 @@ void CSNormal(uint3 id : SV_DispatchThreadID)
 			uint3 loc_u = uint3(px, py + 1, uint(normal_idx));
 			uint3 loc_r = uint3(px + 1, py, uint(normal_idx));
 
-			float depth = depth_cube_for_normal_cube[loc.xyz] * 65.536f;
-			float depth_u = depth_cube_for_normal_cube[loc_u.xyz] * 65.536f;
-			float depth_r = depth_cube_for_normal_cube[loc_r.xyz] * 65.536f;
+			float depth = depth_cube_for_normal_cube[loc.xyz].x * 65.536f;
+			float depth_u = depth_cube_for_normal_cube[loc_u.xyz].x * 65.536f;
+			float depth_r = depth_cube_for_normal_cube[loc_r.xyz].x * 65.536f;
 
-			/*
-			float depth = depth_tex_for_normal_cube[loc.xy] * 65.536f;
-			float depth_u = depth_tex_for_normal_cube[loc_u.xy] * 65.536f;
-			float depth_r = depth_tex_for_normal_cube[loc_r.xy] * 65.536f;
-			*/
+			float2 distortion = distortion_cube_for_normal_cube[loc.xyz].xy;
+			//float distortion_y = distortion_cube_for_normal_cube[loc.xyz].y;
+			float2 distortion_u = distortion_cube_for_normal_cube[loc.xyz].xy;
+			//float distortion_y_u = distortion_cube_for_normal_cube[loc.xyz].y;
+			float2 distortion_r = distortion_cube_for_normal_cube[loc.xyz].xy;
+			//float distortion_y_r = distortion_cube_for_normal_cube[loc.xyz].y;
 
 			bool valid = false;
 			if ((depth != 0) && (depth_u != 0) && (depth_r != 0)) {
@@ -103,19 +111,20 @@ void CSNormal(uint3 id : SV_DispatchThreadID)
 			}
 
 			float3 pos = float3(0.0, 0.0, 0.0);
-			pos.x = depth * ((px)-depth_cx) / depth_fx;
-			pos.y = -depth * ((py)-depth_cy) / depth_fy;
+			pos.x = depth * distortion.x;
+			pos.y = depth * distortion.y;
 			pos.z = depth;
 
 			float3 pos_u = float3(0.0, 0.0, 0.0);
-			pos_u.x = depth_u * ((px)-depth_cx) / depth_fx;
-			pos_u.y = -depth_u * ((py + 1) - depth_cy) / depth_fy;
+			pos_u.x = depth_u * distortion_u.x;
+			pos_u.y = depth_u * distortion_u.y;
 			pos_u.z = depth_u;
 
 			float3 pos_r = float3(0.0, 0.0, 0.0);
-			pos_r.x = depth_r * ((px + 1) - depth_cx) / depth_fx;
-			pos_r.y = -depth_r * ((py)-depth_cy) / depth_fy;
+			pos_r.x = depth_r * distortion_r.x;
+			pos_r.y = depth_r * distortion_r.y;
 			pos_r.z = depth_r;
+
 
 			float3 v1 = pos_u - pos;
 			float3 v2 = pos_r - pos;
@@ -151,6 +160,8 @@ void CSNormal(uint3 id : SV_DispatchThreadID)
 	center.xyzw = center.xyzw / center.w;
 
 	float3 global_normal = float3(forward.x - center.x, forward.y - center.y, forward.z - center.z);
+	global_normal = -global_normal;
+	//float3 global_normal = float3(mean_x, mean_y, mean_z);
 
 
 
@@ -170,5 +181,176 @@ void CSNormal(uint3 id : SV_DispatchThreadID)
 }
 
 
+
+
+
+int test_idx;
+
+
+//----------------------------------------------------------------------------
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel testCSColor
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture3D<float4> color_cube_for_test;
+RWTexture2D<float4> color_test_output;
+
+[numthreads(8, 8, 1)]
+void testCSColor(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+
+
+	//color_tex[id.xyz] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	uint3 loc = uint3(id.x, id.y, test_idx);
+	//uint3 loc = uint3(id.x, id.y, id.z);
+	//color_cube[loc.xyz] = uint4(color_tex[id.xy].x, color_tex[id.xy].y, color_tex[id.xy].z, color_tex[id.xy].w);
+	color_test_output[id.xy] = float4(color_cube_for_test[loc.xyz].x, color_cube_for_test[loc.xyz].y, color_cube_for_test[loc.xyz].z, color_cube_for_test[loc.xyz].w);
+	//color_test_output[id.xy] = float4(((float)test_idx)/4.0f, 1, 1, 1);
+	//output[id.xy] = float4(1, 1, 1, 1);
+}
+
+
+
+//----------------------------------------------------------------------------
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel testCSDepth
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture3D<float4> depth_cube_for_test;
+RWTexture2D<float4> depth_test_output;
+
+[numthreads(8, 8, 1)]
+void testCSDepth(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+
+
+	//color_tex[id.xyz] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	uint3 loc = uint3(id.x, id.y, test_idx);
+	//uint3 loc = uint3(id.x, id.y, id.z);
+	//color_cube[loc.xyz] = uint4(color_tex[id.xy].x, color_tex[id.xy].y, color_tex[id.xy].z, color_tex[id.xy].w);
+	float depth = depth_cube_for_test[loc.xyz].x;
+	//float q = 65.535.0f;
+	depth = depth * 65.535f; //meters
+	depth = depth / 3.0f; // 3 meters is 1.
+	depth_test_output[id.xy] = float4(depth, depth, depth, 1);
+	//output[id.xy] = float4(1, 1, 1, 1);
+}
+
+
+
+
+//----------------------------------------------------------------------------
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel testCSDistortion
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture3D<float2> distortion_cube_for_test;
+RWTexture2D<float4> distortion_test_output;
+float distortion_multiplier;
+float distortion_dimension;
+
+[numthreads(8, 8, 1)]
+void testCSDistortion(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+
+
+	//color_tex[id.xyz] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	uint3 loc = uint3(id.x, id.y, test_idx);
+	//uint3 loc = uint3(id.x, id.y, id.z);
+	//color_cube[loc.xyz] = uint4(color_tex[id.xy].x, color_tex[id.xy].y, color_tex[id.xy].z, color_tex[id.xy].w);
+
+	float distortion = 0;
+	if (distortion_dimension >= 0) {
+		distortion = distortion_cube_for_test[loc.xyz].x*distortion_multiplier;
+	}
+	else {
+		distortion = distortion_cube_for_test[loc.xyz].y*distortion_multiplier;
+	}
+
+	//float q = 65.535.0f;
+	distortion_test_output[id.xy] = float4(distortion, distortion, distortion, 1);
+	//output[id.xy] = float4(1, 1, 1, 1);
+}
+
+
+
+//----------------------------------------------------------------------------
+
+
+#pragma kernel testCSNormal
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture3D<float4> normal_cube_for_test;
+RWTexture2D<float4> normal_test_output;
+
+[numthreads(8, 8, 1)]
+void testCSNormal(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+
+
+	//color_tex[id.xyz] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	uint3 loc = uint3(id.x, id.y, test_idx);
+
+	float x = normal_cube_for_test[loc.xyz].x;
+	float y = normal_cube_for_test[loc.xyz].y;
+	float z = normal_cube_for_test[loc.xyz].z;
+	normal_test_output[id.xy] = float4(x, y, z, 1);
+
+}
+
+
+
+
+//----------------------------------------------------------------------------
+
+
+#pragma kernel testCSPosition
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture3D<float> depth_cube_for_position_test; //only one of these will work at a time. todo: comment this better.
+Texture3D<float2> distortion_cube_for_position_test; //only one of these will work at a time. todo: comment this better.
+float position_test_multiplier;
+RWTexture2D<float4> position_test_output;
+
+[numthreads(8, 8, 1)]
+void testCSPosition(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+	//color_tex[id.xyz] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	uint3 loc = uint3(id.x, id.y, test_idx);
+
+	float x = depth_cube_for_position_test[loc.xyz].x*65.536f * distortion_cube_for_position_test[loc.xyz].x;
+	float y = depth_cube_for_position_test[loc.xyz].x*65.536f * distortion_cube_for_position_test[loc.xyz].y;
+	float z = depth_cube_for_position_test[loc.xyz].x*65.536f;
+
+	if (z < position_test_multiplier) {
+		position_test_output[id.xy] = float4(0.0, 1.0, 1.0, 1);
+	}
+	else {
+		position_test_output[id.xy] = float4(1.0,0.0, 0.0, 1);
+	}
+	//position_test_output[id.xy] = float4(x*position_test_multiplier, y*position_test_multiplier, z*position_test_multiplier, 1);
+	//position_test_output[id.xy] = float4(depth_cube_for_position_test[loc.xyz].x*position_test_multiplier, depth_cube_for_position_test[loc.xyz].x *position_test_multiplier, depth_cube_for_position_test[loc.xyz].x *position_test_multiplier, 1);
+	//position_test_output[id.xy] = float4(position_test_multiplier, position_test_multiplier, position_test_multiplier, 1);
+
+}
 
 

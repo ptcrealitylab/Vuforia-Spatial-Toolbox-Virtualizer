@@ -10,11 +10,26 @@ public class AK_stitching : MonoBehaviour {
     public bool[] maskArray;
     public int normalFilterSize=3;
 
+    public float flying_pixel_tolerance = 0.1f;
+    public float depth_debug_val = 0.0f;
+    public int discontinuity_delta = 2;
+    public float max_depth_discontinuity = 0.3f;
+
     //references:
     public GameObject AK_receiver;
     List<akplay.camInfo> camInfoList;
-
     public ComputeShader textureCubeCompute;
+    public ComputeShader voxelCompute;
+
+    //debugging:
+    public GameObject debugCube;
+    public RenderTexture debugTexture;
+    public int test_idx = 0;
+    public enum debugOutputModeEnum { none, color, depth, normal, distortion, position };
+    public debugOutputModeEnum debugOutputMode = debugOutputModeEnum.color;
+    public float distortion_multiplier = 1.0f;
+    public float distortion_dimension = 1.0f; //positive is x, negative is y
+    public float position_multiplier = 1.0f;
 
 
     //internal stuff
@@ -76,6 +91,7 @@ public class AK_stitching : MonoBehaviour {
 	void Update () {
         if (firstFrame && AK_receiver.GetComponent<akplay>().camerasReady)
         {
+            Debug.Log("cameras ready. running setup! " + AK_receiver.GetComponent<akplay>().camerasReady);
             firstFrame = false;
             setup();
         }
@@ -85,7 +101,7 @@ public class AK_stitching : MonoBehaviour {
             render_ready = false;
             getCameraInfo();
             makeTextureCubes();
-            //loadVoxels();
+            loadVoxels();
             render_ready = true;
 
         }
@@ -234,6 +250,8 @@ public class AK_stitching : MonoBehaviour {
         camInfoBuffer.SetData(infoArray);
     }
 
+
+
     void makeTextureCubes()
     {
         int numCameras = camInfoList.Count;
@@ -246,23 +264,196 @@ public class AK_stitching : MonoBehaviour {
         for(int i = 0; i<numCameras; i++)
         {
 
+            //handle color:
             textureCubeCompute.SetInt("color_idx", i);
-            textureCubeCompute.SetInt("depth_idx", i);
-            textureCubeCompute.SetInt("distortion_idx", i);
-            textureCubeCompute.SetInt("normal_idx", i);
-
+            textureCubeCompute.SetTexture(tex_cube_color_kh, "color_cube", color_tex_cube);
+            textureCubeCompute.SetTexture(tex_cube_color_kh, "color_tex", camInfoList[i].colorTex);
             textureCubeCompute.Dispatch(tex_cube_color_kh, camInfoList[0].color_width / 8, camInfoList[0].color_height / 8, 1);
+
+            //handle depth:
+            textureCubeCompute.SetInt("depth_idx", i);
+            textureCubeCompute.SetTexture(tex_cube_depth_kh, "depth_cube", depth_tex_cube);
+            textureCubeCompute.SetTexture(tex_cube_depth_kh, "depth_tex", camInfoList[i].depthTex);
             textureCubeCompute.Dispatch(tex_cube_depth_kh, camInfoList[0].depth_width / 8, camInfoList[0].depth_height / 8, 1);
+
+            //handle distortion:
+            textureCubeCompute.SetInt("distortion_idx", i);
+            textureCubeCompute.SetTexture(tex_cube_distortion_kh, "distortion_cube", distortion_tex_cube);
+            textureCubeCompute.SetTexture(tex_cube_distortion_kh, "distortion_tex", camInfoList[i].distortionMapTex);
             textureCubeCompute.Dispatch(tex_cube_distortion_kh, camInfoList[0].depth_width / 8, camInfoList[0].depth_height / 8, 1);
 
+            //handle normal:
+            textureCubeCompute.SetInt("normal_idx", i);
             textureCubeCompute.SetInt("_filter_size", normalFilterSize);
+            textureCubeCompute.SetMatrix("depthToWorld", camInfoList[i].visualization.transform.localToWorldMatrix); //i guess this was necessary for some reason... hmmmm.
+            textureCubeCompute.SetMatrix("worldToDepth", camInfoList[i].visualization.transform.worldToLocalMatrix);
             textureCubeCompute.SetTexture(tex_cube_normal_kh, "normal_cube", normal_tex_cube);
             textureCubeCompute.SetTexture(tex_cube_normal_kh, "depth_cube_for_normal_cube", depth_tex_cube);
+            textureCubeCompute.SetTexture(tex_cube_normal_kh, "distortion_cube_for_normal_cube", distortion_tex_cube);
             //textureCubeCompute.SetTexture(tex_cube_normal_kh, "depth_tex_for_normal_cube", depthCubeArray[i].GetComponent<Renderer>().material.mainTexture);
             textureCubeCompute.Dispatch(tex_cube_normal_kh, camInfoList[0].depth_width / 8, camInfoList[0].depth_height / 8, 1);
         }
 
 
+        if(debugOutputMode == debugOutputModeEnum.none)
+        {
+            debugCube.SetActive(false);
+        }
+        else
+        {
+            debugCube.SetActive(true);
+
+            int debug_width = 0;
+            int debug_height = 0;
+
+            if (debugOutputMode == debugOutputModeEnum.color)
+            {
+                debug_width = color_tex_cube.width;
+                debug_height = color_tex_cube.height;
+
+            }
+            if (debugOutputMode == debugOutputModeEnum.depth)
+            {
+                debug_width = depth_tex_cube.width;
+                debug_height = depth_tex_cube.height;
+
+            }
+            if (debugOutputMode == debugOutputModeEnum.normal)
+            {
+                debug_width = depth_tex_cube.width;
+                debug_height = depth_tex_cube.height;
+            }
+
+            if (debugOutputMode == debugOutputModeEnum.distortion)
+            {
+                debug_width = depth_tex_cube.width;
+                debug_height = depth_tex_cube.height;
+            }
+
+            if (debugOutputMode == debugOutputModeEnum.position)
+            {
+                debug_width = depth_tex_cube.width;
+                debug_height = depth_tex_cube.height;
+            }
+
+
+            if (debugTexture == null || debugTexture.width != debug_width)
+            {
+                debugTexture = new RenderTexture(debug_width, debug_height, 24);
+                debugTexture.enableRandomWrite = true;
+                debugTexture.Create();
+            }
+
+            if (debugOutputMode == debugOutputModeEnum.depth)
+            {
+                int test_CSDepth_kh = textureCubeCompute.FindKernel("testCSDepth");
+                textureCubeCompute.SetInt("test_idx", test_idx);
+                textureCubeCompute.SetTexture(test_CSDepth_kh, "depth_cube_for_test", depth_tex_cube);
+                textureCubeCompute.SetTexture(test_CSDepth_kh, "depth_test_output", debugTexture);
+                textureCubeCompute.Dispatch(test_CSDepth_kh, debug_width / 8, debug_height / 8, 1);
+            }
+
+            if (debugOutputMode == debugOutputModeEnum.color)
+            {
+                int test_CSColor_kh = textureCubeCompute.FindKernel("testCSColor");
+                textureCubeCompute.SetInt("test_idx", test_idx);
+                textureCubeCompute.SetTexture(test_CSColor_kh, "color_cube_for_test", color_tex_cube);
+                textureCubeCompute.SetTexture(test_CSColor_kh, "color_test_output", debugTexture);
+                textureCubeCompute.Dispatch(test_CSColor_kh, debug_width / 8, debug_height / 8, 1);
+            }
+
+            if (debugOutputMode == debugOutputModeEnum.normal)
+            {
+                int test_CSNormal_kh = textureCubeCompute.FindKernel("testCSNormal");
+                textureCubeCompute.SetInt("test_idx", test_idx);
+                textureCubeCompute.SetTexture(test_CSNormal_kh, "normal_cube_for_test", normal_tex_cube);
+                textureCubeCompute.SetTexture(test_CSNormal_kh, "normal_test_output", debugTexture);
+                textureCubeCompute.Dispatch(test_CSNormal_kh, debug_width / 8, debug_height / 8, 1);
+            }
+
+            if (debugOutputMode == debugOutputModeEnum.distortion)
+            {
+                int test_CSDistortion_kh = textureCubeCompute.FindKernel("testCSDistortion");
+                textureCubeCompute.SetInt("test_idx", test_idx);
+                textureCubeCompute.SetFloat("distortion_multiplier", distortion_multiplier);
+                textureCubeCompute.SetFloat("distortion_dimension", distortion_dimension);
+                textureCubeCompute.SetTexture(test_CSDistortion_kh, "distortion_cube_for_test", distortion_tex_cube);
+                textureCubeCompute.SetTexture(test_CSDistortion_kh, "distortion_test_output", debugTexture);
+                textureCubeCompute.Dispatch(test_CSDistortion_kh, debug_width / 8, debug_height / 8, 1);
+            }
+
+            if (debugOutputMode == debugOutputModeEnum.position)
+            {
+                int test_CSPosition_kh = textureCubeCompute.FindKernel("testCSPosition");
+                textureCubeCompute.SetInt("test_idx", test_idx);
+                textureCubeCompute.SetTexture(test_CSPosition_kh, "depth_cube_for_position_test", depth_tex_cube);
+                textureCubeCompute.SetTexture(test_CSPosition_kh, "distortion_cube_for_position_test", distortion_tex_cube);
+                textureCubeCompute.SetTexture(test_CSPosition_kh, "position_test_output", debugTexture);
+                textureCubeCompute.SetFloat("position_test_multiplier", position_multiplier);
+                textureCubeCompute.Dispatch(test_CSPosition_kh, debug_width / 8, debug_height / 8, 1);
+            }
+
+
+
+            debugCube.GetComponent<Renderer>().material.mainTexture = debugTexture;
+        }
+
+
+
+    }
+
+    void loadVoxels()
+    {
+        int numCameras = camInfoList.Count;
+
+        //clear out voxel buffer so it's all zeros
+        int voxelClearKH = voxelCompute.FindKernel("CSVoxelClear");
+        voxelCompute.SetBuffer(voxelClearKH, "VoxelsClear", voxelBuffer);
+        voxelCompute.Dispatch(voxelClearKH, numVoxels * numVoxels * numVoxels / 64, 1, 1);
+
+        /*
+        int voxelFillKH = marchCompute.FindKernel("CSVoxelFill");
+        marchCompute.SetBuffer(voxelFillKH, "VoxelsFill", voxelBuffer);
+        marchCompute.Dispatch(voxelFillKH, numVoxels * numVoxels * numVoxels / 64, 1, 1);
+        */
+
+        for (int cc = 0; cc < numCameras; cc++)
+        {
+            if (maskArray[cc])
+            {
+
+                //load camera data into voxels, flying pixel filter, normal filter
+                int voxelKernelHandle = voxelCompute.FindKernel("CSVoxel");
+                voxelCompute.SetBuffer(voxelKernelHandle, "Voxels2", voxelBuffer);
+                voxelCompute.SetFloat("_CubeWidth2", cubeWidth);
+                voxelCompute.SetInt("_NumVoxels2", numVoxels);
+                voxelCompute.SetInt("_NumCameras", numCameras);
+
+
+                voxelCompute.SetBuffer(voxelKernelHandle, "_CamInfoBuffer", camInfoBuffer);
+                voxelCompute.SetFloat("flying_pixel_tolerance", flying_pixel_tolerance);
+                voxelCompute.SetTexture(voxelKernelHandle, "color_cube", color_tex_cube);
+                voxelCompute.SetTexture(voxelKernelHandle, "depth_cube", depth_tex_cube);
+                voxelCompute.SetTexture(voxelKernelHandle, "distortion_cube", distortion_tex_cube);
+                voxelCompute.SetTexture(voxelKernelHandle, "normal_cube", normal_tex_cube);
+                voxelCompute.SetFloat("depth_debug_val", depth_debug_val);
+                voxelCompute.SetFloat("max_discontinuity", max_depth_discontinuity);
+                voxelCompute.SetInt("discontinuity_delta", discontinuity_delta);
+                voxelCompute.SetInt("_CameraId", cc);
+
+                /* //damn, all this was because i messed up the order in the struct.
+                marchCompute.SetMatrix("testDepthCameraToWorld", visualizeArray[0].transform.localToWorldMatrix);
+                marchCompute.SetFloat("testCx", dii.ppx);
+                marchCompute.SetFloat("testCy", dii.ppy);
+                marchCompute.SetFloat("testFx", dii.fx);
+                marchCompute.SetFloat("testFy", dii.fy);
+                marchCompute.SetFloat("depth_debug_val", depth_debug_val);
+                */
+
+                voxelCompute.Dispatch(voxelKernelHandle, camInfoList[0].depth_width, camInfoList[0].depth_height, 1);
+            }
+
+        }
     }
 
     private void OnApplicationQuit()
@@ -274,6 +465,11 @@ public class AK_stitching : MonoBehaviour {
     void OnValidate()
     {
         //Debug.Log("on validate!");
-        setup();
+        if(firstFrame == false)
+        {
+            setup();
+        }
+
     }
 }
+
