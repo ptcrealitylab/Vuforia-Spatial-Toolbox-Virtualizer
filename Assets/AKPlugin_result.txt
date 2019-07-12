@@ -59,9 +59,9 @@ AKPlugin Thread 2: camera config depth mode: 2
 AKPlugin Thread 1: camera config depth mode: 2
 cleaning up!
 joining thread: 0 with joinablility: 1
+AKPlugin Thread 2: completed grab thread: 2
 AKPlugin Thread 0: completed grab thread: 0
 completed joining thread: 0
-AKPlugin Thread 2: completed grab thread: 2
 AKPlugin Thread 1: completed grab thread: 1
 joining thread: 1 with joinablility: 1
 completed joining thread: 1

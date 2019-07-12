@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "azurekinectrealityzone", "azurekinectrealityzone.csproj", "{39B18540-AE36-DCE3-137E-2A0EEC2D65F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "azurekinectrealityzone.Editor", "azurekinectrealityzone.Editor.csproj", "{77E8951F-7880-BE94-36F8-647CCF5C45EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{39B18540-AE36-DCE3-137E-2A0EEC2D65F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39B18540-AE36-DCE3-137E-2A0EEC2D65F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39B18540-AE36-DCE3-137E-2A0EEC2D65F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39B18540-AE36-DCE3-137E-2A0EEC2D65F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77E8951F-7880-BE94-36F8-647CCF5C45EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77E8951F-7880-BE94-36F8-647CCF5C45EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77E8951F-7880-BE94-36F8-647CCF5C45EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77E8951F-7880-BE94-36F8-647CCF5C45EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,5 +1,5 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_textureCube.compute(12): undeclared identifier 'color_loc'
-  api=4 insize=4922 outsize=0 ok=0
+  error: 2 plat 4 at AK_voxel.compute(235): invalid subscript 'depth_fx'
+  api=4 insize=18252 outsize=0 ok=0
