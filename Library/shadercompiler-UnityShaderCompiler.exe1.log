@@ -1,7 +1,4 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(235): invalid subscript 'depth_fx'
-  api=4 insize=18252 outsize=0 ok=0
-Cmd: compileComputeKernel
-  api=4 insize=11156 outsize=605 ok=1
+  api=4 insize=19180 outsize=313 ok=1

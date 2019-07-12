@@ -76,6 +76,25 @@ public class AK_stitching : MonoBehaviour {
         public float color_radius;
 
         public Matrix4x4 color_extrinsic;
+
+
+        public float depth_cx;
+        public float depth_cy;
+        public float depth_fx;
+        public float depth_fy;
+
+        public float depth_k1;
+        public float depth_k2;
+        public float depth_k3;
+        public float depth_k4;
+        public float depth_k5;
+        public float depth_k6;
+
+        public float depth_codx;
+        public float depth_cody;
+        public float depth_p1;
+        public float depth_p2;
+        public float depth_radius;
     }
     
 
@@ -126,7 +145,8 @@ public class AK_stitching : MonoBehaviour {
     void setupTextureCubes()
     {
         Debug.Log("setting up texture cubes, cam info list count: " + camInfoList.Count);
-        camInfoBuffer = new ComputeBuffer(camInfoList.Count, 268);  //3 matrices and 19 floats: 3*64 + 19*4 = 268
+        //camInfoBuffer = new ComputeBuffer(camInfoList.Count, 268);  //3 matrices and 19 floats: 3*64 + 19*4 = 268
+        camInfoBuffer = new ComputeBuffer(camInfoList.Count, 328);  //3 matrices and 19 floats: 3*64 + 34*4 = 328
 
         depth_tex_cube = new RenderTexture(camInfoList[0].depth_width, camInfoList[0].depth_height, 24, RenderTextureFormat.RFloat);
         depth_tex_cube.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
@@ -214,6 +234,29 @@ public class AK_stitching : MonoBehaviour {
             infoArray[cc].color_cody = camInfoList[cc].color_cody;
 
             infoArray[cc].color_radius = camInfoList[cc].color_radius;
+
+
+            infoArray[cc].depth_cx = camInfoList[cc].depth_cx;
+            infoArray[cc].depth_cx = camInfoList[cc].depth_cy;
+            infoArray[cc].depth_fx = camInfoList[cc].depth_fx;
+            infoArray[cc].depth_fy = camInfoList[cc].depth_fy;
+
+            infoArray[cc].depth_k1 = camInfoList[cc].depth_k1;
+            infoArray[cc].depth_k2 = camInfoList[cc].depth_k2;
+            infoArray[cc].depth_k3 = camInfoList[cc].depth_k3;
+            infoArray[cc].depth_k4 = camInfoList[cc].depth_k4;
+            infoArray[cc].depth_k5 = camInfoList[cc].depth_k5;
+            infoArray[cc].depth_k6 = camInfoList[cc].depth_k6;
+
+            infoArray[cc].depth_p1 = camInfoList[cc].depth_p1;
+            infoArray[cc].depth_p2 = camInfoList[cc].depth_p2;
+
+            infoArray[cc].depth_codx = camInfoList[cc].depth_codx;
+            infoArray[cc].depth_cody = camInfoList[cc].depth_cody;
+
+            infoArray[cc].depth_radius = camInfoList[cc].depth_radius;
+
+
 
             infoArray[cc].depthCameraToWorld = camInfoList[cc].visualization.transform.localToWorldMatrix;
             infoArray[cc].worldToDepthCamera = camInfoList[cc].visualization.transform.worldToLocalMatrix;

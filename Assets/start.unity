@@ -231,7 +231,7 @@ MonoBehaviour:
   max_depth_discontinuity: 0.3
   AK_receiver: {fileID: 1640398109}
   textureCubeCompute: {fileID: 7200000, guid: fdb6f9bd6ba5a5d48a2c5c18dd88c258, type: 3}
-  voxelCompute: {fileID: 7200000, guid: 2e48687bd232452438586eab82ee6d78, type: 3}
+  voxelCompute: {fileID: 7200000, guid: 20b3993c7f015374491e1b2fca772f2d, type: 3}
   debugCube: {fileID: 1057938908}
   debugTexture: {fileID: 0}
   test_idx: 0

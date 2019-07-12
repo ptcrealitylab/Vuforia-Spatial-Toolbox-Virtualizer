@@ -4,36 +4,56 @@
 
 /*
 up the stack the struct looks like:
-	struct infoStruct
-	{
-		public Matrix4x4 depthCameraToWorld;
-		public Matrix4x4 worldToDepthCamera;
+	    struct infoStruct
+    {
+        public Matrix4x4 depthCameraToWorld;
+        public Matrix4x4 worldToDepthCamera;
 
-		public float camera_x;
-		public float camera_y;
-		public float camera_z;
-		public float cameraActive;
+        public float camera_x;
+        public float camera_y;
+        public float camera_z;
+        public float cameraActive;
 
-		public float color_cx;
-		public float color_cy;
-		public float color_fx;
-		public float color_fy;
+        public float color_cx;
+        public float color_cy;
+        public float color_fx;
+        public float color_fy;
 
-		public float color_k1;
-		public float color_k2;
-		public float color_k3;
-		public float color_k4;
-		public float color_k5;
-		public float color_k6;
+        public float color_k1;
+        public float color_k2;
+        public float color_k3;
+        public float color_k4;
+        public float color_k5;
+        public float color_k6;
 
-		public float color_codx;
-		public float color_cody;
-		public float color_p1;
-		public float color_p2;
-		public float color_radius;
+        public float color_codx;
+        public float color_cody;
+        public float color_p1;
+        public float color_p2;
+        public float color_radius;
 
-		public Matrix4x4 color_extrinsic;
-	}
+        public Matrix4x4 color_extrinsic;
+
+
+        public float depth_cx;
+        public float depth_cy;
+        public float depth_fx;
+        public float depth_fy;
+
+        public float depth_k1;
+        public float depth_k2;
+        public float depth_k3;
+        public float depth_k4;
+        public float depth_k5;
+        public float depth_k6;
+
+        public float depth_codx;
+        public float depth_cody;
+        public float depth_p1;
+        public float depth_p2;
+        public float depth_radius;
+    }
+    
 */
 
 
@@ -68,6 +88,24 @@ struct camInfo
 	float color_radius;
 
 	float4x4 color_extrinsic;
+
+	float depth_cx;
+	float depth_cy;
+	float depth_fx;
+	float depth_fy;
+
+	float depth_k1;
+	float depth_k2;
+	float depth_k3;
+	float depth_k4;
+	float depth_k5;
+	float depth_k6;
+
+	float depth_codx;
+	float depth_cody;
+	float depth_p1;
+	float depth_p2;
+	float depth_radius;
 
 
 };

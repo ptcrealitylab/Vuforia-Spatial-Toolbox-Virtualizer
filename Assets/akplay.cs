@@ -224,6 +224,22 @@ public class akplay : MonoBehaviour {
         public float color_radius;
         public Matrix4x4 color_extrinsics;
 
+        public float depth_fx;
+        public float depth_fy;
+        public float depth_cx;
+        public float depth_cy;
+        public float depth_k1;
+        public float depth_k2;
+        public float depth_k3;
+        public float depth_k4;
+        public float depth_k5;
+        public float depth_k6;
+        public float depth_p1;
+        public float depth_p2;
+        public float depth_codx;
+        public float depth_cody;
+        public float depth_radius;
+
 
     }
 
@@ -445,7 +461,24 @@ public class akplay : MonoBehaviour {
             ci.color_cody = 0;
             ci.color_radius = 0;
             ci.color_extrinsics = new Matrix4x4();
-            
+
+
+            ci.depth_fx = 0;
+            ci.depth_fy = 0;
+            ci.depth_cx = 0;
+            ci.depth_cy = 0;
+            ci.depth_k1 = 0;
+            ci.depth_k2 = 0;
+            ci.depth_k3 = 0;
+            ci.depth_k4 = 0;
+            ci.depth_k5 = 0;
+            ci.depth_k6 = 0;
+            ci.depth_p1 = 0;
+            ci.depth_p2 = 0;
+            ci.depth_codx = 0;
+            ci.depth_cody = 0;
+            ci.depth_radius = 0;
+
 
 
             camInfoList.Add(ci);
@@ -655,6 +688,25 @@ public class akplay : MonoBehaviour {
             ci.color_p1 = color_intrinsics[13];
             ci.color_radius = color_intrinsics[14];
             ci.color_extrinsics = colorExtrinsics;
+
+            ci.depth_cx = depth_intrinsics[0];
+            ci.depth_cx = depth_intrinsics[0];
+            ci.depth_cy = depth_intrinsics[1];
+            ci.depth_fx = depth_intrinsics[2];
+            ci.depth_fy = depth_intrinsics[3];
+            ci.depth_k1 = depth_intrinsics[4];
+            ci.depth_k2 = depth_intrinsics[5];
+            ci.depth_k3 = depth_intrinsics[6];
+            ci.depth_k4 = depth_intrinsics[7];
+            ci.depth_k5 = depth_intrinsics[8];
+            ci.depth_k6 = depth_intrinsics[9];
+            ci.depth_codx = depth_intrinsics[10];
+            ci.depth_cody = depth_intrinsics[11];
+            ci.depth_p2 = depth_intrinsics[12];
+            ci.depth_p1 = depth_intrinsics[13];
+            ci.depth_radius = depth_intrinsics[14];
+
+
             camInfoList[i] = ci;
             
 
