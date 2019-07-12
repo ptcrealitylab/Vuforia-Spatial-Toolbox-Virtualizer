@@ -1,0 +1,174 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSColor
+
+int color_idx;
+RWTexture3D<float4> color_cube;
+Texture2D<float4> color_tex;
+
+[numthreads(8, 8, 1)]
+void CSColor(uint3 id : SV_DispatchThreadID)
+{
+	uint3 loc = uint3(id.x, id.y, uint(color_idx));
+	color_cube[loc.xyz] = color_tex[color_loc.xy].xyzw;
+}
+
+//---------------------------------------------------
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSDepth
+int depth_idx;
+RWTexture3D<float> depth_cube;
+Texture2D<float> depth_tex;
+
+[numthreads(8, 8, 1)]
+void CSDepth(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+	uint3 loc = uint3(id.x, id.y, uint(depth_idx));
+	//uint3 loc = uint3(id.x, id.y, id.z);
+	depth_cube[loc.xyz] = float(depth_tex[id.xy]);
+}
+
+
+//---------------------------------------------------
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSDistortion
+int distortion_idx;
+RWTexture3D<float> distortion_cube;
+Texture2D<float> distortion_tex;
+
+[numthreads(8, 8, 1)]
+void CSDistortion(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+	uint3 loc = uint3(id.x, id.y, uint(distortion_idx));
+	//uint3 loc = uint3(id.x, id.y, id.z);
+	distortion_cube[loc.xyz] = float(distortion_tex[id.xy]);
+}
+
+
+//-------------------------------------------------------
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSNormal
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+int normal_idx;
+RWTexture3D<float4> normal_cube;
+//Texture2D<float> depth_tex_for_normal_cube;
+Texture3D<float> depth_cube_for_normal_cube; //only one of these will work at a time. todo: comment this better.
+int _filter_size;
+
+[numthreads(8, 8, 1)]
+void CSNormal(uint3 id : SV_DispatchThreadID)
+{
+
+
+	float mean_x = 0.0f;
+	float mean_y = 0.0f;
+	float mean_z = 0.0f;
+
+	int N = _filter_size * _filter_size;
+
+	int counter = 0;
+	int delta = 1;
+
+
+	for (int xx = 0; xx < _filter_size; xx++) {
+		for (int yy = 0; yy < _filter_size; yy++) {
+			//int xx = 0;
+			//int yy = 0;
+
+			int px = id.x + xx - _filter_size / 2;
+			int py = id.y + yy - _filter_size / 2;
+
+			uint3 loc = uint3(px, py, uint(normal_idx));
+			uint3 loc_u = uint3(px, py + 1, uint(normal_idx));
+			uint3 loc_r = uint3(px + 1, py, uint(normal_idx));
+
+			float depth = depth_cube_for_normal_cube[loc.xyz] * 65.536f;
+			float depth_u = depth_cube_for_normal_cube[loc_u.xyz] * 65.536f;
+			float depth_r = depth_cube_for_normal_cube[loc_r.xyz] * 65.536f;
+
+			/*
+			float depth = depth_tex_for_normal_cube[loc.xy] * 65.536f;
+			float depth_u = depth_tex_for_normal_cube[loc_u.xy] * 65.536f;
+			float depth_r = depth_tex_for_normal_cube[loc_r.xy] * 65.536f;
+			*/
+
+			bool valid = false;
+			if ((depth != 0) && (depth_u != 0) && (depth_r != 0)) {
+				valid = true;
+			}
+
+			float3 pos = float3(0.0, 0.0, 0.0);
+			pos.x = depth * ((px)-depth_cx) / depth_fx;
+			pos.y = -depth * ((py)-depth_cy) / depth_fy;
+			pos.z = depth;
+
+			float3 pos_u = float3(0.0, 0.0, 0.0);
+			pos_u.x = depth_u * ((px)-depth_cx) / depth_fx;
+			pos_u.y = -depth_u * ((py + 1) - depth_cy) / depth_fy;
+			pos_u.z = depth_u;
+
+			float3 pos_r = float3(0.0, 0.0, 0.0);
+			pos_r.x = depth_r * ((px + 1) - depth_cx) / depth_fx;
+			pos_r.y = -depth_r * ((py)-depth_cy) / depth_fy;
+			pos_r.z = depth_r;
+
+			float3 v1 = pos_u - pos;
+			float3 v2 = pos_r - pos;
+			//float3 v1 = float3(-1, 0, 0);
+			//float3 v2 = float3(0, 1, 0);
+			float3 normal = normalize(cross(v2, v1));
+
+			if (valid) {
+				mean_x = mean_x + normal.x;
+				mean_y = mean_y + normal.y;
+				mean_z = mean_z + normal.z;
+
+				//norm_x_array[counter] = normal.x;
+				//norm_y_array[counter] = normal.y;
+				//norm_z_array[counter] = normal.z;
+				counter++;
+
+			}
+		}
+	}
+
+	mean_x = mean_x / (float)counter;
+	mean_y = mean_y / (float)counter;
+	mean_z = mean_z / (float)counter;
+
+	//convert to world space:
+	float4 forward = float4(mean_x, mean_y, mean_z, 1);
+	forward = mul(depthToWorld, forward);
+	forward.xyzw = forward.xyzw / forward.w;
+
+	float4 center = float4(0, 0, 0, 1);
+	center = mul(depthToWorld, center);
+	center.xyzw = center.xyzw / center.w;
+
+	float3 global_normal = float3(forward.x - center.x, forward.y - center.y, forward.z - center.z);
+
+
+
+
+	//mean_x = depth_r/5.0f;
+	//mean_y = depth_r/5.0f;
+	//mean_z = depth_r/5.0f;
+	//mean_x = 0.0f;
+	//mean_y = 1.0f;
+	//mean_z = 1.0f;
+
+	// TODO: insert actual code here!
+	uint3 loc = uint3(id.x, id.y, uint(normal_idx));
+	//uint3 loc = uint3(id.x, id.y, id.z);
+	//normal_cube[loc.xyz] = float4(-mean_x, -mean_y, -mean_z, 0.0f);
+	normal_cube[loc.xyz] = float4(global_normal.x, global_normal.y, global_normal.z, 0.0f);
+}
+
+
+
+

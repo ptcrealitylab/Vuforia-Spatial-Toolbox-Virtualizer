@@ -1,0 +1,4 @@
+Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
+Cmd: initializeCompiler
+Cmd: compileComputeKernel
+  api=4 insize=414 outsize=441 ok=1
