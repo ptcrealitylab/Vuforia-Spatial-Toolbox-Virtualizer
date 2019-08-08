@@ -1,0 +1,773 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSVoxel
+
+
+/*
+up the stack the struct looks like:
+	    struct infoStruct
+    {
+        public Matrix4x4 depthCameraToWorld;
+        public Matrix4x4 worldToDepthCamera;
+
+        public float camera_x;
+        public float camera_y;
+        public float camera_z;
+        public float cameraActive;
+
+        public float color_cx;
+        public float color_cy;
+        public float color_fx;
+        public float color_fy;
+
+        public float color_k1;
+        public float color_k2;
+        public float color_k3;
+        public float color_k4;
+        public float color_k5;
+        public float color_k6;
+
+        public float color_codx;
+        public float color_cody;
+        public float color_p1;
+        public float color_p2;
+        public float color_radius;
+
+        public Matrix4x4 color_extrinsic;
+
+
+        public float depth_cx;
+        public float depth_cy;
+        public float depth_fx;
+        public float depth_fy;
+
+        public float depth_k1;
+        public float depth_k2;
+        public float depth_k3;
+        public float depth_k4;
+        public float depth_k5;
+        public float depth_k6;
+
+        public float depth_codx;
+        public float depth_cody;
+        public float depth_p1;
+        public float depth_p2;
+        public float depth_radius;
+    }
+    
+*/
+
+
+
+
+struct camInfo
+{
+	float4x4 depthCameraToWorld;
+	float4x4 worldToDepthCamera;
+
+	float camera_x;
+	float camera_y;
+	float camera_z;
+	float camera_active;
+
+	float color_cx;
+	float color_cy;
+	float color_fx;
+	float color_fy;
+
+	float color_k1;
+	float color_k2;
+	float color_k3;
+	float color_k4;
+	float color_k5;
+	float color_k6;
+
+	float color_codx;
+	float color_cody;
+	float color_p1;
+	float color_p2;
+	float color_radius;
+
+	float4x4 color_extrinsic;
+
+	float depth_cx;
+	float depth_cy;
+	float depth_fx;
+	float depth_fy;
+
+	float depth_k1;
+	float depth_k2;
+	float depth_k3;
+	float depth_k4;
+	float depth_k5;
+	float depth_k6;
+
+	float depth_codx;
+	float depth_cody;
+	float depth_p1;
+	float depth_p2;
+	float depth_radius;
+
+
+};
+
+Texture3D<float4> color_cube;
+Texture3D<float> depth_cube;
+Texture3D<float2> distortion_cube;
+Texture3D<float4> normal_cube;
+
+int _NumCameras;
+StructuredBuffer<camInfo> _CamInfoBuffer;
+
+Texture2D<float> depthTexture;
+RWStructuredBuffer<uint> Voxels2;
+float _CubeWidth2;
+int _NumVoxels2;
+float4x4 depthCameraToWorld;
+
+
+float depth_cx;
+float depth_cy;
+float depth_fx;
+float depth_fy;
+float flying_pixel_tolerance;
+float depth_debug_val;
+
+float4x4 testDepthCameraToWorld;
+float testCx;
+float testCy;
+float testFx;
+float testFy;
+int _CameraId;
+float max_discontinuity;
+int discontinuity_delta;
+
+/*
+float4x4 cameraToWorld;
+float4x4 worldToCamera;
+float4x4 cameraProjection;
+float _CubeWidth;
+int _NumVoxels;
+*/
+
+[numthreads(8, 8, 1)]
+void CSVoxel(uint3 id : SV_DispatchThreadID)
+{
+	int i = _CameraId;
+	//for (int i = 0; i < _NumCameras; i++) {
+	float4x4 depthCameraToWorld = _CamInfoBuffer[i].depthCameraToWorld;
+	/*
+	float depth_fx = _CamInfoBuffer[i].depth_fx;
+	float depth_fy = _CamInfoBuffer[i].depth_fy;
+	float depth_cx = _CamInfoBuffer[i].depth_cx;
+	float depth_cy = _CamInfoBuffer[i].depth_cy;
+	*/
+
+	//depthCameraToWorld = testDepthCameraToWorld;
+	//depth_fx = testFx;
+	//depth_fy = testFy;
+	//depth_cx = testCx;
+	//depth_cy = testCy;
+
+	//float depthRaw = (float)(depthTexture[id.xy].x)*65535.0f; //i think this is 0-1, with 65.536f being maximum
+	//float depth = (float)(depthTexture[id.xy].x)*65535.0f;
+
+	uint3 loc = uint3(id.x, id.y, i);
+	float depthRaw = (float)(depth_cube[loc.xyz].x)*65.5360f; //i think this is 0-1, with 65.536f being maximum
+	float depth = (float)(depth_cube[loc.xyz].x)*65.5360f;
+
+
+	bool discontinuity = false;
+
+	float depth_up = (float)(depth_cube[uint3(loc.x, loc.y + discontinuity_delta, loc.z)].x)*65.5360f;
+	float depth_right = (float)(depth_cube[uint3(loc.x + discontinuity_delta, loc.y, loc.z)].x)*65.5360f;
+	if (abs(depth_up - depth) > max_discontinuity || abs(depth_right - depth) > max_discontinuity) {
+		discontinuity = true;
+	}
+
+
+
+
+	//depth = 2000.0f;
+	//depth = depth * 65536.0f;
+	//depth = 2000.0f;
+	int row = id.y;
+	int col = id.x;
+
+
+	float x = depth_cube[loc.xyz].x*65.536f * distortion_cube[loc.xyz].x;
+	float y = depth_cube[loc.xyz].x*65.536f * distortion_cube[loc.xyz].y;
+	float z = depth_cube[loc.xyz].x*65.536f;
+
+
+	/*
+	float x = depth / 1000.0f * (col - depth_cx) / depth_fx;
+	float y = -depth / 1000.0f * (row - depth_cy) / depth_fy;
+	float z = depth / 1000.0f;
+	*/
+
+	float4 cameraPoint = float4(x, y, z, 1);
+	float4 worldPoint = mul(depthCameraToWorld, cameraPoint);
+	worldPoint.x = worldPoint.x / worldPoint.w;
+	worldPoint.y = worldPoint.y / worldPoint.w;
+	worldPoint.z = worldPoint.z / worldPoint.w;
+	worldPoint.w = worldPoint.w / worldPoint.w;
+	x = worldPoint.x / worldPoint.w;
+	y = worldPoint.y / worldPoint.w;
+	z = worldPoint.z / worldPoint.w;
+
+
+
+	//flying pixel filter on x,y,z
+	bool flyingPixel = false;
+
+	/*
+	//if camera 0, find distance to camera 1, and if smaller than debug, it's a flying pixel:
+	if (i==0) {
+		//flyingPixel = true;
+
+		int cc = 1;
+		float4 depthCameraPoint_4 = mul(_CamInfoBuffer[cc].worldToDepthCamera, worldPoint);
+		float3 depthCameraPoint = depthCameraPoint_4.xyz / depthCameraPoint_4.w;
+
+		float pixel_x = depthCameraPoint.x / depthCameraPoint.z * _CamInfoBuffer[cc].depth_fx + _CamInfoBuffer[cc].depth_cx;
+		float pixel_y = depthCameraPoint.y / depthCameraPoint.z * _CamInfoBuffer[cc].depth_fy + _CamInfoBuffer[cc].depth_cy;
+		float pixel_y_lookup = -depthCameraPoint.y / depthCameraPoint.z * _CamInfoBuffer[cc].depth_fy + _CamInfoBuffer[cc].depth_cy;
+
+		uint3 loc_cc = uint3(uint(pixel_x), uint(pixel_y_lookup), uint(cc));
+		float z_cc = (float)(depth_cube[loc_cc.xyz].x)*65535.0f / 1000.0f;
+
+
+		//float z_cc = depth_cube[loc_cc.xyz] * 65.535f;
+		float x_cc = (uint(pixel_x)-_CamInfoBuffer[cc].depth_cx) * z_cc / _CamInfoBuffer[cc].depth_fx;
+		float y_cc = (uint(pixel_y)-_CamInfoBuffer[cc].depth_cy) * z_cc / _CamInfoBuffer[cc].depth_fy;
+
+		float voxel_to_depth = length(depthCameraPoint);
+		float measured_range = length(float3(x_cc, y_cc, z_cc));
+
+		//if (z_cc < depth_debug_val && z_cc>0.0f) {
+		if (z_cc < depth_debug_val && z_cc>0.0f && depth>0.0f) {
+			flyingPixel = true;
+		}
+
+	}
+	*/
+
+
+	int not_seen_count = 0;
+	int seen_count = 0;
+	int flying_count = 0;
+	int not_flying_count = 0;
+	int active_camera_count = 0;
+
+	for (int cc = 0; cc < _NumCameras; cc++) {
+		bool cameraActive = (_CamInfoBuffer[cc].camera_active > 0.0f);
+		//bool cameraActive = true;
+		//cameraActive = true;
+		if (cc != i && cameraActive) {
+			active_camera_count++;
+			//if (true) {
+
+				//project x,y,z into each camera's world
+			float4 depthCameraPoint_4 = mul(_CamInfoBuffer[cc].worldToDepthCamera, worldPoint);
+			float3 depthCameraPoint = depthCameraPoint_4.xyz / depthCameraPoint_4.w;
+			float pixel_x = depthCameraPoint.x / depthCameraPoint.z * _CamInfoBuffer[cc].depth_fx + _CamInfoBuffer[cc].depth_cx;
+			float pixel_y = depthCameraPoint.y / depthCameraPoint.z * _CamInfoBuffer[cc].depth_fy + _CamInfoBuffer[cc].depth_cy;
+			float pixel_y_lookup = -depthCameraPoint.y / depthCameraPoint.z * _CamInfoBuffer[cc].depth_fy + _CamInfoBuffer[cc].depth_cy;
+
+
+			uint3 loc_cc = uint3(uint(pixel_x), uint(pixel_y_lookup), cc);
+			float z_cc = (float)(depth_cube[loc_cc.xyz].x)*65535.0f / 1000.0f;
+			//float z_cc = depth_cube[loc_cc.xyz] *  65.535f;
+			float x_cc = (uint(pixel_x)-_CamInfoBuffer[cc].depth_cx) * z_cc / _CamInfoBuffer[cc].depth_fx;
+			float y_cc = (uint(pixel_y)-_CamInfoBuffer[cc].depth_cy) * z_cc / _CamInfoBuffer[cc].depth_fy;
+
+
+
+
+			float voxel_to_depth = length(depthCameraPoint);
+			float measured_range = length(float3(x_cc, y_cc, z_cc));
+			bool visible = true;
+			if (measured_range == 0.0f) {
+				visible = false;
+			}
+			if (pixel_x < 0 || pixel_x >= 1280 || pixel_y < 0 || pixel_y >= 720) {
+				visible = false;
+			}
+
+			if (!visible) {
+				not_seen_count++;
+			}
+			else {
+				seen_count++;
+				if (voxel_to_depth < (measured_range - flying_pixel_tolerance)) {
+					flying_count++;
+				}
+				else {
+					not_flying_count++;
+				}
+			}
+
+			/*
+			if (visible && (voxel_to_depth < (measured_range - flying_pixel_tolerance))) {
+			//if ((measured_range > 0.0f)) {
+				//if (i == 1 && cc == 0) {
+					flyingPixel = true;
+				//}
+
+			}
+			*/
+
+
+
+		}
+	}
+
+
+
+	if (flying_count > 0) {
+		flyingPixel = true;
+	}
+	else {
+		flyingPixel = false;
+	}
+
+
+
+	if (discontinuity) {
+		flyingPixel = true;
+	}
+
+	//calculate normal at x,y,z
+
+
+
+
+
+	x = x / _CubeWidth2 + 0.5f;
+	int xx = (int)(x*(float)_NumVoxels2);
+
+	y = y / _CubeWidth2 + 0.5f;
+	int yy = (int)(y*(float)_NumVoxels2);
+
+	z = z / _CubeWidth2 + 0.5f;
+	int zz = (int)(z*(float)_NumVoxels2);
+
+	//project onto each of the depth maps to see if it's a flying pixel:
+	//todo
+
+	/*
+	zz = _NumVoxels / 2;
+	yy = _NumVoxels / 2;
+	xx = _NumVoxels / 2;
+	int idx = zz * _NumVoxels*_NumVoxels + yy * _NumVoxels + xx;
+	if (depth_fx < depth_debug_val) {
+		Voxels2[idx] = (int)1;
+	}
+	else {
+		Voxels2[idx] = (int)0;
+	}
+	*/
+
+
+	int idx = zz * _NumVoxels2*_NumVoxels2 + yy * _NumVoxels2 + xx;
+	//if (idx >= 0 && idx < (_NumVoxels*_NumVoxels*_NumVoxels)) {
+	if (xx >= 0 && xx < _NumVoxels2 && yy >= 0 && yy < _NumVoxels2 && zz >= 0 && zz < _NumVoxels2) {
+
+
+
+		/*
+		if (Voxels2[idx] == 0) {
+			Voxels2[idx] = (i+1);
+		}
+		else {
+			Voxels2[idx] = 3;
+		}
+		*/
+
+		/*
+		if (flyingPixel) {
+			Voxels2[idx] = (int)1;
+		}
+		*/
+
+		if (true) {
+			if (!flyingPixel) {
+
+				int val = Voxels2[idx];
+				if (val > 0) {
+					//project this point onto the normal map of the previous owner:
+					float4 camPoint = mul(_CamInfoBuffer[val].worldToDepthCamera, float4(x, y, z, 1));
+					camPoint = camPoint / camPoint.w;
+					float previous_x = camPoint.x / camPoint.z*_CamInfoBuffer[val].depth_fx + _CamInfoBuffer[val].depth_cx;
+					float previous_y = camPoint.y / camPoint.z*_CamInfoBuffer[val].depth_fy + _CamInfoBuffer[val].depth_cy;
+					uint3 previous_loc = uint3(uint(previous_x), uint(previous_y), val);
+					float3 previous_normal = normal_cube[previous_loc.xyz].xyz;
+					float3 previous_pointToCamera = float3(_CamInfoBuffer[val].camera_x - x, _CamInfoBuffer[val].camera_y - y, _CamInfoBuffer[val].camera_z - z);
+					float previous_affinity = dot(previous_normal, normalize(previous_pointToCamera));
+
+					float3 normal = normal_cube[loc.xyz].xyz;
+					float3 pointToCamera = float3(_CamInfoBuffer[i].camera_x - x, _CamInfoBuffer[i].camera_y - y, _CamInfoBuffer[i].camera_z - z);
+					float affinity = dot(normal, normalize(pointToCamera));
+
+					if (affinity > previous_affinity) {
+
+						int mask = 1 << _CameraId;
+						//int mask = 8;
+
+
+						int s_val = Voxels2[idx];
+						int set = fmod(s_val, pow(2, (_CameraId + 1))) / pow(2, _CameraId);  //_CameraId must be integer class for this to work. it has to be an int division
+						if (set == 0) {
+							Voxels2[idx] = s_val + pow(2, (_CameraId));
+						}
+
+						//Voxels2[idx] = (int)(Voxels2[idx] + pow(2, (_CameraId + 0)));
+
+						//Voxels2[idx] =(int)( Voxels2[idx] || mask);
+
+						//Voxels2[idx] = (int)(_CameraId + 1);
+						//Voxels2[idx] = 3;
+					}
+
+
+
+
+				}
+				else {
+					int mask = 1 << _CameraId;
+					//int mask = 8;
+
+					int s_val = Voxels2[idx];
+					int set = fmod(s_val, pow(2, (_CameraId + 1))) / pow(2, _CameraId);  //_CameraId must be integer class for this to work. it has to be an int division
+					if (set == 0) {
+						Voxels2[idx] = s_val + pow(2, (_CameraId));
+					}
+
+					//Voxels2[idx] = (int)(Voxels2[idx] || mask);
+					//Voxels2[idx] = (int)(_CameraId + 1);
+				}
+
+
+				/*
+				//check if this affinity is greater than affinity of object already inside:
+				float3 normal = normal_cube[loc.xyz].xyz;
+				float3 pointToCamera = float3(_CamInfoBuffer[i].camera_x - x, _CamInfoBuffer[i].camera_y-y, _CamInfoBuffer[i].camera_z-z);
+				float affinity = dot(normal, normalize(pointToCamera));
+
+				//Voxels2[idx] = 1;
+				if (affinity > depth_debug_val) {
+					//Voxels2[idx] = 1;
+					Voxels2[idx] = (int)(_CameraId + 1);
+				}
+				*/
+
+
+
+			}
+
+		}
+
+
+
+		/*
+		if (flyingPixel) {
+			Voxels2[idx] = (int)2;
+		}
+		else {
+			Voxels2[idx] = (int)1;
+		}
+		*/
+
+
+
+		/*
+		//if (i == 1) {
+			if (!flyingPixel) {
+				Voxels2[idx] = (int)1;
+			}
+			else {
+				//Voxels2[idx] = (int)2;
+			}
+
+		//}
+		*/
+
+		//}
+
+
+	}
+
+
+
+
+
+
+}
+
+
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSVoxelClear
+
+
+RWStructuredBuffer<int> VoxelsClear;
+
+[numthreads(64, 1, 1)]
+void CSVoxelClear(uint3 id : SV_DispatchThreadID)
+{
+	VoxelsClear[id.x] = (uint)0;
+
+}
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSVoxelFill
+
+
+RWStructuredBuffer<int> VoxelsFill;
+
+[numthreads(64, 1, 1)]
+void CSVoxelFill(uint3 id : SV_DispatchThreadID)
+{
+
+	VoxelsFill[id.x] = (int)1;
+
+	/*
+	if (id.x > 5000) {
+		VoxelsFill[id.x] = (int)1;
+	}
+	else {
+		VoxelsFill[id.x] = (int)2;
+	}
+	*/
+
+
+}
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSInitializeVoxelsEMA
+
+
+RWStructuredBuffer<float> InitializeVoxelsEMA;
+
+[numthreads(64, 1, 1)]
+void CSInitializeVoxelsEMA(uint3 id : SV_DispatchThreadID)
+{
+
+	InitializeVoxelsEMA[id.x] = float(0.0f);
+}
+
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSCombineVoxelsEMA
+
+RWStructuredBuffer<int> NewVoxels;
+RWStructuredBuffer<float> VoxelsEMA;
+float alpha_EMA;
+float voxel_EMA_threshold;
+
+[numthreads(64, 1, 1)]
+void CSCombineVoxelsEMA(uint3 id : SV_DispatchThreadID)
+{
+	float val = 0.0f;
+	if (NewVoxels[id.x] > 0.0f) {
+		val = 1.0f;
+	}
+
+	float new_val = alpha_EMA * val + (1.0f - alpha_EMA)*VoxelsEMA[id.x];
+	//float new_val = alpha_EMA * val;
+	VoxelsEMA[id.x] = new_val;
+	if (new_val < voxel_EMA_threshold) {
+		NewVoxels[id.x] = 0;
+	}
+
+	//InitializeVoxelsEMA[id.x] = float(0.0f);
+}
+
+
+
+
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+//RWTexture2D<float4> Result2;
+RWStructuredBuffer<int> Voxels;
+float4x4 cameraToWorld;
+float4x4 worldToCamera;
+float4x4 cameraProjection;
+float _CubeWidth;
+int _NumVoxels;
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+
+	float n = 0;
+	float f = 0;
+	float r = 0;
+	float l = 0;
+	float t = 0;
+	float b = 0;
+
+	float m23 = cameraProjection[2][3];
+	float m22 = cameraProjection[2][2];
+	float m02 = cameraProjection[0][2];
+	float m00 = cameraProjection[0][0];
+	float m12 = cameraProjection[1][2];
+	float m11 = cameraProjection[1][1];
+
+	n = m23 / (m22 - 1);
+	f = m23 / (m22 + 1);
+	l = n / m00 * (m02 - 1);
+	r = 2 * n * m02 / m00 - l;
+	b = n / m11 * (m12 - 1);
+	t = 2 * n * m12 / m11 - b;
+
+	float4 camera_center_4 = mul(cameraToWorld, float4(0, 0, 0, 1));
+	float3 camera_center = camera_center_4.xyz / camera_center_4.w;
+
+	float x = id.x / 512.0f;
+	float y = id.y / 512.0f;
+	float4 forward_camera_space_4 = float4(l + (r - l)*x, -(b + (t - b)*y), -n, 1);
+	float3 forward_camera_space = forward_camera_space_4.xyz / forward_camera_space_4.w;
+	//forward_camera_space = forward_camera_space;
+	forward_camera_space = normalize(forward_camera_space);
+	float4 forward_world_space_4 = mul(cameraToWorld, forward_camera_space_4);
+	float3 forward_world_space = forward_world_space_4.xyz / forward_world_space_4.w;
+	forward_world_space = forward_world_space - camera_center;
+	forward_world_space = normalize(forward_world_space);
+
+
+
+
+	bool found = false;
+	int foundIdx = -1;
+
+
+	//see if it hits a circle:
+	float R = 2.0f*pow(2.0f, 0.5f)*(_CubeWidth / 2.0f); //todo, fix this so it bounds better
+	float delta = _CubeWidth / (2 * (float)_NumVoxels);
+	float A = pow(forward_world_space.x, 2) + pow(forward_world_space.y, 2) + pow(forward_world_space.z, 2);
+	float B = 2 * (camera_center.x*forward_world_space.x + camera_center.y*forward_world_space.y + camera_center.z*forward_world_space.z);
+	float C = pow(camera_center.x, 2) + pow(camera_center.y, 2) + pow(camera_center.z, 2) - pow(R, 2);
+	float det = pow(B, 2) - 4 * A*C;
+
+	/*
+	float3 test_point = camera_center + forward_world_space * 5.0f;
+	if (test_point.y < 0.0f) {
+		found = true;
+	}
+	*/
+
+
+	//Result[id.xy] = float4(forward_camera_space.x, forward_camera_space.y, forward_camera_space.z, 1.0f);
+	//Result[id.xy] = float4(id.x/512.0f, id.y/512.0f, 0, 1.0f);
+
+
+	if (det >= 0) {
+		float sol1 = (-B + pow(det, 0.5f)) / 2 * A;
+		float sol2 = (-B - pow(det, 0.5f)) / 2 * A;
+		float start = min(sol1, sol2);
+		float stop = max(sol1, sol2);
+
+		int startIdx = start / delta;
+		int stopIdx = stop / delta;
+
+		for (int i = startIdx; i < stopIdx; i++) {
+			float3 testPoint = camera_center + i * forward_world_space * delta;
+			if (length(testPoint) < _CubeWidth) {
+				//found = true;
+			}
+
+
+
+			float x = testPoint.x / _CubeWidth + 0.5f;
+			int xx = (int)(x*(float)_NumVoxels);
+
+			float y = testPoint.y / _CubeWidth + 0.5f;
+			int yy = (int)(y*(float)_NumVoxels);
+
+			float z = testPoint.z / _CubeWidth + 0.5f;
+			int zz = (int)(z*(float)_NumVoxels);
+
+
+
+			/*
+
+			float x = testPoint.x + _CubeWidth / 2.0f;
+			int xx = (int)(x / _CubeWidth * (float)(_NumVoxels-1));
+
+			float y = testPoint.y + _CubeWidth / 2.0f;
+			int yy = (int)(y / _CubeWidth * (float)(_NumVoxels-1));
+
+			float z = testPoint.z + _CubeWidth / 2.0f;
+			int zz = (int)(z / _CubeWidth * (float)(_NumVoxels-1));
+			*/
+
+
+			if (xx >= 0 && xx < _NumVoxels && yy >= 0 && yy < _NumVoxels && zz >= 0 && zz < _NumVoxels) {
+
+				int idx = zz * _NumVoxels*_NumVoxels + yy * _NumVoxels + xx;
+
+				//float4 uv = float4((float)idx / _VoxelTex_ST.z, 0.5f, 0.0f, 0.0f);
+
+				//float val = -1.0f;
+				float val = (float)Voxels[idx];
+				//float val = tex2Dlod(_VoxelTex, uv).r;
+
+				if (val > 0.0f) {
+					found = true;
+					foundIdx = idx;
+					break;
+				}
+
+
+			}
+			else {
+				found = false;
+			}
+
+
+		}
+		//int stopIdx = _NumVoxels * 2;
+
+
+	}
+
+
+	if (found) {
+		if (Voxels[foundIdx] == 1) {
+			Result[id.xy] = float4(0, 0, 1, 1.0);
+		}
+		if (Voxels[foundIdx] == 2) {
+			Result[id.xy] = float4(0, 1, 0, 0.1f);
+			//found = false;
+		}
+		if (Voxels[foundIdx] == 3) {
+			Result[id.xy] = float4(1, 0, 0, 1.0f);
+		}
+
+
+	}
+	else {
+		Result[id.xy] = float4(0, 0, 0, 0.0);
+	}
+
+
+
+
+	//Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 1.0);
+
+	//Result[id.xy] = float4(1.0, 1.0, 1.0, 1.0);
+}
+
