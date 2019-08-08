@@ -1,10 +1,12 @@
 Enumerating devices...
 Opening device: 0 result: 0
-serial number for camera 0: 442492112
+serial number for camera 0: 406492112
 Opening device: 1 result: 0
-serial number for camera 1: 355192112
+serial number for camera 1: 442492112
 Opening device: 2 result: 0
-serial number for camera 2: 101592112
+serial number for camera 2: 355192112
+Opening device: 3 result: 0
+serial number for camera 3: 101592112
 setting color bytes length for camera: 0 to: 3686400
 setting color width and height for camera: 0 to: 1280 720
 standard multiplication: 3686400
@@ -20,51 +22,71 @@ setting color width and height for camera: 2 to: 1280 720
 standard multiplication: 3686400
 setting depth bytes length for camera: 2 to: 737280
 setting depth width and height for camera: 2 to: 640 576
+setting color bytes length for camera: 3 to: 3686400
+setting color width and height for camera: 3 to: 1280 720
+standard multiplication: 3686400
+setting depth bytes length for camera: 3 to: 737280
+setting depth width and height for camera: 3 to: 640 576
 Attempting to register buffer for camera: 0
 Attempting to register buffer for camera: 1
 Attempting to register buffer for camera: 2
-color_rotation 0: [0.9999992,0.00111325,-0.0006580556,-0.001051824,0.996213,0.08693962,0.0007523492,-0.08693886,0.9962134]
-color_translation 0: [-32.06825,-2.156462,4.022371]
-color_intrinsics 0: [634.8033,365.2453,602.2218,601.801,0.7595562,-2.962538,1.665561,0.6349793,-2.78979,1.594991,0,0,9.599284E-05,0.0009899901,0]
+Attempting to register buffer for camera: 3
+color_rotation 0: [0.9999862,0.004853942,-0.00199046,-0.004678303,0.996755,0.08035938,0.002374061,-0.08034897,0.9967639]
+color_translation 0: [-32.07218,-2.28846,3.98156]
+color_intrinsics 0: [636.4407,365.4997,602.7747,602.4983,0.6674485,-2.857392,1.640825,0.5466185,-2.687604,1.57025,0,0,0.0002688051,0.0008838443,0]
 depth_rotation 0: [1,0,0,0,1,0,0,0,1]
 depth_translation 0: [0,0,0]
-depth_intrinsics 0: [326.4639,341.924,505.1937,505.3277,2.139656,1.316038,0.06745353,2.473737,1.990876,0.359368,0,0,-5.879253E-05,-3.201032E-05,0]
+depth_intrinsics 0: [315.6305,333.5913,505.8497,505.8871,1.987307,1.24244,0.06668913,2.321843,1.863098,0.3454497,0,0,-0.000147841,-2.067331E-05,0]
 Attempting to get XYZMap
-color_rotation 1: [0.9999999,2.441502E-05,0.0002823718,-4.701707E-05,0.9967689,0.08032294,-0.0002794983,-0.08032294,0.9967688]
-color_translation 1: [-31.97552,-2.26056,4.003675]
-color_intrinsics 1: [634.0743,367.7917,601.4535,601.3138,0.5240597,-2.757293,1.66782,0.4033078,-2.579545,1.589705,0,0,0.0002523719,-0.0001024214,0]
+color_rotation 1: [0.9999992,0.00111325,-0.0006580556,-0.001051824,0.996213,0.08693962,0.0007523492,-0.08693886,0.9962134]
+color_translation 1: [-32.06825,-2.156462,4.022371]
+color_intrinsics 1: [634.8033,365.2453,602.2218,601.801,0.7595562,-2.962538,1.665561,0.6349793,-2.78979,1.594991,0,0,9.599284E-05,0.0009899901,0]
 depth_rotation 1: [1,0,0,0,1,0,0,0,1]
 depth_translation 1: [0,0,0]
-depth_intrinsics 1: [325.4042,328.8008,505.1283,505.4059,2.047807,1.129852,0.05456191,2.383538,1.767803,0.2982885,0,0,-9.60805E-05,-1.752653E-05,0]
+depth_intrinsics 1: [326.4639,341.924,505.1937,505.3277,2.139656,1.316038,0.06745353,2.473737,1.990876,0.359368,0,0,-5.879253E-05,-3.201032E-05,0]
 Attempting to get XYZMap
-color_rotation 2: [0.9999998,0.0006201933,0.0003763891,-0.0006487102,0.9966971,0.08120636,-0.0003247823,-0.08120658,0.9966972]
-color_translation 2: [-31.95231,-2.301468,3.994856]
-color_intrinsics 2: [635.1125,364.7881,603.3609,603.1129,0.536765,-2.741651,1.62156,0.4178404,-2.568408,1.547537,0,0,0.0004085806,-2.529741E-06,0]
+color_rotation 2: [0.9999999,2.441502E-05,0.0002823718,-4.701707E-05,0.9967689,0.08032294,-0.0002794983,-0.08032294,0.9967688]
+color_translation 2: [-31.97552,-2.26056,4.003675]
+color_intrinsics 2: [634.0743,367.7917,601.4535,601.3138,0.5240597,-2.757293,1.66782,0.4033078,-2.579545,1.589705,0,0,0.0002523719,-0.0001024214,0]
 depth_rotation 2: [1,0,0,0,1,0,0,0,1]
 depth_translation 2: [0,0,0]
-depth_intrinsics 2: [315.3314,326.368,504.8382,504.997,1.463733,0.8661339,0.04749157,1.799672,1.305596,0.2436519,0,0,4.759368E-05,-0.0001286664,0]
+depth_intrinsics 2: [325.4042,328.8008,505.1283,505.4059,2.047807,1.129852,0.05456191,2.383538,1.767803,0.2982885,0,0,-9.60805E-05,-1.752653E-05,0]
+Attempting to get XYZMap
+color_rotation 3: [0.9999998,0.0006201933,0.0003763891,-0.0006487102,0.9966971,0.08120636,-0.0003247823,-0.08120658,0.9966972]
+color_translation 3: [-31.95231,-2.301468,3.994856]
+color_intrinsics 3: [635.1125,364.7881,603.3609,603.1129,0.536765,-2.741651,1.62156,0.4178404,-2.568408,1.547537,0,0,0.0004085806,-2.529741E-06,0]
+depth_rotation 3: [1,0,0,0,1,0,0,0,1]
+depth_translation 3: [0,0,0]
+depth_intrinsics 3: [315.3314,326.368,504.8382,504.997,1.463733,0.8661339,0.04749157,1.799672,1.305596,0.2436519,0,0,4.759368E-05,-0.0001286664,0]
 Attempting to get XYZMap
 Attempting to start all the camera threads
 AKPlugin Thread 0: starting grab thread: 0
 AKPlugin Thread 1: starting grab thread: 1
 AKPlugin Thread 2: starting grab thread: 2
+AKPlugin Thread 3: starting grab thread: 3
 AKPlugin Thread 0: camera config color format: 3
 AKPlugin Thread 1: camera config color format: 3
 AKPlugin Thread 2: camera config color format: 3
+AKPlugin Thread 3: camera config color format: 3
 AKPlugin Thread 0: camera config color resolution: 1
 AKPlugin Thread 1: camera config color resolution: 1
 AKPlugin Thread 2: camera config color resolution: 1
+AKPlugin Thread 3: camera config color resolution: 1
 AKPlugin Thread 0: camera config depth mode: 2
 AKPlugin Thread 1: camera config depth mode: 2
 AKPlugin Thread 2: camera config depth mode: 2
+AKPlugin Thread 3: camera config depth mode: 2
 cleaning up!
 joining thread: 0 with joinablility: 1
-AKPlugin Thread 2: completed grab thread: 2
 AKPlugin Thread 1: completed grab thread: 1
+AKPlugin Thread 2: completed grab thread: 2
+AKPlugin Thread 3: completed grab thread: 3
 AKPlugin Thread 0: completed grab thread: 0
 completed joining thread: 0
 joining thread: 1 with joinablility: 1
 completed joining thread: 1
 joining thread: 2 with joinablility: 1
 completed joining thread: 2
+joining thread: 3 with joinablility: 1
+completed joining thread: 3
 Completed Closing Camera threads

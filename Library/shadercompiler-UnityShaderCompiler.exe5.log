@@ -1,4 +1,16 @@
-Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
+Base path: C:/Program Files/Unity/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=19180 outsize=6877 ok=1
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(57): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(58): integer divides may be much slower, try using uints if possible.
+  api=4 insize=3783 outsize=2213 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(59): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(60): integer divides may be much slower, try using uints if possible.
+  api=4 insize=3876 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=7900 outsize=1993 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(253): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(254): integer divides may be much slower, try using uints if possible.
+  api=4 insize=8386 outsize=2301 ok=1

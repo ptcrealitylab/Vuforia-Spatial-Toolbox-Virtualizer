@@ -1,4 +1,17 @@
-Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
+Base path: C:/Program Files/Unity/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=26959 outsize=12049 ok=1
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(57): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(58): integer divides may be much slower, try using uints if possible.
+  api=4 insize=3783 outsize=2213 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(127): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(128): integer divides may be much slower, try using uints if possible.
+  api=4 insize=5532 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(204): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(205): integer divides may be much slower, try using uints if possible.
+  api=4 insize=7544 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_radiusFeatureDetector.compute(102): undeclared identifier 'depthd'
+  api=4 insize=8874 outsize=0 ok=0

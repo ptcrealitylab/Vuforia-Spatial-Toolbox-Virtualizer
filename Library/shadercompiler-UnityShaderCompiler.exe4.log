@@ -1,4 +1,23 @@
-Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
+Base path: C:/Program Files/Unity/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=19180 outsize=865 ok=1
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(57): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(58): integer divides may be much slower, try using uints if possible.
+  api=4 insize=3783 outsize=2213 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(122): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(123): integer divides may be much slower, try using uints if possible.
+  api=4 insize=5284 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(201): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(202): integer divides may be much slower, try using uints if possible.
+  api=4 insize=7516 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(271): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(272): integer divides may be much slower, try using uints if possible.
+  api=4 insize=8865 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(193): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(357): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(358): integer divides may be much slower, try using uints if possible.
+  api=4 insize=10683 outsize=2301 ok=1

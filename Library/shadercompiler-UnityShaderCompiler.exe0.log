@@ -1,4 +1,120 @@
-Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
+Base path: C:/Program Files/Unity/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=19180 outsize=3561 ok=1
+  api=4 insize=3812 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3828 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3807 outsize=437 ok=1
+Cmd: disassembleShader
+  api=4 insize=272 outsize=913 ok=1
+Cmd: disassembleShader
+  api=4 insize=1288 outsize=2262 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3753 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3771 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3783 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3783 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3783 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3783 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3783 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3788 outsize=437 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=3876 outsize=437 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_radiusFeatureDetector.compute(36): undeclared identifier 'depth_Tex'
+  api=4 insize=5196 outsize=0 ok=0
+Cmd: compileComputeKernel
+  api=4 insize=5196 outsize=1605 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5238 outsize=297 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5236 outsize=297 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5240 outsize=1565 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5242 outsize=1565 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5284 outsize=1641 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5330 outsize=1745 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5356 outsize=1929 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5446 outsize=1929 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5532 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5532 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=7544 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=7516 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=7707 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=7804 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=7898 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8386 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8386 outsize=925 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_radiusFeatureDetector.compute(136): redefinition of 'xx'
+  api=4 insize=8873 outsize=0 ok=0
+Cmd: disassembleShader
+  api=4 insize=332 outsize=1020 ok=1
+Cmd: disassembleShader
+  api=4 insize=332 outsize=1017 ok=1
+Cmd: disassembleShader
+  api=4 insize=332 outsize=1018 ok=1
+Cmd: disassembleShader
+  api=4 insize=2188 outsize=3429 ok=1
+Cmd: disassembleShader
+  api=4 insize=300 outsize=985 ok=1
+Cmd: disassembleShader
+  api=4 insize=360 outsize=1082 ok=1
+Cmd: disassembleShader
+  api=4 insize=532 outsize=1327 ok=1
+Cmd: disassembleShader
+  api=4 insize=320 outsize=1012 ok=1
+Cmd: disassembleShader
+  api=4 insize=428 outsize=1190 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_radiusFeatureDetector.compute(102): undeclared identifier 'depthd'
+  api=4 insize=8874 outsize=0 ok=0
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_radiusFeatureDetector.compute(136): redefinition of 'xx'
+  api=4 insize=8873 outsize=0 ok=0
+Cmd: compileComputeKernel
+  api=4 insize=8865 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8954 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8956 outsize=1149 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8954 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8954 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8957 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8957 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8955 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=9044 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(192): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=10445 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(193): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=10683 outsize=1917 ok=1

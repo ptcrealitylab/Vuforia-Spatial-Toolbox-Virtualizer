@@ -1,4 +1,30 @@
-Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
+Base path: C:/Program Files/Unity/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=11156 outsize=633 ok=1
+  error: 2 plat 4 at AK_radiusFeatureDetector.compute(36): undeclared identifier 'depth_Tex'
+  api=4 insize=5196 outsize=0 ok=0
+Cmd: compileComputeKernel
+  api=4 insize=5446 outsize=1961 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(231): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(232): integer divides may be much slower, try using uints if possible.
+  api=4 insize=7898 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(231): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(232): integer divides may be much slower, try using uints if possible.
+  api=4 insize=7900 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_radiusFeatureDetector.compute(136): redefinition of 'xx'
+  api=4 insize=8873 outsize=0 ok=0
+Cmd: compileComputeKernel
+  api=4 insize=8954 outsize=1293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=8956 outsize=1917 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(277): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(278): integer divides may be much slower, try using uints if possible.
+  api=4 insize=8954 outsize=2301 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(277): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_radiusFeatureDetector.compute(278): integer divides may be much slower, try using uints if possible.
+  api=4 insize=8955 outsize=2301 ok=1
