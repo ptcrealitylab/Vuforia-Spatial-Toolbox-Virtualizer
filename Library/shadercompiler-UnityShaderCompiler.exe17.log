@@ -1,16 +1,57 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 1 plat 4 at (0): Program 'cornerDescriptor', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced
-  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(478): floating point division by zero
-  error: 1 plat 4 at AK_cornerWalker.compute(727): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(728): implicit truncation of vector type
-  error: 1 plat 4 at AK_cornerWalker.compute(733): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=24283 outsize=9469 ok=1
+  api=4 insize=19243 outsize=3561 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(727): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(728): implicit truncation of vector type
-  error: 1 plat 4 at AK_cornerWalker.compute(733): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=24283 outsize=1053 ok=1
+  api=4 insize=19312 outsize=3561 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
+  api=4 insize=19414 outsize=0 ok=0
+Cmd: compileComputeKernel
+  api=4 insize=19452 outsize=3561 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19470 outsize=2189 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19530 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19526 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19544 outsize=3561 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=18310 outsize=3917 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19930 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19930 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19930 outsize=3561 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19930 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=17957 outsize=4181 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=17967 outsize=11973 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=17982 outsize=12021 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=18399 outsize=4025 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=18395 outsize=4253 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=20230 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19136 outsize=4413 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19135 outsize=4413 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19134 outsize=4413 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=11160 outsize=605 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19120 outsize=12021 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=18845 outsize=12145 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19332 outsize=4293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=20374 outsize=12653 ok=1

@@ -1,58 +1,25 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(106): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_cornerWalker.compute(108): integer modulus may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_cornerWalker.compute(632): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21418 outsize=4025 ok=1
+  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
+  api=4 insize=19410 outsize=0 ok=0
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(633): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21454 outsize=1053 ok=1
+  api=4 insize=19470 outsize=293 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(635): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21450 outsize=7577 ok=1
+  api=4 insize=19930 outsize=865 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(635): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21487 outsize=2041 ok=1
+  api=4 insize=17879 outsize=12113 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(637): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21534 outsize=1053 ok=1
+  api=4 insize=17957 outsize=4181 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(654): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21787 outsize=1053 ok=1
+  api=4 insize=18406 outsize=11397 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(461): floating point division by zero
-  error: 1 plat 4 at AK_cornerWalker.compute(655): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21850 outsize=7049 ok=1
+  api=4 insize=19017 outsize=11677 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(461): floating point division by zero
-  error: 1 plat 4 at AK_cornerWalker.compute(663): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=21994 outsize=7185 ok=1
+  api=4 insize=19019 outsize=11685 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(462): floating point division by zero
-  error: 1 plat 4 at AK_cornerWalker.compute(669): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=22171 outsize=7545 ok=1
+  api=4 insize=19332 outsize=4293 ok=1
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_cornerWalker.compute(423): syntax error: unexpected token '['
-  error: 2 plat 4 at AK_cornerWalker.compute(498): undeclared identifier 'container'
-  api=4 insize=23129 outsize=0 ok=0
+  api=4 insize=19332 outsize=4293 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(30): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(721): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(722): implicit truncation of vector type
-  error: 1 plat 4 at AK_cornerWalker.compute(725): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=23795 outsize=2853 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_cornerWalker.compute(106): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_cornerWalker.compute(108): integer modulus may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(721): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(722): implicit truncation of vector type
-  error: 1 plat 4 at AK_cornerWalker.compute(725): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=23987 outsize=4025 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=700 outsize=449 ok=1
-Unhandled exception: Protocol error - failed to read correct magic number
-
-Quitting shader compiler process
+  api=4 insize=20373 outsize=12761 ok=1

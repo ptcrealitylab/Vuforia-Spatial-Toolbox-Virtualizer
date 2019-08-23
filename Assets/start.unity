@@ -738,7 +738,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &342288931
 GameObject:
@@ -1406,12 +1406,12 @@ GameObject:
   - component: {fileID: 1055434986}
   - component: {fileID: 1055434985}
   m_Layer: 0
-  m_Name: ak_stitching
+  m_Name: ak_fusion_(turn_off_visualization1-3_to_see_just_fusion)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1055434985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1423,9 +1423,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1cf1a7fd88ec88458a5fd26c9a6e2a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeWidth: 2.54
-  numVoxels: 10
-  maskArray: 01010101
+  cubeWidth: 5
+  numVoxels: 350
+  maskArray: 010101
   normalFilterSize: 3
   flying_pixel_tolerance: 0.1
   depth_debug_val: 0
@@ -1447,6 +1447,7 @@ MonoBehaviour:
   wireframeVal: 0.1
   play: 0
   freeze: {fileID: 0}
+  invertColorMatrix: 0
 --- !u!4 &1055434986
 Transform:
   m_ObjectHideFlags: 0
@@ -1459,7 +1460,7 @@ Transform:
   m_Children:
   - {fileID: 1057938909}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1057938908
 GameObject:
@@ -1661,7 +1662,7 @@ Transform:
   - {fileID: 550258049}
   - {fileID: 197937084}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1308983893
 MonoBehaviour:
@@ -1920,7 +1921,7 @@ Transform:
   - {fileID: 1889643612}
   - {fileID: 1826550613}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1415024126
 GameObject:
@@ -2221,7 +2222,7 @@ Transform:
   m_Children:
   - {fileID: 989580115}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1640398109
 GameObject:
@@ -2920,7 +2921,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2139639873
 GameObject:

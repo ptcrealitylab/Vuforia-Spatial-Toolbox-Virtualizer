@@ -100,9 +100,9 @@ void CSNormal(uint3 id : SV_DispatchThreadID)
 
 			float2 distortion = distortion_cube_for_normal_cube[loc.xyz].xy;
 			//float distortion_y = distortion_cube_for_normal_cube[loc.xyz].y;
-			float2 distortion_u = distortion_cube_for_normal_cube[loc.xyz].xy;
+			float2 distortion_u = distortion_cube_for_normal_cube[loc_u.xyz].xy;
 			//float distortion_y_u = distortion_cube_for_normal_cube[loc.xyz].y;
-			float2 distortion_r = distortion_cube_for_normal_cube[loc.xyz].xy;
+			float2 distortion_r = distortion_cube_for_normal_cube[loc_r.xyz].xy;
 			//float distortion_y_r = distortion_cube_for_normal_cube[loc.xyz].y;
 
 			bool valid = false;

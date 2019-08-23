@@ -1,10 +1,35 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 1 plat 4 at (0): Program 'cornerDescriptor', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced
-  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(478): floating point division by zero
-  error: 1 plat 4 at AK_cornerWalker.compute(727): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_cornerWalker.compute(728): implicit truncation of vector type
-  error: 1 plat 4 at AK_cornerWalker.compute(733): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=24285 outsize=9729 ok=1
+  api=4 insize=19335 outsize=2189 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19312 outsize=293 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
+  api=4 insize=19412 outsize=0 ok=0
+Cmd: compileComputeKernel
+  api=4 insize=19450 outsize=3561 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19542 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19544 outsize=865 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19930 outsize=3561 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19930 outsize=313 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19930 outsize=293 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=20230 outsize=865 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19032 outsize=10805 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19136 outsize=4413 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19135 outsize=4413 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=11160 outsize=589 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19120 outsize=12021 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=19122 outsize=12157 ok=1

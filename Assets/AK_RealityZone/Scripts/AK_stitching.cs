@@ -58,6 +58,12 @@ public class AK_stitching : MonoBehaviour {
         public Matrix4x4 depthCameraToWorld;
         public Matrix4x4 worldToDepthCamera;
 
+        public int depth_width;
+        public int depth_height;
+        public int color_width;
+        public int color_height;
+
+
         public float camera_x;
         public float camera_y;
         public float camera_z;
@@ -231,6 +237,31 @@ public class AK_stitching : MonoBehaviour {
         Debug.Log("setup: " + AK_receiver.GetComponent<akplay>().camInfoList.Count);
         camInfoList = AK_receiver.GetComponent<akplay>().camInfoList;
 
+        for(int i = 0; i<camInfoList.Count; i++)
+        {
+            Debug.Log("cam info stuff " + i);
+
+            Debug.Log("color extrinsic: " + camInfoList[i].color_extrinsics);
+
+            Debug.Log("depth fx: " + camInfoList[i].depth_fx);
+            Debug.Log("depth fy: " + camInfoList[i].depth_fy);
+            Debug.Log("depth cx: " + camInfoList[i].depth_cx);
+            Debug.Log("depth cy: " + camInfoList[i].depth_cy);
+
+            Debug.Log("color fx: " + camInfoList[i].color_fx);
+            Debug.Log("color fy: " + camInfoList[i].color_fy);
+            Debug.Log("color cx: " + camInfoList[i].color_cx);
+            Debug.Log("color cy: " + camInfoList[i].color_cy);
+
+        }
+
+        bool[] tempMask = maskArray;
+        maskArray = new bool[camInfoList.Count];
+        for(int i = 0; i<maskArray.Length; i++)
+        {
+            maskArray[i] = tempMask[i];
+        }
+
         //smart Cleanup
         takeDown();
 
@@ -243,7 +274,8 @@ public class AK_stitching : MonoBehaviour {
     {
         Debug.Log("setting up texture cubes, cam info list count: " + camInfoList.Count);
         //camInfoBuffer = new ComputeBuffer(camInfoList.Count, 268);  //3 matrices and 19 floats: 3*64 + 19*4 = 268
-        camInfoBuffer = new ComputeBuffer(camInfoList.Count, 328);  //3 matrices and 19 floats: 3*64 + 34*4 = 328
+        //camInfoBuffer = new ComputeBuffer(camInfoList.Count, 328);  //3 matrices and 19 floats: 3*64 + 34*4 = 328
+        camInfoBuffer = new ComputeBuffer(camInfoList.Count, (328 + 4*sizeof(int)));  //3 matrices and 19 floats: 3*64 + 34*4 = 328
 
         depth_tex_cube = new RenderTexture(camInfoList[0].depth_width, camInfoList[0].depth_height, 24, RenderTextureFormat.RFloat);
         depth_tex_cube.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
@@ -312,8 +344,14 @@ public class AK_stitching : MonoBehaviour {
         infoStruct[] infoArray = new infoStruct[numCameras];
         for (int cc = 0; cc < numCameras; cc++)
         {
+
+            infoArray[cc].depth_width = camInfoList[cc].depth_width;
+            infoArray[cc].depth_height = camInfoList[cc].depth_height;
+            infoArray[cc].color_width = camInfoList[cc].color_width;
+            infoArray[cc].color_height = camInfoList[cc].color_height;
+
             infoArray[cc].color_cx = camInfoList[cc].color_cx;
-            infoArray[cc].color_cx = camInfoList[cc].color_cy;
+            infoArray[cc].color_cy = camInfoList[cc].color_cy;
             infoArray[cc].color_fx = camInfoList[cc].color_fx;
             infoArray[cc].color_fy = camInfoList[cc].color_fy;
 
@@ -334,7 +372,7 @@ public class AK_stitching : MonoBehaviour {
 
 
             infoArray[cc].depth_cx = camInfoList[cc].depth_cx;
-            infoArray[cc].depth_cx = camInfoList[cc].depth_cy;
+            infoArray[cc].depth_cy = camInfoList[cc].depth_cy;
             infoArray[cc].depth_fx = camInfoList[cc].depth_fx;
             infoArray[cc].depth_fy = camInfoList[cc].depth_fy;
 
@@ -362,7 +400,23 @@ public class AK_stitching : MonoBehaviour {
             infoArray[cc].camera_y = camInfoList[cc].visualization.transform.position.y;
             infoArray[cc].camera_z = camInfoList[cc].visualization.transform.position.z;
 
-            infoArray[cc].color_extrinsic = camInfoList[cc].color_extrinsics;
+            if (invertColorMatrix)
+            {
+                infoArray[cc].color_extrinsic = camInfoList[cc].color_extrinsics.inverse;
+                Matrix4x4 flip = camInfoList[cc].color_extrinsics;
+                Vector4 c2 = flip.GetColumn(1);
+                Vector4 c3 = flip.GetColumn(2);
+
+                flip.SetColumn(1, new Vector4(c2.x, c2.y, -c2.z, c2.w));
+                flip.SetColumn(2, new Vector4(c3.x, -c3.y, c3.z, c3.w));
+
+                infoArray[cc].color_extrinsic = flip;
+            }
+            else
+            {
+                infoArray[cc].color_extrinsic = camInfoList[cc].color_extrinsics;
+            }
+            //Debug.Log("info array: " + cc + " " + infoArray[cc].color_extrinsic);
 
 
             //camInfo[cc].cameraActive = 1.0f;
@@ -390,7 +444,7 @@ public class AK_stitching : MonoBehaviour {
         camInfoBuffer.SetData(infoArray);
     }
 
-
+    public bool invertColorMatrix = false;
 
     void makeTextureCubes()
     {
@@ -546,17 +600,20 @@ public class AK_stitching : MonoBehaviour {
     {
         int numCameras = camInfoList.Count;
 
+        
         //clear out voxel buffer so it's all zeros
         int voxelClearKH = voxelCompute.FindKernel("CSVoxelClear");
         voxelCompute.SetBuffer(voxelClearKH, "VoxelsClear", voxelBuffer);
         voxelCompute.Dispatch(voxelClearKH, numVoxels * numVoxels * numVoxels / 64, 1, 1);
+        
 
         /*
-        int voxelFillKH = marchCompute.FindKernel("CSVoxelFill");
-        marchCompute.SetBuffer(voxelFillKH, "VoxelsFill", voxelBuffer);
-        marchCompute.Dispatch(voxelFillKH, numVoxels * numVoxels * numVoxels / 64, 1, 1);
+        int voxelFillKH = voxelCompute.FindKernel("CSVoxelFill");
+        voxelCompute.SetBuffer(voxelFillKH, "VoxelsFill", voxelBuffer);
+        voxelCompute.Dispatch(voxelFillKH, numVoxels * numVoxels * numVoxels / 64, 1, 1);
         */
-
+        
+        
         for (int cc = 0; cc < numCameras; cc++)
         {
             if (maskArray[cc])
@@ -581,19 +638,11 @@ public class AK_stitching : MonoBehaviour {
                 voxelCompute.SetInt("discontinuity_delta", discontinuity_delta);
                 voxelCompute.SetInt("_CameraId", cc);
 
-                /* //damn, all this was because i messed up the order in the struct.
-                marchCompute.SetMatrix("testDepthCameraToWorld", visualizeArray[0].transform.localToWorldMatrix);
-                marchCompute.SetFloat("testCx", dii.ppx);
-                marchCompute.SetFloat("testCy", dii.ppy);
-                marchCompute.SetFloat("testFx", dii.fx);
-                marchCompute.SetFloat("testFy", dii.fy);
-                marchCompute.SetFloat("depth_debug_val", depth_debug_val);
-                */
-
-                voxelCompute.Dispatch(voxelKernelHandle, camInfoList[0].depth_width, camInfoList[0].depth_height, 1);
+                voxelCompute.Dispatch(voxelKernelHandle, (camInfoList[0].depth_width/8), (camInfoList[0].depth_height/8), 1);
             }
 
         }
+        
     }
 
     private void OnApplicationQuit()
@@ -612,4 +661,5 @@ public class AK_stitching : MonoBehaviour {
 
     }
 }
+
 

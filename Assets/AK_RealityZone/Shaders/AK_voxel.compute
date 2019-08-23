@@ -64,6 +64,11 @@ struct camInfo
 	float4x4 depthCameraToWorld;
 	float4x4 worldToDepthCamera;
 
+	int depth_width;
+	int depth_height;
+	int color_width;
+	int color_height;
+
 	float camera_x;
 	float camera_y;
 	float camera_z;
@@ -155,6 +160,7 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 	int i = _CameraId;
 	//for (int i = 0; i < _NumCameras; i++) {
 	float4x4 depthCameraToWorld = _CamInfoBuffer[i].depthCameraToWorld;
+	//float4x4 depthCameraToWorld = _CamInfoBuffer[i].worldToDepthCamera;
 	/*
 	float depth_fx = _CamInfoBuffer[i].depth_fx;
 	float depth_fy = _CamInfoBuffer[i].depth_fy;
@@ -195,7 +201,7 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 
 
 	float x = depth_cube[loc.xyz].x*65.536f * distortion_cube[loc.xyz].x;
-	float y = depth_cube[loc.xyz].x*65.536f * distortion_cube[loc.xyz].y;
+	float y = -depth_cube[loc.xyz].x*65.536f * distortion_cube[loc.xyz].y;
 	float z = depth_cube[loc.xyz].x*65.536f;
 
 
@@ -253,6 +259,8 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 	*/
 
 
+	
+
 	int not_seen_count = 0;
 	int seen_count = 0;
 	int flying_count = 0;
@@ -276,6 +284,7 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 
 
 			uint3 loc_cc = uint3(uint(pixel_x), uint(pixel_y_lookup), cc);
+			//uint3 loc_cc = uint3(uint(pixel_x), uint(pixel_y), cc);
 			float z_cc = (float)(depth_cube[loc_cc.xyz].x)*65535.0f / 1000.0f;
 			//float z_cc = depth_cube[loc_cc.xyz] *  65.535f;
 			float x_cc = (uint(pixel_x)-_CamInfoBuffer[cc].depth_cx) * z_cc / _CamInfoBuffer[cc].depth_fx;
@@ -290,7 +299,7 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 			if (measured_range == 0.0f) {
 				visible = false;
 			}
-			if (pixel_x < 0 || pixel_x >= 1280 || pixel_y < 0 || pixel_y >= 720) {
+			if (pixel_x < 0 || pixel_x >= _CamInfoBuffer[cc].depth_width || pixel_y < 0 || pixel_y >= _CamInfoBuffer[cc].depth_height) {
 				visible = false;
 			}
 
@@ -307,30 +316,31 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 				}
 			}
 
-			/*
-			if (visible && (voxel_to_depth < (measured_range - flying_pixel_tolerance))) {
-			//if ((measured_range > 0.0f)) {
-				//if (i == 1 && cc == 0) {
-					flyingPixel = true;
-				//}
+			
+			//if (visible && (voxel_to_depth < (measured_range - flying_pixel_tolerance))) {
+			////if ((measured_range > 0.0f)) {
+				////if (i == 1 && cc == 0) {
+					//flyingPixel = true;
+				////}
 
-			}
-			*/
+			//}
+			
 
 
 
 		}
 	}
 
+	
 
-
+	
 	if (flying_count > 0) {
 		flyingPixel = true;
 	}
 	else {
 		flyingPixel = false;
 	}
-
+	
 
 
 	if (discontinuity) {
@@ -373,8 +383,6 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 	//if (idx >= 0 && idx < (_NumVoxels*_NumVoxels*_NumVoxels)) {
 	if (xx >= 0 && xx < _NumVoxels2 && yy >= 0 && yy < _NumVoxels2 && zz >= 0 && zz < _NumVoxels2) {
 
-
-
 		/*
 		if (Voxels2[idx] == 0) {
 			Voxels2[idx] = (i+1);
@@ -389,11 +397,38 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 			Voxels2[idx] = (int)1;
 		}
 		*/
-
+		//flyingPixel = false;
 		if (true) {
 			if (!flyingPixel) {
 
+
+				int s_val = Voxels2[idx];
+				int set = fmod(s_val, pow(2, (_CameraId + 1))) / pow(2, _CameraId);  //_CameraId must be integer class for this to work. it has to be an int division
+				if (set == 0) {
+					Voxels2[idx] = s_val + pow(2, (_CameraId));
+				}
+				//Voxels2[idx] = -2;
+
+/*
 				int val = Voxels2[idx];
+				if (val > 0) {
+					int mask = 1 << _CameraId;
+					//int mask = 8;
+
+
+					int s_val = Voxels2[idx];
+					int set = fmod(s_val, pow(2, (_CameraId + 1))) / pow(2, _CameraId);  //_CameraId must be integer class for this to work. it has to be an int division
+					if (set == 0) {
+						Voxels2[idx] = s_val + pow(2, (_CameraId));
+					}
+				}
+*/
+				//Voxels2[idx] = 7;
+
+
+				//Voxels2[idx] = _CameraId+1;
+
+				/*
 				if (val > 0) {
 					//project this point onto the normal map of the previous owner:
 					float4 camPoint = mul(_CamInfoBuffer[val].worldToDepthCamera, float4(x, y, z, 1));
@@ -446,6 +481,8 @@ void CSVoxel(uint3 id : SV_DispatchThreadID)
 					//Voxels2[idx] = (int)(Voxels2[idx] || mask);
 					//Voxels2[idx] = (int)(_CameraId + 1);
 				}
+				*/
+				
 
 
 				/*
