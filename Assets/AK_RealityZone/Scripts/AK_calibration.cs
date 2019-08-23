@@ -1,4 +1,7 @@
-﻿using OpenCVForUnity.Calib3dModule;
+﻿//Target based calibration for the azure kinect
+//written by Hisham Bedri, Reality Lab, 2019
+
+using OpenCVForUnity.Calib3dModule;
 using OpenCVForUnity.CoreModule;
 using OpenCVForUnity.ImgprocModule;
 using OpenCVForUnity.UnityUtils;
@@ -24,6 +27,8 @@ public class AK_calibration : MonoBehaviour {
 
     public List<GameObject> threshold_display_list;
     public List<GameObject> checkerboard_display_list;
+
+    public GameObject calibrationSaverAndLoader;
 
 
     // Use this for initialization
@@ -82,6 +87,7 @@ public class AK_calibration : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.D))
                 {
                     handleCalibration();
+                    calibrationSaverAndLoader.GetComponent<CalibrationLoaderAndSaver>().saveCalibration();
                 }
             }
         }

@@ -1,21 +1,8 @@
-Base path: C:/Program Files/Unity/Editor/Data
+Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(118): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(119): integer divides may be much slower, try using uints if possible.
-  api=4 insize=5196 outsize=2301 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(126): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(127): integer divides may be much slower, try using uints if possible.
-  api=4 insize=5356 outsize=2301 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=8386 outsize=925 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(277): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(278): integer divides may be much slower, try using uints if possible.
-  api=4 insize=8957 outsize=2301 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(192): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(337): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(338): integer divides may be much slower, try using uints if possible.
-  api=4 insize=10445 outsize=2301 ok=1
+  error: 1 plat 4 at AK_cornerWalker.compute(444): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(748): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(749): implicit truncation of vector type
+  error: 1 plat 4 at AK_cornerWalker.compute(754): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=25043 outsize=2041 ok=1

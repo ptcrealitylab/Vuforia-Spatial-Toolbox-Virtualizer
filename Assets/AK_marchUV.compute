@@ -1,0 +1,897 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMarchUV
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+//RWTexture2D<float4> Result2;
+RWStructuredBuffer<uint> Voxels;
+float4x4 cameraToWorld;
+float4x4 worldToCamera;
+float4x4 cameraProjection;
+float _CubeWidth;
+int _NumVoxels;
+int width;
+int height;
+bool use_wireframe;
+float wireframe_val;
+
+float play;
+
+struct camInfo
+{
+	float depth_cx;
+	float depth_cy;
+	float depth_fx;
+	float depth_fy;
+	float4x4 depthCameraToWorld;
+	float4x4 worldToDepthCamera;
+	float camera_x;
+	float camera_y;
+	float camera_z;
+	float camera_active;
+};
+
+Texture3D<float4> color_cube;
+SamplerState sampler_color_cube;
+Texture3D<float4> normal_cube;
+StructuredBuffer<camInfo> _CamInfoBuffer;
+
+[numthreads(8, 8, 1)]
+void CSMarchUV(uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+
+	float n = 0;
+	float f = 0;
+	float r = 0;
+	float l = 0;
+	float t = 0;
+	float b = 0;
+
+	float m23 = cameraProjection[2][3];
+	float m22 = cameraProjection[2][2];
+	float m02 = cameraProjection[0][2];
+	float m00 = cameraProjection[0][0];
+	float m12 = cameraProjection[1][2];
+	float m11 = cameraProjection[1][1];
+
+	n = m23 / (m22 - 1);
+	f = m23 / (m22 + 1);
+	l = n / m00 * (m02 - 1);
+	r = 2 * n * m02 / m00 - l;
+	b = n / m11 * (m12 - 1);
+	t = 2 * n * m12 / m11 - b;
+
+	float4 camera_center_4 = mul(cameraToWorld, float4(0, 0, 0, 1));
+	float3 camera_center = camera_center_4.xyz / camera_center_4.w;
+
+	float x = (float)id.x / ((float)width);
+	float y = (float)id.y / ((float)height);
+	float4 forward_camera_space_4 = float4(l + (r - l)*x, -(b + (t - b)*y), -n, 1);
+	float3 forward_camera_space = forward_camera_space_4.xyz / forward_camera_space_4.w;
+	//forward_camera_space = forward_camera_space;
+	forward_camera_space = normalize(forward_camera_space);
+	float4 forward_world_space_4 = mul(cameraToWorld, forward_camera_space_4);
+	float3 forward_world_space = forward_world_space_4.xyz / forward_world_space_4.w;
+	forward_world_space = forward_world_space - camera_center;
+	forward_world_space = normalize(forward_world_space);
+
+
+
+
+	bool found = false;
+	int foundIdx = -1;
+
+	/*
+	if (forward_camera_space.x < 0) {
+		found = true;
+	}
+	*/
+
+
+
+
+
+
+	//see if it hits a circle:
+	float R = 2.0f*pow(2.0f, 0.5f)*(_CubeWidth / 2.0f); //todo, fix this so it bounds better
+	float delta = _CubeWidth / (2.0f * (float)_NumVoxels);
+	float A = pow(forward_world_space.x, 2) + pow(forward_world_space.y, 2) + pow(forward_world_space.z, 2);
+	float B = 2 * (camera_center.x*forward_world_space.x + camera_center.y*forward_world_space.y + camera_center.z*forward_world_space.z);
+	float C = pow(camera_center.x, 2) + pow(camera_center.y, 2) + pow(camera_center.z, 2) - pow(R, 2);
+	float det = pow(B, 2) - 4 * A*C;
+
+	/*
+	float3 test_point = camera_center + forward_world_space * 5.0f;
+
+	if (test_point.y < 0.0f) {
+		found = true;
+	}
+	*/
+	float voxelWidth = _CubeWidth / (float)_NumVoxels;
+	float3 vertex_offset_array[18] =
+	{
+		float3(-voxelWidth / 2.0f,  -voxelWidth / 2.0f, -voxelWidth / 2.0f), //0
+		float3(voxelWidth / 2.0f,  -voxelWidth / 2.0f, -voxelWidth / 2.0f), //1
+		float3(-voxelWidth / 2.0f,  voxelWidth / 2.0f, -voxelWidth / 2.0f), //4
+
+		float3(voxelWidth / 2.0f,  -voxelWidth / 2.0f, -voxelWidth / 2.0f), //1
+		float3(voxelWidth / 2.0f,  -voxelWidth / 2.0f, voxelWidth / 2.0f), //2
+		float3(voxelWidth / 2.0f,  voxelWidth / 2.0f, -voxelWidth / 2.0f), //5
+
+		float3(voxelWidth / 2.0f,  -voxelWidth / 2.0f, voxelWidth / 2.0f), //2
+		float3(-voxelWidth / 2.0f,  -voxelWidth / 2.0f, voxelWidth / 2.0f), //3
+		float3(voxelWidth / 2.0f,  voxelWidth / 2.0f, voxelWidth / 2.0f), //6
+
+		float3(-voxelWidth / 2.0f,  -voxelWidth / 2.0f, voxelWidth / 2.0f), //3
+		float3(-voxelWidth / 2.0f,  -voxelWidth / 2.0f, -voxelWidth / 2.0f), //0
+		float3(-voxelWidth / 2.0f,  voxelWidth / 2.0f, voxelWidth / 2.0f), //7
+
+		float3(-voxelWidth / 2.0f,  voxelWidth / 2.0f, -voxelWidth / 2.0f), //4
+		float3(voxelWidth / 2.0f,  voxelWidth / 2.0f, -voxelWidth / 2.0f), //5
+		float3(-voxelWidth / 2.0f,  voxelWidth / 2.0f, voxelWidth / 2.0f), //7
+
+		float3(-voxelWidth / 2.0f,  -voxelWidth / 2.0f, -voxelWidth / 2.0f), //0
+		float3(-voxelWidth / 2.0f,  -voxelWidth / 2.0f, voxelWidth / 2.0f), //3
+		float3(voxelWidth / 2.0f,  -voxelWidth / 2.0f, -voxelWidth / 2.0f) //1
+	};
+
+
+	//Result[id.xy] = float4(forward_camera_space.x, forward_camera_space.y, forward_camera_space.z, 1.0f);
+	//Result[id.xy] = float4(id.x/512.0f, id.y/512.0f, 0, 1.0f);
+
+	float4 col = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	if (det >= 0) {
+		//found = true;
+
+
+
+		float sol1 = (-B + pow(det, 0.5f)) / 2 * A;
+		float sol2 = (-B - pow(det, 0.5f)) / 2 * A;
+
+		if (true) {
+
+			float start = min(sol1, sol2);
+			float stop = max(sol1, sol2);
+
+			int startIdx = start / delta;
+			startIdx = max(startIdx, 0);
+			int stopIdx = stop / delta;
+			stopIdx = max(stopIdx, 0);
+
+
+			for (int i = startIdx; i < stopIdx; i++) {
+				float3 testPoint = camera_center + i * forward_world_space * delta;
+				float3 intersection_face_normal = float3(0.0f, 0.0f, 0.0f);
+				float3 intersection_point = testPoint;
+
+				float x = testPoint.x / _CubeWidth + 0.5f;
+				//int xx = (int)(x*(float)_NumVoxels);
+				int xx = int(floor(x*float(_NumVoxels)));
+
+				float y = testPoint.y / _CubeWidth + 0.5f;
+				//int yy = (int)(y*(float)_NumVoxels);
+				int yy = int(floor(y*float(_NumVoxels)));
+
+				float z = testPoint.z / _CubeWidth + 0.5f;
+				//int zz = (int)(z*(float)_NumVoxels);
+				int zz = int(floor(z*float(_NumVoxels)));
+
+
+
+				if (xx >= 0 && xx < _NumVoxels && yy >= 0 && yy < _NumVoxels && zz >= 0 && zz < _NumVoxels) {
+
+					//found = true;
+					//break;
+
+
+					int idx = zz * _NumVoxels*_NumVoxels + yy * _NumVoxels + xx;
+
+					bool wireframe = false;
+
+
+					if (Voxels[idx] > 0) {
+
+						found = true;
+						//idx center point in 3d:
+						float voxel_center_x = ((float)(2 * xx + 1) / ((float)2 * _NumVoxels) - 0.5f)*_CubeWidth;
+						float voxel_center_y = ((float)(2 * yy + 1) / ((float)2 * _NumVoxels) - 0.5f)*_CubeWidth;
+						float voxel_center_z = ((float)(2 * zz + 1) / ((float)2 * _NumVoxels) - 0.5f)*_CubeWidth;
+						float3 voxel_center = float3(voxel_center_x, voxel_center_y, voxel_center_z);
+						//float delta = _CubeWidth / 2.0f;
+
+						//check for intersection of 6 faces.
+						bool dist_init = false;
+						float best_dist = 0.0f;
+						int best_dist_idx = -1;
+						//float3 intersection_point = float3(0.0f, 0.0f, 0.0f);
+						float3 tri_corner_b = float3(0.0f, 0.0f, 0.0f);
+						float3 tri_corner_c = float3(0.0f, 0.0f, 0.0f);
+						float3 tri_corner_a = float3(0.0f, 0.0f, 0.0f);
+
+
+						bool any_face_valid = false;
+						//find intersecting face
+						for (int vv = 0; vv < 6; vv++) {
+
+							bool valid_face = false;
+							float dist = 0.0f;
+
+							float3 tri_b = voxel_center + vertex_offset_array[3 * vv + 0];
+							float3 tri_c = voxel_center + vertex_offset_array[3 * vv + 1];
+							float3 tri_a = voxel_center + vertex_offset_array[3 * vv + 2];
+
+							float3 bc = tri_c - tri_b;
+							float3 ba = tri_a - tri_b;
+							float3 face_normal = normalize(cross(bc, ba));
+							//float3 camera_to_voxel_center = normalize(voxel_center - camera_center);
+							float t = dot((tri_b - camera_center), face_normal) / dot(forward_world_space, face_normal);
+							float3 p = camera_center + t * forward_world_space;
+
+							//project the intersection point onto ba and bc to figure if it intersects right:
+							float ba_dist = dot((p - tri_b), normalize(ba));
+							float bc_dist = dot((p - tri_b), normalize(bc));
+							//valid_face = true;
+
+							//if (ba_dist>0.0f && bc_dist>0.0f && ba_dist < _CubeWidth*play && bc_dist < _CubeWidth*play) {
+							//bool normal_valid = dot(face_normal, forward_world_space) > 0.0f;
+							bool normal_valid = true;
+							if (ba_dist > 0.0f && bc_dist > 0.0f && ba_dist < 1.0f*voxelWidth && bc_dist < 1.0f*voxelWidth && normal_valid) {
+								valid_face = true;
+							}
+							else {
+								valid_face = false;
+							}
+
+
+
+
+
+
+							//all this to discover that it was _CubeWidth on tri b instead of voxelWidth....
+							/*
+							if (length(camera_center - tri_a) > play) {
+								intersection_point = float3(0.0f, 0.0f, 0.0f);
+							}
+							else {
+								intersection_point = p;
+
+							}
+							*/
+
+
+
+							if (!dist_init && valid_face) {
+
+
+
+								dist_init = true;
+								best_dist_idx = vv;
+								best_dist = t;
+								intersection_point = p;
+								any_face_valid = true;
+								tri_corner_b = tri_b;
+								intersection_face_normal = normalize(face_normal);
+								if (ba_dist < wireframe_val*voxelWidth || bc_dist < wireframe_val*voxelWidth || ba_dist>(1 - .0f - wireframe_val)*voxelWidth || bc_dist>(1.0f - wireframe_val)*voxelWidth) {
+									wireframe = true;
+								}
+								else {
+									wireframe = false;
+								}
+
+								/*
+								//float temp = dot((p - tri_b), normalize(bc));
+								if (ba_dist > play) {
+									col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+								}
+								else {
+									col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+								}
+								*/
+
+								/*
+								if (wireframe) {
+									col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+								}
+								else {
+									col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+								}
+								*/
+
+							}
+
+							if (dist_init && t < best_dist && valid_face) {
+								best_dist_idx = vv;
+								best_dist = t;
+								intersection_point = p;
+								intersection_face_normal = normalize(face_normal);
+								//tri_corner_b = float3(1.2f, 0.0f, 0.0f);
+								tri_corner_c = tri_c;
+								tri_corner_a = tri_a;
+
+								//any_face_valid = true;
+
+								if (ba_dist < wireframe_val*voxelWidth || bc_dist < wireframe_val*voxelWidth || ba_dist>(1 - .0f - wireframe_val)*voxelWidth || bc_dist>(1.0f - wireframe_val)*voxelWidth) {
+									wireframe = true;
+								}
+								else {
+									wireframe = false;
+								}
+
+								/*
+								//float temp = dot((p - tri_b), normalize(bc));
+								if (ba_dist > play) {
+									col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+								}
+								else {
+									col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+								}
+								*/
+								/*
+								if (wireframe) {
+									col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+								}
+								else {
+									col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+								}
+								*/
+							}
+
+
+
+
+						}
+
+
+
+						//adjust the test point to the intersecting face:
+						if (any_face_valid) {
+							testPoint = intersection_point;
+							//col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+
+							//col = float4(-intersection_face_normal.x, -intersection_face_normal.y, intersection_face_normal.z, 1.0f);
+
+							/*
+							if (best_dist_idx == 0) {
+								col = float4(0.0f, 0.0f, 1.0f, 1.0f);
+							}
+							if (best_dist_idx == 1) {
+								col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+							}
+							if (best_dist_idx == 2) {
+								col = float4(0.0f, 1.0f, 1.0f, 1.0f);
+							}
+							if (best_dist_idx == 3) {
+								col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+							}
+							if (best_dist_idx == 4) {
+								col = float4(1.0f, 0.0f, 1.0f, 1.0f);
+							}
+							if (best_dist_idx == 5) {
+								col = float4(1.0f, 1.0f, 0.0f, 1.0f);
+							}
+
+							if (wireframe) {
+								col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+							}
+							*/
+
+
+
+
+							//col = float4(float(best_dist_idx+1) / 7.0f, float(best_dist_idx+1) / 7.0f, float(best_dist_idx+1) / 7.0f, 1.0f);
+
+							/*
+
+							if (tri_corner_b.x < play) {
+								col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+							}
+							else {
+								col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+							}
+							*/
+
+
+							//testPoint = voxel_center;
+							//testPoint = float3(0.0f, 0.0f, 0.0f);
+						}
+						else {
+							testPoint = float3(0.0f, 0.0f, 0.0f);
+							//col = float4(1.0f, 1.0f, 1.0f, 1.0f);
+						}
+
+
+
+						//int val = Voxels[idx];
+						float best_affinity = -3.0f;
+						int best_affinity_idx = -1;
+						float affinity_sum = 0.0f;
+						float4 best_color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+						float4 backup_color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+						int best_px = 0;
+						int best_py = 0;
+						bool change = 0;
+						float4 temp4 = float4(0.0f, 0.0f, 0.0f, 0.0f);
+						float temp1 = 0.0f;
+
+
+						/*
+						int mask_val = Voxels[idx];
+						for (int aa = 0; aa < 16; aa++) {
+							//int mask = fmod(val, pow(2, (aa + 1))) / pow(2, aa);
+							//val = -8.0f;
+
+							int mask = fmod(float(mask_val), pow(2, (aa + 1))) / pow(2, aa);
+							if (aa == 0 && (mask>0)) {
+								best_color = float4(0.0f, 1.0f, 0.0f, 1.0f);
+								affinity_sum = 1.0f;
+							}
+							if (aa == 1 && (mask > 0)) {
+								best_color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+								affinity_sum = 1.0f;
+							}
+							if (aa == 2 && (mask > 0)) {
+								best_color = float4(0.0f, 0.0f, 1.0f, 1.0f);
+								affinity_sum = 1.0f;
+							}
+							if (aa == 3 && (mask > 0)) {
+								best_color = float4(0.0f, 1.0f, 1.0f, 1.0f);
+								affinity_sum = 1.0f;
+							}
+
+
+							//val = 1;
+						}
+						*/
+
+
+
+
+
+
+
+
+
+
+						//go through each camera and accumulate the pixel color based on affinity:
+						int mask_val = Voxels[idx];
+						for (int aa = 0; aa < 16; aa++) {
+							int mask = fmod(mask_val, pow(2, (aa + 1))) / pow(2, aa);
+							if (mask > 0) {
+								//if (true) {
+
+									//project point to this camera:
+								float4 testPoint4 = float4(intersection_point.x, intersection_point.y, intersection_point.z, 1);
+								float4x4 worldToDepthCamera = _CamInfoBuffer[aa].worldToDepthCamera;
+								float depth_fx = _CamInfoBuffer[aa].depth_fx;
+								float depth_fy = _CamInfoBuffer[aa].depth_fy;
+								float depth_cx = _CamInfoBuffer[aa].depth_cx;
+								float depth_cy = _CamInfoBuffer[aa].depth_cy;
+								testPoint4 = mul(worldToDepthCamera, testPoint4);
+								testPoint4 = testPoint4.xyzw / testPoint4.w;
+								uint pixel_x = uint(depth_fx * testPoint4.x / testPoint4.z + depth_cx);
+								uint pixel_y = uint(-depth_fy * testPoint4.y / testPoint4.z + depth_cy);
+
+								uint3 normal_loc = uint3(pixel_x, pixel_y, aa);
+								float3 normal_depth = normal_cube[normal_loc.xyz].xyz;
+								float3 normal_face = float3(-intersection_face_normal.x, -intersection_face_normal.y, -intersection_face_normal.z);
+								float3 pointToCamera = float3(_CamInfoBuffer[aa].camera_x - intersection_point.x, _CamInfoBuffer[aa].camera_y - intersection_point.y, _CamInfoBuffer[aa].camera_z - intersection_point.z);
+								float3 pointToViewingCamera = float3(camera_center.x - intersection_point.x, camera_center.y - intersection_point.y, camera_center.z - intersection_point.z);
+
+								float affinity = 0.0f;
+								//affinity = dot(normalize(pointToCamera), normalize(pointToViewingCamera)); //best?
+								affinity = dot(normal_depth, normalize(pointToViewingCamera));
+								//finity = dot(normal_face, normalize(pointToViewingCamera));
+								//float affinity = dot(normal, normalize(pointToCamera));
+								//float affinity = 3.14f - acos(dot(normalize(pointToCamera), normalize(pointToViewingCamera)));
+								//affinity = dot(normal_face, normalize(pointToCamera));
+								//affinity = 1.0f;
+
+								//best_color = best_color + color_cube[uint3(pixel_x, pixel_y, aa)] ;
+								//best_color = best_color + color_cube[uint3(pixel_x, pixel_y, aa)];
+								//affinity_sum = affinity_sum + 1.0f;
+								//affinity = 1.0f;
+								if (affinity > 0.0f) {
+									best_color = best_color + color_cube[uint3(pixel_x, pixel_y, aa)] * affinity;
+									////best_color = best_color + color_cube[uint3(pixel_x, pixel_y, aa)];
+
+									affinity_sum = affinity_sum + affinity;
+									////affinity_sum = affinity_sum + 1.0f;
+
+									//best_color = float4(0.0f, 1.0f, 1.0f, 1.0f);
+									//affinity_sum = 1.0f;
+								}
+							}
+						}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+						if (affinity_sum > 0.0f) {
+
+
+							best_color = best_color / affinity_sum;
+							//best_color.a = 1.0f;
+
+							if (best_color.a > 0.0f) {
+								best_color.a = 1.0f;
+							}
+
+							col = best_color;
+
+
+							break;
+						}
+
+
+
+
+					}
+
+					//float4 uv = float4((float)idx / _VoxelTex_ST.z, 0.5f, 0.0f, 0.0f);
+
+					//float val = -1.0f;
+
+
+
+
+
+
+
+
+
+
+					/*
+					if (val > 0) {
+						//go through each camera and accumulate the pixel color based on affinity:
+						for (int aa = 0; aa < 16; aa++) {
+							int mask = fmod(val, pow(2, (aa + 1))) / pow(2, aa);
+							//if (mask > 0) {
+							if (true) {
+
+								//project point to this camera:
+								float4 testPoint4 = float4(intersection_point.x, intersection_point.y, intersection_point.z, 1);
+								float4x4 worldToDepthCamera = _CamInfoBuffer[aa].worldToDepthCamera;
+								float depth_fx = _CamInfoBuffer[aa].depth_fx;
+								float depth_fy = _CamInfoBuffer[aa].depth_fy;
+								float depth_cx = _CamInfoBuffer[aa].depth_cx;
+								float depth_cy = _CamInfoBuffer[aa].depth_cy;
+								testPoint4 = mul(worldToDepthCamera, testPoint4);
+								testPoint4 = testPoint4.xyzw / testPoint4.w;
+								uint pixel_x = uint(depth_fx * testPoint4.x / testPoint4.z + depth_cx);
+								uint pixel_y = uint(-depth_fy * testPoint4.y / testPoint4.z + depth_cy);
+
+								uint3 normal_loc = uint3(pixel_x, pixel_y, aa);
+								float3 normal_depth = normal_cube[normal_loc.xyz].xyz;
+								float3 normal_face = float3(-intersection_face_normal.x, -intersection_face_normal.y, -intersection_face_normal.z);
+								float3 pointToCamera = float3(_CamInfoBuffer[aa].camera_x - intersection_point.x, _CamInfoBuffer[aa].camera_y - intersection_point.y, _CamInfoBuffer[aa].camera_z - intersection_point.z);
+								float3 pointToViewingCamera = float3(camera_center.x - intersection_point.x, camera_center.y - intersection_point.y, camera_center.z- intersection_point.z);
+
+								//float affinity = dot(normal, normalize(pointToCamera));
+								//float affinity = dot(pointToCamera, normalize(pointToViewingCamera));
+								float affinity = dot(normal_face, normalize(pointToCamera));
+								affinity = 1.0f;
+
+								if (affinity > 0.0f) {
+									best_color = best_color + color_cube[uint3(pixel_x, pixel_y, aa)] * affinity;
+									affinity_sum = affinity_sum + affinity;
+
+									best_color = float4(0.0f, 1.0f, 1.0f, 1.0f);
+									affinity_sum = 1.0f;
+								}
+							}
+						}
+					}
+					*/
+
+
+
+
+
+
+
+
+					/*
+					if (val > 0) {
+						float affinity_0 = 0.0f;
+						float affinity_1 = 1.0f;
+						for (int aa = 0; aa < 16; aa++) {
+							//int mask = 1 << aa;
+
+							int mask = fmod(val, pow(2, (aa + 1))) / pow(2, aa);
+
+							if (mask>0) {
+								//project point to cam a:
+
+								float4 testPoint4 = float4(intersection_point.x, intersection_point.y, intersection_point.z, 1);
+								//float4 testPoint4 = float4(testPoint.x, testPoint.y, testPoint.z, 1);
+								float4x4 worldToDepthCamera = _CamInfoBuffer[aa].worldToDepthCamera;
+								float depth_fx = _CamInfoBuffer[aa].depth_fx;
+								float depth_fy = _CamInfoBuffer[aa].depth_fy;
+								float depth_cx = _CamInfoBuffer[aa].depth_cx;
+								float depth_cy = _CamInfoBuffer[aa].depth_cy;
+
+								temp4 = testPoint4;
+								testPoint4 = mul(worldToDepthCamera, testPoint4);
+
+								testPoint4 = testPoint4.xyzw / testPoint4.w;
+								uint pixel_x = uint(depth_fx * testPoint4.x / testPoint4.z + depth_cx);
+								uint pixel_y = uint(-depth_fy * testPoint4.y / testPoint4.z + depth_cy);
+								uint3 normal_loc = uint3(pixel_x, pixel_y, aa);
+								float3 normal = normal_cube[normal_loc.xyz].xyz;
+
+								//normal = intersection_face_normal;
+								normal = float3(-intersection_face_normal.x, -intersection_face_normal.y, -intersection_face_normal.z);
+
+								//normal.x = -normal.x;
+								//normal.y = normal.y;
+								//float3 pointToCamera = float3(camera_center.x - testPoint.x, camera_center.y - testPoint.y, camera_center.z - testPoint.z);
+								float3 pointToCamera = float3(_CamInfoBuffer[aa].camera_x - testPoint.x, _CamInfoBuffer[aa].camera_y - testPoint.y, _CamInfoBuffer[aa].camera_z - testPoint.z);
+								//float3 pointToCamera = float3(camera_center.x, camera_center.y, camera_center.z);
+								pointToCamera = normalize(pointToCamera);
+								float affinity = dot(normal, normalize(pointToCamera));
+
+								if (aa == 0) {
+									affinity_0 = affinity;
+								}
+								if (aa == 1) {
+									affinity_1 = affinity;
+								}
+
+								if (aa == 0) {
+									//best_color = float4((normal.x), (normal.y), (normal.z), 1.0f);
+									//best_color = float4((pointToCamera.x), (0), (0), 1.0f);
+									//best_color = float4(pointToCamera.x*normal.x, pointToCamera.y*normal.y, pointToCamera.z*normal.z, 1.0f);
+
+								}
+
+
+
+								if (affinity > best_affinity || (best_affinity_idx<0)) {
+
+
+									if (best_affinity_idx >= 0) {
+										change = true;
+									}
+
+									best_affinity = affinity;
+									best_affinity_idx = aa;
+									best_px = pixel_x;
+									best_py = pixel_y;
+									if (aa==1) {
+										//best_color = float4(0.0f, 1.0f, 0.0f, 1.0f);
+										//best_color = float4((-normal.x), (-normal.y), (normal.z), 1.0f);
+										//best_color = color_cube[normal_loc.xyz];
+										//best_color = float4(affinity, affinity, affinity, 1.0f);
+									}
+									else {
+										//best_color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+									}
+
+
+
+									//int s_val = 0;
+									//s_val = s_val + pow(2, (1 + 0));
+									//s_val = s_val + pow(2, (2 + 0));
+									//s_val = s_val + pow(2, (3 + 0));
+
+									//int desired_cam = 0;
+									//int set = fmod(s_val,pow(2, (desired_cam + 1))) / pow(2, desired_cam);
+
+
+
+									//if (aa==1) {
+									//	col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+									//}
+									//else {
+									//	col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+									//}
+
+
+									//best_color = color_cube[normal_loc.xyz];
+									//affinity_sum = 1.0f;
+
+
+									if (affinity > 0.0f) {
+										//float4 this_color = color_cube.sample(sampler_color_cube, normal_loc.xyz);
+										//best_color = best_color + this_color * affinity;
+										best_color = best_color + color_cube[normal_loc.xyz] * affinity;
+										//best_color = color_cube[normal_loc.xyz];
+										affinity_sum = affinity_sum + affinity;
+									}
+									else {
+										//backup_color = color_cube[normal_loc.xyz];
+									}
+									//best_color = color_cube[normal_loc.xyz]*affinity;
+									//best_color = float4(-(pointToCamera.x), (pointToCamera.y), (pointToCamera.z), 1.0f);
+									//best_color = float4(normal.x, normal.y, normal.z, 1.0f);
+									//best_color = float4(affinity, affinity, affinity, 1.0f);
+
+
+
+								}
+
+							}
+						}
+
+						if (best_affinity_idx >= 0 && affinity_sum>0.0f ) {
+							found = true;
+							foundIdx = best_affinity_idx;
+							if (best_affinity > 0.0f) {
+								//col = best_color;
+							}
+
+							if (affinity_sum > 0.0f) {
+								best_color = best_color / affinity_sum;
+								if (best_color.a > 0) {
+									best_color.a = 1.0f;
+								}
+
+							}
+							else {
+								//best_color = backup_color;
+							}
+
+
+							col = best_color;
+
+
+							//col = color_cube[uint3(best_px, best_py, best_affinity_idx)];
+
+
+							//if (best_px>play) {
+							//	col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+							//}
+							//else {
+							//	col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+							//}
+
+
+
+
+							//col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+							//col = float4(-intersection_face_normal.x, -intersection_face_normal.y, intersection_face_normal.z, 1.0f);
+
+							if(wireframe) {
+								if (use_wireframe) {
+									col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+								}
+
+								//col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+							}
+
+							//col = float4(affinity_0, affinity_1, 0.0f, 1.0f);
+							break;
+						}
+						else {
+							//something went seriously wrong.
+							//if you're here, that means an occupied voxel has no affinity > than -1.0f.
+							col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+						}
+
+
+					}
+					*/
+
+
+
+
+
+
+					/*
+					float val = (float)Voxels[idx];
+					//float val = tex2Dlod(_VoxelTex, uv).r;
+
+
+					if (val > 0.0f) {
+						uint color_idx = uint(val - 1);
+						//color_idx = 1;
+						//project point onto appropriate stuff:
+
+						float4 testPoint4 = float4(testPoint.x, testPoint.y, testPoint.z, 1);
+						float4x4 worldToDepthCamera = _CamInfoBuffer[color_idx].worldToDepthCamera;
+						float depth_fx = _CamInfoBuffer[color_idx].depth_fx;
+						float depth_fy = _CamInfoBuffer[color_idx].depth_fy;
+						float depth_cx = _CamInfoBuffer[color_idx].depth_cx;
+						float depth_cy = _CamInfoBuffer[color_idx].depth_cy;
+
+						testPoint4 = mul(worldToDepthCamera, testPoint4);
+						testPoint4 = testPoint4.xyzw / testPoint4.w;
+						uint pixel_x = uint(depth_fx * testPoint4.x / testPoint4.z + depth_cx);
+						uint pixel_y = uint(-depth_fy * testPoint4.y / testPoint4.z + depth_cy);
+						uint3 color_loc = uint3(pixel_x, pixel_y, color_idx);
+						col = color_cube[color_loc.xyz];
+						//col = float4(-intersection_face_normal.x, -intersection_face_normal.y, intersection_face_normal.z, 1.0f);
+						//col = float4(testPoint4.x, testPoint4.y, testPoint4.z, 1.0f);
+
+						if (wireframe) {
+							if (use_wireframe) {
+								col = float4(0.0f, 1.0f, 0.0f, 1.0f);
+							}
+
+							//col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+						}
+
+
+						found = true;
+						foundIdx = idx;
+						break;
+					}
+					*/
+
+
+					//if (val > 0.0f) {
+					//	found = true;
+					//	foundIdx = idx;
+					//	break;
+					//}
+
+				}
+				else {
+					//found = false;
+				}
+
+
+
+
+			}
+		}
+
+
+		//int stopIdx = _NumVoxels * 2;
+
+
+	}
+
+
+	if (found) {
+
+		//Result[id.xy] = float4(0, 0, 1, 1.0f);
+
+		/*
+		if (Voxels[foundIdx] == 1) {
+			Result[id.xy] = float4(0, 0, 1, 1.0);
+		}
+		if (Voxels[foundIdx] == 2) {
+			Result[id.xy] = float4(0, 1, 0, 1.0f);
+			//found = false;
+		}
+		if (Voxels[foundIdx] == 3) {
+			Result[id.xy] = float4(1, 0, 0, 1.0f);
+		}
+		*/
+		Result[id.xy] = col;
+		if (col.r == 0.0f && col.g == 0.0f && col.b == 0.0f && col.a == 0.0f) {
+
+		}
+		else {
+
+		}
+
+		//Result[id.xy] = float4(0, 0, 1, 1);
+
+
+	}
+	else {
+		Result[id.xy] = float4(0, 0, 0, 0.0);
+	}
+
+
+
+
+	//Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 1.0);
+
+	//Result[id.xy] = float4(1.0, 1.0, 1.0, 1.0);
+}

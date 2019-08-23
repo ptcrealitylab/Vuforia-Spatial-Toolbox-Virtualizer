@@ -1,15 +1,6 @@
-Base path: C:/Program Files/Unity/Editor/Data
+Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_radiusFeatureDetector.compute(136): redefinition of 'xx'
-  api=4 insize=8873 outsize=0 ok=0
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(277): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(278): integer divides may be much slower, try using uints if possible.
-  api=4 insize=8956 outsize=2301 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(192): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=10445 outsize=1729 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(193): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=10700 outsize=1993 ok=1
+  error: 2 plat 4 at AK_cornerWalker.compute(192): 'dot': no matching 2 parameter intrinsic function; Possible intrinsic functions are: dot(floatM|halfM|doubleM|min10floatM|min16floatM|intM|uintM|min12intM|min16intM|min16uintM, floatM|halfM|doubleM|min10floatM|min16floatM|intM|uintM|min12intM|min16intM|min16uintM)
+  error: 2 plat 4 at AK_cornerWalker.compute(192): undeclared identifier 'floor_norm'
+  api=4 insize=24883 outsize=0 ok=0

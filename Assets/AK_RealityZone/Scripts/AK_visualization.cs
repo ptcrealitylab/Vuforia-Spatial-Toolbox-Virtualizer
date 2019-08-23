@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿//point cloud for the azure kinect, heavily influenced by the Zed pointcloud shader
+//written by Hisham Bedri, Reality Lab, 2019
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -48,7 +51,7 @@ public class AK_visualization : MonoBehaviour {
     RenderTexture resized_depth_tex = null;
     RenderTexture resized_distortion_tex = null;
 
-    public float size = 0.03f;
+    public float size = 0.08f;
     public bool enhanced_depth_sampling = false;
     public float multiplier = 1.0f;
 	// Update is called once per frame

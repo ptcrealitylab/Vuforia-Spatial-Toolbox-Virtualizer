@@ -1,0 +1,859 @@
+﻿//Corner Detector in a depth map compute shader
+//written by Hisham Bedri, Reality Lab, 2019
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel cornerWalker
+
+int num_points = 10;
+int num_iterations = 10;
+float gravity_x;
+float gravity_y;
+float gravity_z;
+
+Texture2D<float> depth_tex;
+Texture2D<float2> distortion_tex;
+RWTexture2D<float4> result_tex;
+RWTexture2D<float4> corner_tex;
+
+int search_size;
+float proximity;
+float result_multiplier;
+
+int width;
+int height;
+
+float floor_x;
+float floor_y;
+float floor_z;
+
+float floor_p_x;
+float floor_p_y;
+float floor_p_z;
+
+
+
+
+[numthreads(8, 8, 1)]
+void cornerWalker(uint3 id : SV_DispatchThreadID)
+{
+	int stride = width / num_points;
+	float3 gravity = float3(gravity_x, gravity_y, gravity_z);
+
+	float depth = depth_tex[id.xy] * 65.536f;
+	float2 distortion = distortion_tex[id.xy].xy;
+	float3 pos = float3(0.0, 0.0, 0.0);
+	pos.x = depth * distortion.x;
+	pos.y = depth * distortion.y;
+	pos.z = depth;
+
+	result_tex[id.xy] = float4(depth / 3.0f, depth / 3.0f, depth / 3.0f, 1.0f);
+
+	if (id.x%stride == 0 && id.y%stride == 0) {
+
+		uint2 next_spot = uint2(id.x, id.y);
+		float best_dist = length(pos - gravity);
+
+		for (int xx = -5; xx < 5; xx++) {
+			for (int yy = -5; yy < 5; yy++) {
+				uint2 new_loc = uint2(next_spot.x + xx, next_spot.y + yy);
+				//result_tex[new_loc.xy] = float4(0.0, 1.0, 1.0, 1.0);
+			}
+		}
+		
+		for (int i = 0; i < num_iterations; i++) {
+
+			for (int xx = -search_size; xx < search_size + 1; xx++) {
+				for (int yy = -search_size; yy < search_size + 1; yy++) {
+					if (xx != 0 && yy != 0) {
+						uint2 loc = uint2(next_spot.x + xx, next_spot.y + yy);
+						float depth_p = depth_tex[loc.xy] * 65.536f;
+						float2 distortion_p = distortion_tex[loc.xy].xy;
+						float3 pos_p = float3(0.0, 0.0, 0.0);
+						pos_p.x = depth_p * distortion_p.x;
+						pos_p.y = depth_p * distortion_p.y;
+						pos_p.z = depth_p;
+
+						float dist = length(pos_p - gravity);
+
+						if (dist < best_dist && depth_p != 0) {
+							best_dist = dist;
+							next_spot = loc;
+						}
+
+					}
+				}
+			}
+
+		}
+
+		if (depth > 0) {
+			for (int xx = -3; xx < 3; xx++) {
+				for (int yy = -3; yy < 3; yy++) {
+					uint2 new_loc = uint2(next_spot.x + xx, next_spot.y + yy);
+					result_tex[new_loc.xy] = float4(1.0, 0.0, 0.0, 1.0);
+				}
+			}
+		}
+
+	}
+}
+
+
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel multiCornerWalker
+
+int constellation_size; //number of points on the spherical shell to have gravity estimated from, automatically sampled using spherical coordinates
+RWStructuredBuffer<float> max_corner_score_buffer;
+
+[numthreads(8, 8, 1)]
+void multiCornerWalker(uint3 id : SV_DispatchThreadID)
+{
+	corner_tex[id.xy] = float4(0.0, 0.0, 0.0, 1.0);
+
+	int spacing = width * height / num_points;
+	int idx = id.y*width + id.x;
+	bool seed = (idx%spacing == 0); //is it a seed or not?
+
+
+	float depth = depth_tex[id.xy] * 65.536f;
+	float2 distortion = distortion_tex[id.xy].xy;
+	float3 pos = float3(0.0, 0.0, 0.0);
+	pos.x = depth * distortion.x;
+	pos.y = depth * distortion.y;
+	pos.z = depth;
+
+	result_tex[id.xy] = result_multiplier*float4(depth / 3.0f, depth / 3.0f, depth / 3.0f, 1.0f);
+
+
+	//do a for loop over constellation size:
+	float dTheta = 360.0f / (constellation_size - 1);
+	float dPhi = 360.0f / (constellation_size - 1);
+
+	for (int theta_counter = 0; theta_counter < (constellation_size - 1); theta_counter++) {
+		for (int phi_counter = 0; phi_counter < (constellation_size - 1); phi_counter++) {
+
+			//calculate the gravity location using spherical coordinates:
+			float theta = theta_counter * dTheta;
+			float phi = phi_counter * dPhi;
+			float3 gravity = float3(100.0f*sin(theta * 3.1416/180.0f) * cos(phi * 3.1416 / 180.0f), //x
+									100.0f*sin(theta * 3.1416 / 180.0f) * sin(phi * 3.1416 / 180.0f), //y
+									100.0f*cos(theta * 3.1416 / 180.0f) ); //z
+
+			uint2 next_spot = uint2(id.x, id.y);
+			float best_dist = length(pos - gravity);
+
+			if (seed) {
+
+				//iterate a bit to find the corner near you.
+				for (int i = 0; i < num_iterations; i++) {
+
+					for (int xx = -search_size; xx < search_size + 1; xx++) {
+						for (int yy = -search_size; yy < search_size + 1; yy++) {
+							
+							if (xx != 0 && yy != 0) {
+
+								uint2 loc = uint2(next_spot.x + xx, next_spot.y + yy);
+								float depth_p = depth_tex[loc.xy] * 65.536f;
+								float2 distortion_p = distortion_tex[loc.xy].xy;
+								float3 pos_p = float3(0.0, 0.0, 0.0);
+								pos_p.x = depth_p * distortion_p.x;
+								pos_p.y = depth_p * distortion_p.y;
+								pos_p.z = depth_p;
+
+								float dist = length(pos_p - gravity);
+								if (dist < best_dist && depth_p != 0) {
+									best_dist = dist;
+									next_spot = loc;
+								}
+
+							} //making sure we don't check the center pixel
+
+						//2D search space around each seed
+						}
+					} 
+
+				}//iteration block
+
+
+				//add result to result texture
+				if (depth > 0) {
+					//the result texture is for visualiztion
+					//the corner texture should have one point per corner, this gets passed to the shader that extracts the top 500 corners from the image
+					//in order to do some non-maximal suppression, we loop over and find the max, then add the value to the maximum
+
+					float depth_p = depth_tex[next_spot.xy] * 65.536f;
+					float2 distortion_p = distortion_tex[next_spot.xy].xy;
+					float3 pos_p = float3(0.0, 0.0, 0.0);
+					pos_p.x = depth_p * distortion_p.x;
+					pos_p.y = depth_p * distortion_p.y;
+					pos_p.z = depth_p;
+
+					float3 floor_point = float3(floor_p_x, floor_p_y, floor_p_z);
+					float3 floor_norm = float3(floor_x, floor_y, floor_z);
+					float3 corner_point_unity = float3(pos_p.x, -pos_p.y, pos_p.z);
+					float corner_height = abs(dot((corner_point_unity - floor_point), floor_norm));
+
+					if (corner_height > 0.1f) {
+						corner_tex[next_spot.xy] = corner_tex[next_spot.xy] + result_multiplier * float4(1.0, 0.0, 0.0, 0.0);
+						result_tex[next_spot.xy] = result_tex[next_spot.xy] + result_multiplier * float4(1.0, 0.0, 0.0, 0.0);
+						int max_x = -1;
+						int max_y = -1;
+						float max_val = 5000000000.0f;
+
+						for (int xx = -3; xx < 3; xx++) {
+							for (int yy = -3; yy < 3; yy++) {
+								uint2 new_loc = uint2(next_spot.x + xx, next_spot.y + yy);
+								//result_tex[new_loc.xy] = result_tex[new_loc.xy] + result_multiplier*float4(1.0, 0.0, 0.0, 0.0);
+								//corner_tex[new_loc.xy] = corner_tex[new_loc.xy] + result_multiplier*float4(1.0, 0.0, 0.0, 0.0);
+								if (corner_tex[new_loc.xy].x > max_corner_score_buffer[0]) {
+									max_corner_score_buffer[0] = corner_tex[new_loc.xy].x;
+								}
+
+								//if (corner_tex[new_loc.xy].x > max_val) {
+								if ((depth_tex[new_loc.xy].x < max_val) &&
+									(depth_tex[new_loc.xy].x > 0)
+									|| max_x < 0) {
+									//max_val = corner_tex[new_loc.xy].x;
+									max_val = depth_tex[new_loc.xy].x;
+									max_x = new_loc.x;
+									max_y = new_loc.y;
+								}
+							}
+						}
+					}
+
+
+
+
+					/*
+					if (max_x >= 0) {
+						corner_tex[uint2(max_x, max_y)] = corner_tex[uint2(max_x, max_y)] + result_multiplier * float4(1.0, 0.0, 0.0, 0.0);
+					}
+					else {
+						corner_tex[next_spot] = result_multiplier * float4(1.0, 0.0, 0.0, 0.0);
+					}
+					*/
+				}
+
+
+			} //finished checking if the pixel is a seed or not
+
+		//finish iterating over gravity points:
+		}
+	}
+
+
+
+}
+
+
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel cornerExtractor
+int num_corners_to_extract;
+
+Texture2D<float4> corner_tex_for_extractor;
+
+RWStructuredBuffer<int> corner_x_buffer;
+RWStructuredBuffer<int> corner_y_buffer;
+RWStructuredBuffer<float> corner_score_buffer;
+RWStructuredBuffer<float3> corner_point_buffer;
+
+RWStructuredBuffer<int> num_non_zero_buffer;
+
+
+//[numthreads(8, 8, 1)]
+[numthreads(1, 1, 1)]
+void cornerExtractor(uint3 id : SV_DispatchThreadID) {
+	float max_corner_score = max_corner_score_buffer[0];
+
+	//if the value is higher than 0:
+	if (corner_tex_for_extractor[id.xy].x > 0) {
+		num_non_zero_buffer[0] = num_non_zero_buffer[0] + 1;
+		
+		int min_idx = -1;
+		float min_value = 0.0f;
+		//search the list to see the minimum score, and determine if you replace it:
+		bool found_a_spot = false;
+		for (int i = 0; i < num_corners_to_extract; i++) {
+
+			
+			if (!found_a_spot) {
+
+				if (corner_x_buffer[i] >= 0) {
+					if (corner_score_buffer[i] < min_value || min_idx < 0) {
+						min_idx = i;
+						min_value = corner_score_buffer[i];
+					}
+				}
+				else {
+					corner_x_buffer[i] = id.x;
+					corner_y_buffer[i] = id.y;
+					corner_score_buffer[i] = corner_tex_for_extractor[id.xy].x;
+
+					found_a_spot = true;
+
+					float depth = depth_tex[id.xy] * 65.536f;
+					float2 distortion = distortion_tex[id.xy].xy;
+					float3 pos = float3(0.0, 0.0, 0.0);
+					pos.x = depth * distortion.x;
+					pos.y = -depth * distortion.y;
+					pos.z = depth;
+
+					corner_point_buffer[i] = pos;
+				}
+
+			}
+			
+		}
+		
+
+		
+		if (!found_a_spot) {
+			if (corner_tex_for_extractor[id.xy].x > min_value) {
+				corner_x_buffer[min_idx] = id.x;
+				corner_y_buffer[min_idx] = id.y;
+				corner_score_buffer[min_idx] = corner_tex_for_extractor[id.xy].x;
+				found_a_spot = true;
+
+				float depth = depth_tex[id.xy] * 65.536f;
+				float2 distortion = distortion_tex[id.xy].xy;
+				float3 pos = float3(0.0, 0.0, 0.0);
+				pos.x = depth * distortion.x;
+				pos.y = -depth * distortion.y;
+				pos.z = depth;
+
+				corner_point_buffer[min_idx] = pos;
+			}
+		}
+
+	}
+
+
+	/*
+	for (int i = 0; i < num_corners_to_extract; i++) {
+		corner_x_buffer[i] = 3;
+		corner_y_buffer[i] = 4;
+		corner_score_buffer[i] = 5.0f;
+		corner_point_buffer[i] = float3(6.0f, 7.0f, 8.0f);
+	}
+	*/
+}
+
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel cornerDescriptor
+
+RWTexture2D<float4> description_tex;
+RWTexture2D<float4> normal_tex;
+Texture2D<float4> color_tex;
+//int descriptor_size;
+int descriptor_width;
+int descriptor_height;
+
+int color_width;
+int color_height;
+
+float descriptor_proximity;
+int descriptor_search_size;
+float descriptor_min_dist;
+float descriptor_max_dist;
+float descriptor_min_dot;
+float descriptor_max_dot;
+
+
+
+
+RWStructuredBuffer<float> curvature_buffer;
+RWStructuredBuffer<float> dotpitch_buffer;
+RWStructuredBuffer<float> color_buffer;
+RWStructuredBuffer<float> column_buffer;
+
+
+
+//information about the color camera:
+float4x4 _color_extrinsics;
+float _color_cx;
+float _color_cy;
+float _color_fx;
+float _color_fy;
+float _color_k1;
+float _color_k2;
+float _color_k3;
+float _color_k4;
+float _color_k5;
+float _color_k6;
+float _color_codx;
+float _color_cody;
+float _color_p1;
+float _color_p2;
+float _color_metric_radius;
+
+
+
+[numthreads(64, 1, 1)]
+void cornerDescriptor(uint3 id : SV_DispatchThreadID) {
+
+	//clear description tex:
+	int descriptor_size = descriptor_width * descriptor_height;
+	for (int i = 0; i < descriptor_size; i++) {
+		description_tex[uint2(i, id.x)] = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	curvature_buffer[id.x] = 0.0f;
+	dotpitch_buffer[id.x] = 0.0f;
+	color_buffer[id.x] = 0.0f;
+	column_buffer[id.x] = 0.0f;
+
+
+
+	//get normal and point for this corner:
+	uint2 pixel = uint2(corner_x_buffer[id.x], corner_y_buffer[id.x]);
+	float depth = depth_tex[pixel.xy] * 65.536f;
+	float2 distortion = distortion_tex[pixel.xy].xy;
+	float3 pos = float3(0.0, 0.0, 0.0);
+	pos.x = depth * distortion.x;
+	pos.y = depth * distortion.y;
+	pos.z = depth;
+
+	float3 norm = float3(normal_tex[pixel.xy].x, normal_tex[pixel.xy].y, normal_tex[pixel.xy].z);
+	float3 floor_norm = float3(floor_x, floor_y, floor_z);
+	float3 floor_point = float3(floor_p_x, floor_p_y, floor_p_z);
+
+	float3 corner_point_unity = float3(pos.x, -pos.y, pos.z);
+	float corner_height = abs(dot((corner_point_unity - floor_point), floor_norm));
+	float3 corner_floor_point = corner_point_unity - corner_height*floor_norm;
+
+	//int idx = 49;
+	//description_tex[uint2(idx, id.x)] = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	int curvature_counter = 0;
+	int dotpitch_counter = 0;
+	int color_counter = 0;
+	int column_counter = 0;
+	int counter = 0;
+	int unique_counter = 0;
+
+
+	int sphere_n = 10;
+	float sphere_container[1000];
+	for (int i = 0; i < 1000; i++) {
+		sphere_container[i] = 0.0f;
+	}
+	
+	int sphere_occupancy_count = 0;
+
+	float pencil_width = 0.1f;
+
+
+
+	//search around this corner and make a histogram of distances and dot products:
+	for (int xx = -descriptor_search_size; xx < descriptor_search_size + 1; xx++) {
+		for (int yy = -descriptor_search_size; yy < descriptor_search_size + 1; yy++) {
+
+			float4 col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+			float hue = 0.0f;
+			
+			//get point and normal here:
+			uint2 loc = uint2(pixel.x+xx, pixel.y+yy);
+			float depth_p = depth_tex[loc.xy] * 65.536f;
+			float2 distortion_p = distortion_tex[loc.xy].xy;
+			float3 pos_p = float3(0.0, 0.0, 0.0);
+			pos_p.x = depth_p * distortion_p.x;
+			pos_p.y = depth_p * distortion_p.y;
+			pos_p.z = depth_p;
+
+			float3 norm_p = float3(normal_tex[loc.xy].x, normal_tex[loc.xy].y, normal_tex[loc.xy].z);
+			bool column_valid = false;
+			bool sphere_valid = false;
+			float h = 0.0f;
+			float column_radius = 0.0f;
+
+			if (depth_p > 0.0f && depth>0.0f) {
+
+				float dist = length(pos - pos_p);
+				float angle = dot(norm, norm_p);
+
+				float measure = sqrt(2)*dist*sqrt(1 - angle);
+
+
+				float3 pos_m = float3(pos_p.x, -pos_p.y, pos_p.z);
+				h = abs(dot((pos_m - floor_point), floor_norm));
+				pos_m = pos_m - dot((pos_m - floor_point), floor_norm)*floor_norm;
+				column_radius = length(pos_m - corner_floor_point);
+				//float column_radius = length(pos_m - floor_point);
+
+				//if (column_radius < 0.1f && h>0.1f && h<corner_height) {
+				if (column_radius < pencil_width && h>0.1f && h < corner_height) {
+					column_buffer[id.x] = column_buffer[id.x] + 1.0f;
+					column_counter = 1;
+					//dotpitch_buffer[id.x] = dotpitch_buffer[id.x] + 1.0f;
+					//dotpitch_counter = 1;
+
+					column_valid = true;
+					dotpitch_buffer[id.x] = dotpitch_buffer[id.x] + col.x / col.y + col.x / col.z;
+					dotpitch_counter = dotpitch_counter + 1;
+				}
+
+				if (h > 0.1f && h < corner_height) {
+					column_valid = true;
+				}
+
+
+				if (dist < descriptor_proximity) {
+					float r = dist;
+					float phi = atan2( (pos - pos_p).y , (pos - pos_p).x ) ;
+					float theta = acos( abs((pos - pos_p).z) / (dist) );
+
+					r = r / descriptor_proximity;
+					r = uint(r*sphere_n);
+
+
+					theta = theta / (3.1415926535f); //[0-1]
+					theta = uint(theta * sphere_n);
+
+					if (phi < 0.0f) {
+						phi = phi + 3.1415926535f;
+					}
+					phi = phi / (2.0f * 3.1415926535f); //[0-1]
+					phi = uint(phi * sphere_n);
+					
+					
+					int sphere_idx = sphere_n * sphere_n*r + sphere_n * theta + phi;
+					if (sphere_container[sphere_idx]<=0.0f) {
+						sphere_occupancy_count++;
+					}
+					sphere_container[sphere_idx] = sphere_container[sphere_idx] + 1.0f;
+
+
+
+				}
+
+
+
+				if (dist < descriptor_proximity) {
+					curvature_buffer[id.x] = curvature_buffer[id.x] + measure;
+					
+					
+					//dotpitch_buffer[id.x] = dotpitch_buffer[id.x] + abs(dot(norm_p, floor_norm));
+
+
+
+
+
+
+
+					//get color
+					
+
+					//multiply point by color camera extrnsic matrix:
+					float4 colorPos = float4(0.0, 0.0, 0.0, 1.0);
+					float4 XYZpos = float4(pos_p.x, pos_p.y, pos_p.z, 1.0f);
+					colorPos = mul(_color_extrinsics, XYZpos);
+					colorPos = colorPos / colorPos.w;
+					colorPos.y = colorPos.y;
+
+
+					//project into color camera pixel space, without correcting for distortion
+					float4 color_uv = float4(0.0f, 0.0f, 0.0f, 0.0f);
+					color_uv.x = colorPos.x / colorPos.z*_color_fx + _color_cx;
+					color_uv.y = colorPos.y / colorPos.z*_color_fy + _color_cy;
+
+					//perform radial distortion of camera so we grab the right pixel:
+					float x = colorPos.x / colorPos.z;
+					float y = colorPos.y / colorPos.z;
+					float r2 = pow(x, 2) + pow(y, 2);
+					float r4 = pow(r2, 2);
+					float r6 = pow(r2, 3);
+					float r8 = pow(r2, 4);
+					float r10 = pow(r2, 5);
+					float r12 = pow(r2, 6);
+
+					//float dx = x * (1 + _color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6);
+					//float dx = x * (1 + _color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6 + _color_k4 * r8 + _color_k5 * r10 + _color_k6 * r12);
+					float dx = x;
+					//dx = dx + x*(_color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6 + _color_k4 * r8 + _color_k5 * r10 + _color_k6 * r12);
+					dx = x * (1 + _color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6) / (1 + _color_k4 * r2 + _color_k5 * r4 + _color_k6 * r6);
+					dx = dx + 2 * _color_p1*x*y + _color_p2 * (r2 + 2 * pow(x, 2));
+					dx = dx * _color_fx + _color_cx;
+
+					//float dy = y * (1 + _color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6);
+					//float dy = y * (1 + _color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6 + _color_k4 * r8 + _color_k5 * r10 + _color_k6 * r12);
+					float dy = y;
+					//dy = dy + y*(_color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6 + _color_k4 * r8 + _color_k5 * r10 + _color_k6 * r12);
+					dy = y * (1 + _color_k1 * r2 + _color_k2 * r4 + _color_k3 * r6) / (1 + _color_k4 * r2 + _color_k5 * r4 + _color_k6 * r6);
+					dy = dy + 2 * _color_p2*x*y + _color_p1 * (r2 + 2 * pow(y, 2));
+					dy = dy * _color_fy + _color_cy;
+
+					//divide by color texture width and heigh to get proper uv's between 0 and 1.
+					//color_uv.x = color_uv.x * _ColorTex_TexelSize.x;
+					//color_uv.y = _Play - (color_uv.y * _ColorTex_TexelSize.y);
+					//color_uv.y = _Play;
+
+					color_uv.x = dx ;
+					color_uv.y = dy ;
+
+					col = color_tex[uint2(color_uv.x, color_uv.y)].xyzw;
+
+					float cmax = 0.0f;
+					float cmin = min(col.x, col.y);
+					cmin = min(cmin, col.z);
+					//float hue = 0.0f;
+					if (col.x > col.y && col.x > col.z) {
+						cmax = col.x;
+						float del = (cmax - cmin);
+						hue = ( ((col.y - col.z) / del) ) ;
+					}
+					if (col.y > col.x && col.y > col.z) {
+						cmax = col.y;
+						float del = (cmax - cmin);
+						hue = (((col.y - col.x) / del + 2));
+					}
+					if (col.z > col.x && col.z > col.y) {
+						cmax = col.z;
+						float del = (cmax - cmin);
+						hue = (((col.x - col.y) / del + 4));
+					}
+
+					hue = hue * 60.0f / 360.0f;
+					//hue = (cmax + cmin) / 2.0f;
+
+					//hue = (col.y + col.z) / (col.x + col.y + col.z);
+
+
+
+
+
+					//uint2 sam = uint2(5, 5);
+					//dotpitch_buffer[id.x] = dotpitch_buffer[id.x] + float(hue);
+					color_buffer[id.x] = color_buffer[id.x] + hue;
+					color_counter = color_counter + 1;
+					
+					
+
+					
+
+
+
+
+
+
+
+
+					
+					//dotpitch_buffer[id.x] = dotpitch_buffer[id.x] + h;
+					//if (xx == 0 && yy == 0) {
+
+
+
+					/*
+						if (pos_m.y < 0.3f) {
+							dotpitch_buffer[id.x] = 1.0f;
+							dotpitch_counter = 1;
+
+						}
+						else {
+							dotpitch_buffer[id.x] = 0.0f;
+							dotpitch_counter = 1;
+						}
+						*/
+
+
+						//dotpitch_buffer[id.x] = h;
+						//dotpitch_counter = 1;
+					//}
+
+
+					curvature_counter++;
+					//dotpitch_counter++;
+					
+				}
+
+			}
+
+
+
+			if (column_valid) {
+				float dist_bin = h;
+				/*
+				if (column_valid) {
+					dist_bin = 0.9f;
+				}
+				else {
+					dist_bin = 0.2f;
+				}
+				*/
+				//float dist_bin = 0.4f;
+				descriptor_min_dist = 0.1f;
+				descriptor_max_dist = corner_height;
+				descriptor_max_dist = 3.0f;
+				//descriptor_max_dist = 4.0f;
+				//float dist_bin = length(pos - pos_p);
+				
+				
+				//float dist_bin = hue;
+				//float dist_bin = col.x/col.y;
+				//dist_bin = 0.8f;
+				dist_bin = (dist_bin - descriptor_min_dist) / (descriptor_max_dist - descriptor_min_dist); //[0-1]
+				dist_bin = 1.0f - dist_bin;
+				dist_bin = dist_bin * float(descriptor_width);
+
+				//float dot_bin = dot(norm, norm_p);
+				float dot_bin = column_radius;
+				//dot_bin = 0.0f;
+				dot_bin = (dot_bin - descriptor_min_dot) / (descriptor_max_dot - descriptor_min_dot); //[0-1]
+				dot_bin = dot_bin * float(descriptor_height);
+
+				//dot_bin = 4;
+				//dist_bin = 5;
+
+				if (dot_bin >= 0 && dot_bin < descriptor_height && dist_bin >= 0 && dist_bin < descriptor_width) {
+					//int idx = int(dot_bin)*descriptor_width + int(dist_bin);
+					int idx = int(dist_bin)*descriptor_width + int(dot_bin);
+					int current_count = uint(description_tex[uint2(idx, id.x)].x);
+
+					if (current_count == 0 && column_radius<pencil_width) {
+						unique_counter++;
+					}
+
+					//idx = 1;
+
+					description_tex[uint2(idx, id.x)] = float4(float(current_count + 1), float(current_count + 1), float(current_count + 1), 1.0f);
+
+					//description_tex[uint2(idx, id.x)] = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+					//description_tex[uint2(idx, id.x)] = float4(0.0f, 1.0f, 1.0f, 1.0f);
+
+
+					//int idx = 49;
+					//description_tex[uint2(idx, id.x)] = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+					//description_tex[uint2(idx, id.x)] = float4(1.0f, 1.0f, 1.0f, 1.0f);
+					counter++;
+				}
+
+			}
+
+
+		}
+	}
+
+	//normalize histogram so the norm is 1:
+	float sum_of_squares = 0.0f;
+	for (int i = 0; i < descriptor_size; i++) {
+		sum_of_squares = sum_of_squares + pow(description_tex[uint2(i, id.x)],2);
+	}
+	float normalizer = sqrt(sum_of_squares);
+	//normalizer = float(descriptor_size);
+	//normalizer = 1.0f;
+	for (int i = 0; i < descriptor_size; i++) {
+		if (normalizer > 0) {
+			description_tex[uint2(i, id.x)] = result_multiplier / normalizer * description_tex[uint2(i, id.x)];
+		}
+	}
+
+	/*
+	//normalize by counts:
+	for (int i = 0; i < descriptor_size; i++) {
+		if (counter > 0) {
+			description_tex[uint2(i, id.x)] = result_multiplier / float(counter) * description_tex[uint2(i, id.x)];
+		}
+	}
+	*/
+
+	if (curvature_counter > 0) {
+		curvature_buffer[id.x] = curvature_buffer[id.x] / float(curvature_counter);
+	}
+
+	if (dotpitch_counter > 0) {
+		//dotpitch_buffer[id.x] = dotpitch_buffer[id.x] / float(dotpitch_counter);
+		dotpitch_buffer[id.x] = float(sphere_occupancy_count) / float(sphere_n*sphere_n*sphere_n);
+	}
+
+	if (column_counter > 0) {
+		//column_buffer[id.x] = column_buffer[id.x] / float(column_counter);
+		//int pencil_bin = int(((pencil_width - descriptor_min_dot) / (descriptor_max_dot - descriptor_min_dot)) * float(descriptor_height));
+		column_buffer[id.x] = float(unique_counter) / float(descriptor_width);
+		//column_buffer[id.x] = float(pencil_bin);
+	}
+
+	if (color_counter > 0) {
+		color_buffer[id.x] = color_buffer[id.x] / float(color_counter);
+	}
+
+
+
+	/*
+	//int descriptor_size = descriptor_width * descriptor_height;
+	for (int i = 0; i < descriptor_size; i++) {
+		int descriptor_row = i / descriptor_width;
+		int descriptor_col = i % descriptor_width;
+		description_tex[uint2(i, id.x)] = result_multiplier * float4(descriptor_row, descriptor_col, 0.0, 0.0f);
+	}
+	*/
+	
+
+
+	/*
+	//if (id.x < num_corners_to_extract) {
+		if (id.x %2==0) {
+			for (int i = 0; i < descriptor_size; i++) {
+				//description_tex[uint2(id.x, i)] = result_multiplier*float4(0.3f, 0.5f, 0.3f, 1.0f);
+				if (i % 2 == 0) {
+					description_tex[uint2(i, id.x)] = result_multiplier * float4(corner_x_buffer[id.x], corner_x_buffer[id.y], 0.0f, 1.0f);
+				}
+				else {
+					description_tex[uint2(i, id.x)] = result_multiplier * float4(0.0f, 0.0f, 0.0f, 1.0f);
+				}
+
+			}
+		}
+		else {
+			for (int i = 0; i < descriptor_size; i++) {
+				//description_tex[uint2(id.x, i)] = result_multiplier*float4(0.3f, 0.5f, 0.3f, 1.0f);
+				if (i % 2 == 0) {
+					description_tex[uint2(i, id.x)] = result_multiplier * float4(500.0f, 0.0f, 0.0f, 1.0f);
+				}
+				else {
+					description_tex[uint2(i, id.x)] = result_multiplier * float4(500.0f, 0.0f, 0.0f, 1.0f);
+				}
+			}
+		}
+
+	//}
+	*/
+
+}
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel cornerMatcher
+
+RWTexture2D<float4> descriptor_start_tex;
+RWTexture2D<float4> descriptor_stop_tex;
+RWTexture2D<float4> distance_tex;
+
+[numthreads(8, 8, 1)]
+void cornerMatcher(uint3 id : SV_DispatchThreadID) {
+
+	int descriptor_size = descriptor_width * descriptor_height;
+	float dist_sum = 0.0f;
+	for (int i = 0; i < descriptor_size; i++) {
+		float dist = abs(descriptor_start_tex[uint2(i, id.x)].x - descriptor_stop_tex[uint2(i, id.y)].x);
+		//float dist = 2.0f;
+		if (id.x < 5) {
+			//dist = 0.0f;
+		}
+		//float dist = descriptor_start_tex[uint2(i, id.x)].x;
+		dist_sum = dist_sum + dist;
+	}
+
+	distance_tex[uint2(id.x, id.y)] = result_multiplier*float4(dist_sum, dist_sum, dist_sum, 1.0f);
+	//distance_tex[uint2(id.x, id.y)] = result_multiplier * float4(id.x, id.y, 0.0f, 1.0f);
+
+
+}

@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿//azure kinect to unity bridge
+//written by Hisham Bedri, Reality Lab, 2019
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
@@ -9,6 +12,9 @@ using System.Threading;
 //using OpenCVForUnity;
 
 public class akplay : MonoBehaviour {
+
+
+    public bool verbose = false;
 
     const string dllName = "AKPlugin88";
 
@@ -179,6 +185,8 @@ public class akplay : MonoBehaviour {
         public Matrix4x4 cameraToWorld;
         */
 
+        public int serial;
+
         public int color_width;
         public int color_height;
         public int depth_width;
@@ -267,11 +275,18 @@ public class akplay : MonoBehaviour {
 
     void updateResolution()
     {
-        superDebug("inside update resolution");
-        superDebug("color resolution int: " + (int)color_resolution);
+        if (verbose)
+        {
+            superDebug("inside update resolution");
+            superDebug("color resolution int: " + (int)color_resolution);
+        }
+
         if(color_resolution == k4a_color_resolution_t.K4A_COLOR_RESOLUTION_720P)
         {
-            superDebug("720p found");
+            if (verbose)
+            {
+                superDebug("720p found");
+            }
             color_width = 1280;
             color_height = 720;
             //depth_width = color_width;
@@ -280,7 +295,10 @@ public class akplay : MonoBehaviour {
 
         if (color_resolution == k4a_color_resolution_t.K4A_COLOR_RESOLUTION_2160P)
         {
-            superDebug("2160p found");
+            if (verbose)
+            {
+                superDebug("2160p found");
+            }
             color_width = 3840;
             color_height = 2160;
             //depth_width = color_width;
@@ -331,8 +349,11 @@ public class akplay : MonoBehaviour {
         filePath = Application.dataPath + "/AKPlugin_result.txt";
         System.IO.File.WriteAllText(filePath, "");
 
+        if (verbose)
+        {
+            superDebug("Enumerating devices...");
+        }
 
-        superDebug("Enumerating devices...");
         int numCameras = enumerateDevices();
         for (int i = 0; i < numCameras; i++)
         {
@@ -340,11 +361,15 @@ public class akplay : MonoBehaviour {
 
             //open device
             result = openDevice(i);
-            superDebug("Opening device: " + i + " result: " + result);
-            superDebug("serial number for camera " + i + ": " + getSerial(i));
+            if (verbose)
+            {
+                superDebug("Opening device: " + i + " result: " + result);
+                superDebug("serial number for camera " + i + ": " + getSerial(i));
+            }
 
         }
 
+        //adds visualization prefabs based on number of cameras!
         adjustVisualizationArray(numCameras);
 
         float step = 0.15f;
@@ -363,6 +388,9 @@ public class akplay : MonoBehaviour {
                                          false);
 
             camInfo ci = new camInfo();
+            
+            ci.serial = getSerial(i);
+            Debug.Log("Camera " + i + ": serial- " + ci.serial);
 
             ci.color_width = getColorWidth(i);
             ci.color_height = getColorHeight(i);
@@ -385,11 +413,15 @@ public class akplay : MonoBehaviour {
 
             ci.colorBytes = new byte[ci.color_width * ci.color_height * 4];
             ci.depthBytes = new byte[ci.depth_width * ci.depth_height * 2];
-            superDebug("setting color bytes length for camera: " + i + " to: " + ci.colorBytes.Length);
-            superDebug("setting color width and height for camera: " + i + " to: " + ci.color_width + " " + ci.color_height);
-            superDebug("standard multiplication: " + ci.color_width * ci.color_height * 4);
-            superDebug("setting depth bytes length for camera: " + i + " to: " + ci.depthBytes.Length);
-            superDebug("setting depth width and height for camera: " + i + " to: " + ci.depth_width + " " + ci.depth_height);
+            if (verbose)
+            {
+                superDebug("setting color bytes length for camera: " + i + " to: " + ci.colorBytes.Length);
+                superDebug("setting color width and height for camera: " + i + " to: " + ci.color_width + " " + ci.color_height);
+                superDebug("standard multiplication: " + ci.color_width * ci.color_height * 4);
+                superDebug("setting depth bytes length for camera: " + i + " to: " + ci.depthBytes.Length);
+                superDebug("setting depth width and height for camera: " + i + " to: " + ci.depth_width + " " + ci.depth_height);
+            }
+
             ci.colorHandle = GCHandle.Alloc(ci.colorBytes, GCHandleType.Pinned);
             ci.depthHandle = GCHandle.Alloc(ci.depthBytes, GCHandleType.Pinned);
 
@@ -398,6 +430,7 @@ public class akplay : MonoBehaviour {
 
 
             ci.visualization = visualizationArray[i];
+            ci.visualization.transform.position = new Vector3(i*3.0f, 0.0f, 0.0f);
             ci.visualization.GetComponent<AK_visualization>().colorTex = ci.colorTex;
             ci.visualization.GetComponent<AK_visualization>().depthTex = ci.depthTex;
             ci.visualization.GetComponent<AK_visualization>().XYMap = ci.distortionMapTex;
@@ -483,7 +516,11 @@ public class akplay : MonoBehaviour {
 
             camInfoList.Add(ci);
         }
-        Debug.Log("finished setting up cam info list, with count: " + camInfoList.Count);
+        if (verbose)
+        {
+            Debug.Log("finished setting up cam info list, with count: " + camInfoList.Count);
+        }
+
 
 
 
@@ -584,7 +621,10 @@ public class akplay : MonoBehaviour {
         //register the buffers:
         for(int i = 0; i<camInfoList.Count; i++)
         {
-            superDebug("Attempting to register buffer for camera: " + i);
+            if (verbose)
+            {
+                superDebug("Attempting to register buffer for camera: " + i);
+            }
             registerBuffer(i, camInfoList[i].colorHandle.AddrOfPinnedObject(), camInfoList[i].depthHandle.AddrOfPinnedObject());
 
         }
@@ -630,13 +670,15 @@ public class akplay : MonoBehaviour {
             depth_translation_h.Free();
             depth_intrinsics_h.Free();
 
-
-            superDebug("color_rotation " + i + ": " + dumpArray(color_rotation));
-            superDebug("color_translation " + i + ": " + dumpArray(color_translation));
-            superDebug("color_intrinsics " + i + ": " + dumpArray(color_intrinsics));
-            superDebug("depth_rotation " + i + ": " + dumpArray(depth_rotation));
-            superDebug("depth_translation " + i + ": " + dumpArray(depth_translation));
-            superDebug("depth_intrinsics " + i + ": " + dumpArray(depth_intrinsics));
+            if (verbose)
+            {
+                superDebug("color_rotation " + i + ": " + dumpArray(color_rotation));
+                superDebug("color_translation " + i + ": " + dumpArray(color_translation));
+                superDebug("color_intrinsics " + i + ": " + dumpArray(color_intrinsics));
+                superDebug("depth_rotation " + i + ": " + dumpArray(depth_rotation));
+                superDebug("depth_translation " + i + ": " + dumpArray(depth_translation));
+                superDebug("depth_intrinsics " + i + ": " + dumpArray(depth_intrinsics));
+            }
 
 
             camInfoList[i].visualization.GetComponent<AK_visualization>().cameraInfo.color_cx = color_intrinsics[0];
@@ -708,9 +750,12 @@ public class akplay : MonoBehaviour {
 
 
             camInfoList[i] = ci;
-            
 
-            superDebug("Attempting to get XYZMap");
+            if (verbose)
+            {
+                superDebug("Attempting to get XYZMap");
+            }
+
             GCHandle XYZMap_h = GCHandle.Alloc(camInfoList[i].XYZMap, GCHandleType.Pinned);
             getXYZMap(i, XYZMap_h.AddrOfPinnedObject());
             Buffer.BlockCopy(camInfoList[i].XYZMap, 0, camInfoList[i].XYZMapBytes, 0, camInfoList[i].XYZMapBytes.Length);
@@ -735,7 +780,11 @@ public class akplay : MonoBehaviour {
 
         //start all the camera threads:
         //see here for more details on the parameters: https://microsoft.github.io/Azure-Kinect-Sensor-SDK/master/structk4a__device__configuration__t.html
-        superDebug("Attempting to start all the camera threads");
+        if (verbose)
+        {
+            superDebug("Attempting to start all the camera threads");
+        }
+
         startAllDevices(); //this assumes, the devices have been enumerated, opened, the buffers registered, and the configuration set... in that order
 
         /*

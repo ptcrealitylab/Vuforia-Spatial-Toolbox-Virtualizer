@@ -1,0 +1,80 @@
+﻿//Partial ICP compute shader
+//written by Hisham Bedri, Reality Lab, 2019
+
+
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel matchImage
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWStructuredBuffer<float3> start_point_buffer;
+RWStructuredBuffer<float3> stop_point_buffer;
+RWTexture2D<float4> match_tex;
+float result_scale = 1.0f;
+
+[numthreads(8,8,1)]
+void matchImage (uint3 id : SV_DispatchThreadID)
+{
+	float3 start = start_point_buffer[id.y];
+	float3 stop = stop_point_buffer[id.x];
+
+	float dist = length(start - stop);
+	//match_tex[id.xy] = result_scale*float4(dist, dist, dist, 1.0f);
+	//match_tex[id.xy] = result_scale * float4(0.0f, 1.0f, 1.0f, 1.0f);
+	//result_scale = 0.1f;
+	match_tex[id.xy] = result_scale * float4(dist, dist, dist, 1.0f);
+
+}
+
+
+
+#pragma kernel matchPoints
+
+RWStructuredBuffer<int> match_idx_buffer;
+float neighbor_threshold = 0.1f;
+int num_points = 0;
+[numthreads(64, 1, 1)]
+void matchPoints(uint3 id : SV_DispatchThreadID)
+{
+	float3 start = start_point_buffer[id.x];
+
+	float min_idx = -1;
+	float min_dist = 0.0f;
+
+	for (int col = 0; col < num_points; col++) {
+		if (col != id.x) {
+			
+			float dist = match_tex[uint2(col, id.x)].x;
+			if (dist < min_dist || min_idx == -1) {
+				min_dist = dist;
+				min_idx = col;
+			}
+		}
+	}
+
+	if (min_dist < neighbor_threshold) {
+		match_idx_buffer[id.x] = min_idx;
+		match_tex[uint2(min_idx, id.x)] = match_tex[uint2(min_idx, id.x)] + float4(0.2f, 0.0f, 0.0f, 1.0f);
+	}
+	else {
+		match_idx_buffer[id.x] = -1;
+	}
+}
+
+
+#pragma kernel projectPoints
+
+float4x4 matFromStopToStart;
+RWStructuredBuffer<float3> reprojected_stop_point_buffer;
+
+[numthreads(64, 1, 1)]
+void projectPoints(uint3 id : SV_DispatchThreadID)
+{
+	float3 stop_point = stop_point_buffer[id.x];
+	float4 reprojected_stop_point = mul(matFromStopToStart , float4(stop_point.x, stop_point.y, stop_point.z, 1.0f));
+	reprojected_stop_point_buffer[id.x] = float3(reprojected_stop_point.x / reprojected_stop_point.w,
+													reprojected_stop_point.y / reprojected_stop_point.w,
+													reprojected_stop_point.z / reprojected_stop_point.w);
+
+}

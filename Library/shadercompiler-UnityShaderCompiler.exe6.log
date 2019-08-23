@@ -1,17 +1,10 @@
-Base path: C:/Program Files/Unity/Editor/Data
+Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(57): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(58): integer divides may be much slower, try using uints if possible.
-  api=4 insize=3783 outsize=2213 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(127): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(128): integer divides may be much slower, try using uints if possible.
-  api=4 insize=5532 outsize=2301 ok=1
-Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(204): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(205): integer divides may be much slower, try using uints if possible.
-  api=4 insize=7544 outsize=2301 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_radiusFeatureDetector.compute(102): undeclared identifier 'depthd'
-  api=4 insize=8874 outsize=0 ok=0
+  error: 1 plat 4 at (0): Program 'cornerDescriptor', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced
+  error: 1 plat 4 at AK_cornerWalker.compute(444): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(498): floating point division by zero
+  error: 1 plat 4 at AK_cornerWalker.compute(748): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(749): implicit truncation of vector type
+  error: 1 plat 4 at AK_cornerWalker.compute(754): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=25043 outsize=9737 ok=1

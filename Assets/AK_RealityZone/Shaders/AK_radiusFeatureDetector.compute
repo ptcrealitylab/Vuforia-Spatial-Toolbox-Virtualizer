@@ -1,4 +1,7 @@
-﻿// Each #kernel tells which function to compile; you can have many kernels
+﻿//3D feature detector compute shader
+//written by Hisham Bedri, Reality Lab, 2019
+
+// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel getFeatures
 
 // Create a RenderTexture with enableRandomWrite flag and set it
@@ -11,6 +14,9 @@ RWTexture2D<float4> result_tex;
 int search_size;
 float proximity;
 float result_multiplier;
+
+int width;
+int height;
 
 [numthreads(8,8,1)]
 void getFeatures(uint3 id : SV_DispatchThreadID)
@@ -29,6 +35,9 @@ void getFeatures(uint3 id : SV_DispatchThreadID)
 	bool initialized = false;
 	float max_radius = 0.0f;
 	float min_radius = 0.0f;
+	float mean_radius = 0.0f;
+
+	int counter = 0;
 
 	for (int xx = 0; xx < search_size; xx++) {
 		for (int yy = 0; yy < search_size; yy++) {
@@ -62,10 +71,18 @@ void getFeatures(uint3 id : SV_DispatchThreadID)
 					min_radius = measure;
 				}
 
+				mean_radius += measure;
+
+				counter++;
+
 			}
 
 
 		}
+	}
+
+	if (counter > 0) {
+		mean_radius = mean_radius / float(counter);
 	}
 
 	//min_radius = 1.0;
@@ -73,6 +90,7 @@ void getFeatures(uint3 id : SV_DispatchThreadID)
 
 	//result_tex[id.xy] = result_multiplier*float4(min_radius, 0.0, max_radius, 1.0);
 	result_tex[id.xy] = result_multiplier * float4(max_radius, 0.0, max_radius, 1.0);
+	result_tex[id.xy] = result_multiplier * float4(mean_radius, 0.0, mean_radius, 1.0);
 	//result_tex[id.xy] = result_multiplier * float4(max_radius - min_radius, 0.0, 0.0, 1.0);
 
 
@@ -87,9 +105,100 @@ void getFeatures(uint3 id : SV_DispatchThreadID)
 }
 
 
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel cornerWalker
+
+int num_points = 10;
+int num_iterations = 10;
+float gravity_x;
+float gravity_y;
+float gravity_z;
+
+[numthreads(8, 8, 1)]
+void cornerWalker(uint3 id : SV_DispatchThreadID)
+{
+	int stride = width / num_points;
+	float3 gravity = float3(gravity_x, gravity_y, gravity_z);
+
+
+
+	float depth = depth_tex[id.xy] * 65.536f;
+	float2 distortion = distortion_tex[id.xy].xy;
+	float3 pos = float3(0.0, 0.0, 0.0);
+	pos.x = depth * distortion.x;
+	pos.y = depth * distortion.y;
+	pos.z = depth;
+
+
+
+
+	result_tex[id.xy] = float4(depth / 3.0f, depth / 3.0f, depth / 3.0f, 1.0f);
+
+
+
+	
+	if (id.x%stride == 0 && id.y%stride == 0) {
+
+
+
+		uint2 next_spot = uint2(id.x, id.y);
+		float best_dist = length(pos - gravity);
+
+
+		for (int xx = -5; xx < 5; xx++) {
+			for (int yy = -5; yy < 5; yy++) {
+				uint2 new_loc = uint2(next_spot.x + xx, next_spot.y + yy);
+				//result_tex[new_loc.xy] = float4(0.0, 1.0, 1.0, 1.0);
+			}
+		}
+
+
+		for (int i = 0; i < num_iterations; i++) {
+
+			for (int xx = -search_size; xx < search_size+1; xx++) {
+				for (int yy = -search_size; yy < search_size+1; yy++) {
+					if (xx != 0 && yy != 0) {
+						uint2 loc = uint2(next_spot.x + xx, next_spot.y + yy);
+						float depth_p = depth_tex[loc.xy] * 65.536f;
+						float2 distortion_p = distortion_tex[loc.xy].xy;
+						float3 pos_p = float3(0.0, 0.0, 0.0);
+						pos_p.x = depth_p * distortion_p.x;
+						pos_p.y = depth_p * distortion_p.y;
+						pos_p.z = depth_p;
+
+						float dist = length(pos_p - gravity);
+
+						if (dist < best_dist && depth_p != 0) {
+							best_dist = dist;
+							next_spot = loc;
+						}
+
+					}
+				}
+			}
+
+		}
+
+		if (depth > 0) {
+			for (int xx = -3; xx < 3; xx++) {
+				for (int yy = -3; yy < 3; yy++) {
+					uint2 new_loc = uint2(next_spot.x + xx, next_spot.y + yy);
+					result_tex[new_loc.xy] = float4(1.0, 0.0, 0.0, 1.0);
+				}
+			}
+
+		}
+
+	}
+	
+}
+
+
 
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel getNormalDiff
+
+
 [numthreads(8, 8, 1)]
 void getNormalDiff(uint3 id : SV_DispatchThreadID)
 {
@@ -211,6 +320,7 @@ void getNormalDiff(uint3 id : SV_DispatchThreadID)
 				}
 				else {
 					ssd = ssd + length(normal_p - normal);
+					//ssd = ssd + abs(normal_p.z - normal.z);
 
 					counter++;
 				}

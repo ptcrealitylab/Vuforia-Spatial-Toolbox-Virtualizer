@@ -1,14 +1,55 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
-Cmd: compileSnippet
-  api=4 type=0 insize=2008 outsize=1118 kw=SPOT SHADOWS_DEPTH UNITY_HDR_ON pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_FULL_HDR ok=1
-Cmd: compileSnippet
-  api=4 type=1 insize=2008 outsize=3246 kw=DIRECTIONAL_COOKIE pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_FULL_HDR ok=1
-Cmd: compileSnippet
-  api=4 type=0 insize=1152 outsize=650 kw= pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_FULL_HDR ok=1
-Cmd: compileSnippet
-  api=4 type=1 insize=1152 outsize=738 kw= pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_FULL_HDR ok=1
-Cmd: compileSnippet
-  api=4 type=0 insize=1152 outsize=650 kw= pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_FULL_HDR ok=1
-Cmd: compileSnippet
-  api=4 type=1 insize=1152 outsize=738 kw= pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_FULL_HDR ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_cornerWalker.compute(635): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=21487 outsize=1053 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_cornerWalker.compute(663): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=21994 outsize=2041 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_cornerWalker.compute(663): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=21996 outsize=2041 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_cornerWalker.compute(669): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=22171 outsize=1053 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at AK_cornerWalker.compute(423): syntax error: unexpected token '['
+  error: 1 plat 4 at AK_cornerWalker.compute(674): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=22235 outsize=0 ok=0
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_cornerWalker.compute(30): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(714): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=23228 outsize=2853 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_cornerWalker.compute(30): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(714): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=23232 outsize=2853 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 2 plat 4 at AK_cornerWalker.compute(430): syntax error: unexpected token 'public'
+  error: 2 plat 4 at AK_cornerWalker.compute(471): undeclared identifier 'pencil_width'
+  api=4 insize=23968 outsize=0 ok=0
+Cmd: compileComputeKernel
+  error: 1 plat 4 at (0): Program 'cornerDescriptor', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced
+  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(478): floating point division by zero
+  error: 1 plat 4 at AK_cornerWalker.compute(721): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(722): implicit truncation of vector type
+  error: 1 plat 4 at AK_cornerWalker.compute(725): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=23961 outsize=10021 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at (0): Program 'cornerDescriptor', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced
+  error: 1 plat 4 at AK_cornerWalker.compute(424): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(478): floating point division by zero
+  error: 1 plat 4 at AK_cornerWalker.compute(721): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  error: 1 plat 4 at AK_cornerWalker.compute(722): implicit truncation of vector type
+  error: 1 plat 4 at AK_cornerWalker.compute(725): 'i': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+  api=4 insize=24041 outsize=9697 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at ICP.compute(45): signed/unsigned mismatch, unsigned assumed
+  api=4 insize=1560 outsize=1181 ok=1
+Unhandled exception: Protocol error - failed to read correct magic number
+
+Quitting shader compiler process
