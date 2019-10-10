@@ -42,10 +42,10 @@ public class akplay : MonoBehaviour {
     public static extern int startAllDevicesWithConfiguration(int color_format, int color_resolution, int depth_mode, int camera_fps, bool synchronized_images_only, int depth_delay_off_color_usec, int wired_sync_mode, int subordinate_delay_of_master_usec, bool disable_streaming_indicator);
 
     [DllImport(dllName, EntryPoint = "registerBuffer")]
-    public static extern int registerBuffer(int cameraIndex, IntPtr resultColorPointer, IntPtr resultDepthPointer);
+    public static extern int registerBuffer(int cameraIndex, IntPtr resultColorPointer, IntPtr resultDepthPointer, IntPtr resultSkeletonPointer);
 
     [DllImport(dllName, EntryPoint = "getLatestCapture")]
-    public static extern int getLatestCapture(int cameraIndex, IntPtr colorBuffer, IntPtr depthBuffer);
+    public static extern int getLatestCapture(int cameraIndex, IntPtr colorBuffer, IntPtr depthBuffer, IntPtr skeletonBuffer);
 
     [DllImport(dllName, EntryPoint = "getLatestCaptureForAllCameras")]
     public static extern int getLatestCaptureForAllCameras();
@@ -157,13 +157,54 @@ public class akplay : MonoBehaviour {
                                        //next device in the chain. 'Sync Out' is a mirror of 'Sync In' for this mode.
                                      //*/
     }
+
+    public enum k4abt_joint_id_t {
+     K4ABT_JOINT_PELVIS = 0,
+     K4ABT_JOINT_SPINE_NAVAL,
+     K4ABT_JOINT_SPINE_CHEST,
+     K4ABT_JOINT_NECK,
+     K4ABT_JOINT_CLAVICLE_LEFT,
+     K4ABT_JOINT_SHOULDER_LEFT,
+     K4ABT_JOINT_ELBOW_LEFT,
+     K4ABT_JOINT_WRIST_LEFT,
+     K4ABT_JOINT_CLAVICLE_RIGHT,
+     K4ABT_JOINT_SHOULDER_RIGHT,
+     K4ABT_JOINT_ELBOW_RIGHT,
+     K4ABT_JOINT_WRIST_RIGHT,
+     K4ABT_JOINT_HIP_LEFT,
+     K4ABT_JOINT_KNEE_LEFT,
+     K4ABT_JOINT_ANKLE_LEFT,
+     K4ABT_JOINT_FOOT_LEFT,
+     K4ABT_JOINT_HIP_RIGHT,
+     K4ABT_JOINT_KNEE_RIGHT,
+     K4ABT_JOINT_ANKLE_RIGHT,
+     K4ABT_JOINT_FOOT_RIGHT,
+     K4ABT_JOINT_HEAD,
+     K4ABT_JOINT_NOSE,
+     K4ABT_JOINT_EYE_LEFT,
+     K4ABT_JOINT_EAR_LEFT,
+     K4ABT_JOINT_EYE_RIGHT,
+     K4ABT_JOINT_EAR_RIGHT,
+     K4ABT_JOINT_COUNT
+    }
+
+    public struct k4abt_joint_t {
+      public float x;
+      public float y;
+      public float z;
+      public fixed float q[4];
+    }
+
+    public struct k4abt_skeleton_t {
+      public fixed k4abt_joint_t joints[K4ABT_JOINT_COUNT];
+    }
     #endregion
 
+    const int MAX_SKELETONS = 32; // should be impossible
 
     public k4a_color_resolution_t color_resolution = k4a_color_resolution_t.K4A_COLOR_RESOLUTION_720P;
     public k4a_depth_mode_t depth_mode = k4a_depth_mode_t.K4A_DEPTH_MODE_WFOV_UNBINNED;
     public k4a_fps_t fps_mode = k4a_fps_t.K4A_FRAMES_PER_SECOND_30;
-
 
     public struct camInfo
     {
@@ -202,6 +243,8 @@ public class akplay : MonoBehaviour {
 
         public byte[] colorBytes;
         public byte[] depthBytes;
+
+        public k4abt_skeleton_t[] skeletonStructs;
 
         public float[] XYZMap;
         public byte[] XYZMapBytes;
@@ -425,6 +468,7 @@ public class akplay : MonoBehaviour {
 
             ci.colorBytes = new byte[ci.color_width * ci.color_height * 4];
             ci.depthBytes = new byte[ci.depth_width * ci.depth_height * 2];
+            ci.skeletonStructs = new k4abt_skeleton_t[MAX_SKELETONS];
             if (verbose)
             {
                 superDebug("setting color bytes length for camera: " + i + " to: " + ci.colorBytes.Length);
@@ -436,6 +480,7 @@ public class akplay : MonoBehaviour {
 
             ci.colorHandle = GCHandle.Alloc(ci.colorBytes, GCHandleType.Pinned);
             ci.depthHandle = GCHandle.Alloc(ci.depthBytes, GCHandleType.Pinned);
+            ci.skeletonHandle = GCHandle.Alloc(ci.skeletonStructs, GCHandleType.Pinned);
 
             ci.XYZMap = new float[ci.depth_width * ci.depth_height * 2];
             ci.XYZMapBytes = new byte[ci.depth_width * ci.depth_height * 8];
@@ -637,7 +682,7 @@ public class akplay : MonoBehaviour {
             {
                 superDebug("Attempting to register buffer for camera: " + i);
             }
-            registerBuffer(i, camInfoList[i].colorHandle.AddrOfPinnedObject(), camInfoList[i].depthHandle.AddrOfPinnedObject());
+            registerBuffer(i, camInfoList[i].colorHandle.AddrOfPinnedObject(), camInfoList[i].depthHandle.AddrOfPinnedObject(), camInfoList[i].skeletonHandle.AddrOfPinnedObject());
 
         }
 
