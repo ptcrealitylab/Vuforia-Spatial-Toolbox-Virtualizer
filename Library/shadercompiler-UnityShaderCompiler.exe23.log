@@ -1,38 +1,11 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
-  api=4 insize=19414 outsize=0 ok=0
+  api=4 insize=11192 outsize=761 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=19448 outsize=865 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19450 outsize=4237 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(336): undeclared identifier 'flying_count'
-  api=4 insize=19468 outsize=0 ok=0
-Cmd: compileComputeKernel
-  api=4 insize=19528 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19526 outsize=6989 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19905 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19930 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=17971 outsize=4141 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=17971 outsize=4177 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=20229 outsize=3561 ok=1
+  api=4 insize=11192 outsize=633 ok=1
 Cmd: compileComputeKernel
   api=4 insize=20232 outsize=313 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19120 outsize=12021 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19122 outsize=12157 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19843 outsize=12969 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19843 outsize=13081 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=20374 outsize=12653 ok=1
+Unhandled exception: Protocol error - failed to read correct magic number
+
+Quitting shader compiler process

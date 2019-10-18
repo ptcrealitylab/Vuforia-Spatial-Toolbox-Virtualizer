@@ -1,25 +1,11 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
-  api=4 insize=19410 outsize=0 ok=0
+  api=4 insize=11212 outsize=589 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=19470 outsize=293 ok=1
+  api=4 insize=20231 outsize=5117 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=19930 outsize=865 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=17879 outsize=12113 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=17957 outsize=4181 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=18406 outsize=11397 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19017 outsize=11677 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19019 outsize=11685 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19332 outsize=4293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19332 outsize=4293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=20373 outsize=12761 ok=1
+  api=4 insize=11192 outsize=457 ok=1
+Unhandled exception: Protocol error - failed to read correct magic number
+
+Quitting shader compiler process

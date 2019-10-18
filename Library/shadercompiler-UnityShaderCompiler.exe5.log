@@ -1,6 +1,7 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(120): integer divides may be much slower, try using uints if possible.
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(302): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=13147 outsize=2853 ok=1
+  api=4 insize=11160 outsize=589 ok=1
+Unhandled exception: Protocol error - failed to read correct magic number
+
+Quitting shader compiler process

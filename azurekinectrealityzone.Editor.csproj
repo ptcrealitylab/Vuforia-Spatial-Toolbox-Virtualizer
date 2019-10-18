@@ -281,6 +281,15 @@
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/15.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
+    <Reference Include="VacuumShaders">
+      <HintPath>Assets/VacuumShaders/Editor/VacuumShaders.dll</HintPath>
+    </Reference>
+    <Reference Include="VacuumShaders.TextureAdjustments_Editor">
+      <HintPath>Assets/VacuumShaders/Texture Adjustments/Editor/VacuumShaders.TextureAdjustments_Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="VacuumShaders.TextureAdjustments">
+      <HintPath>Assets/VacuumShaders/Texture Adjustments/Scripts/VacuumShaders.TextureAdjustments.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>C:/Users/hisha/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
     </Reference>
@@ -298,15 +307,6 @@
     </Reference>
     <Reference Include="UnityEngine.StandardEvents">
       <HintPath>C:/Users/hisha/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="VacuumShaders.TextureAdjustments_Editor">
-      <HintPath>Assets/VacuumShaders/Texture Adjustments/Editor/VacuumShaders.TextureAdjustments_Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="VacuumShaders.TextureAdjustments">
-      <HintPath>Assets/VacuumShaders/Texture Adjustments/Scripts/VacuumShaders.TextureAdjustments.dll</HintPath>
-    </Reference>
-    <Reference Include="VacuumShaders">
-      <HintPath>Assets/VacuumShaders/Editor/VacuumShaders.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data/PlaybackEngines/iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -334,7 +334,11 @@
     <None Include="Assets\AK_RealityZone\Shaders\AK_voxel.compute" />
     <None Include="Assets\AK_RealityZone\Shaders\ICP.compute" />
     <None Include="Assets\AK_RealityZone\Shaders\floatShaderRealsense.shader" />
+    <None Include="Assets\AK_calibration - Copy (2).txt" />
     <None Include="Assets\AK_calibration.txt" />
+    <None Include="Assets\AK_calibration2.txt" />
+    <None Include="Assets\AK_calibration3.txt" />
+    <None Include="Assets\AK_calibration_perfect.txt" />
     <None Include="Assets\AK_marchUV.compute" />
     <None Include="Assets\Best HTTP (Pro)\BestHTTP\SecureProtocol\License.txt" />
     <None Include="Assets\Best HTTP (Pro)\ReleaseNotes.txt" />
@@ -390,6 +394,16 @@
     <None Include="Assets\VacuumShaders\Texture Adjustments\Shaders\Resources\Adjustments_IncludeChannel.shader" />
     <None Include="Assets\VacuumShaders\Texture Adjustments\Shaders\Resources\Adjustments_Mask.shader" />
     <None Include="Assets\VacuumShaders\Texture Adjustments\Shaders\cginc\Adjustments_Math.cginc" />
+    <None Include="Assets\Wireframe\Shaders\OverDraw.shader" />
+    <None Include="Assets\Wireframe\Shaders\Resources\Wireframe-Global.shader" />
+    <None Include="Assets\Wireframe\Shaders\Resources\WireframeShaded-Unlit-Global.shader" />
+    <None Include="Assets\Wireframe\Shaders\Resources\WireframeTransparent-Global.shader" />
+    <None Include="Assets\Wireframe\Shaders\Resources\WireframeTransparentCulled-Global.shader" />
+    <None Include="Assets\Wireframe\Shaders\Wireframe.cginc" />
+    <None Include="Assets\Wireframe\Shaders\Wireframe.shader" />
+    <None Include="Assets\Wireframe\Shaders\WireframeShaded-Unlit.shader" />
+    <None Include="Assets\Wireframe\Shaders\WireframeTransparent.shader" />
+    <None Include="Assets\Wireframe\Shaders\WireframeTransparentCulled.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

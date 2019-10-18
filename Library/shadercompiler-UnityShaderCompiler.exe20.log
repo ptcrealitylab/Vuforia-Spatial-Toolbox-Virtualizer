@@ -1,32 +1,15 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=19334 outsize=313 ok=1
+  api=4 insize=11196 outsize=909 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=19312 outsize=2189 ok=1
+  error: 1 plat 4 at AK_textureCube.compute(90): integer divides may be much slower, try using uints if possible.
+  error: 1 plat 4 at AK_textureCube.compute(91): integer divides may be much slower, try using uints if possible.
+  api=4 insize=11192 outsize=2669 ok=1
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
-  api=4 insize=19412 outsize=0 ok=0
+  api=4 insize=11192 outsize=605 ok=1
 Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
-  api=4 insize=19412 outsize=0 ok=0
-Cmd: compileComputeKernel
-  api=4 insize=19526 outsize=313 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19930 outsize=4781 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19930 outsize=4781 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19930 outsize=3561 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=18264 outsize=4025 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=18422 outsize=11949 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=18400 outsize=11697 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=20232 outsize=3561 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19113 outsize=11685 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19332 outsize=4293 ok=1
+  api=4 insize=11192 outsize=457 ok=1
+Unhandled exception: Protocol error - failed to read correct magic number
+
+Quitting shader compiler process

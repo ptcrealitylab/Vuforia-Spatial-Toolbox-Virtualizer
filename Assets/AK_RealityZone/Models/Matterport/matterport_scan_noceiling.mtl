@@ -1,0 +1,1010 @@
+# Blender MTL File: 'None'
+# Material Count: 84
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_000.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_000.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_000.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_001.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_001.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_001.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_002.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_002.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_002.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_003.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_003.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_003.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_004.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_004.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_004.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_005.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_005.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_005.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_006.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_006.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_006.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_007.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_007.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_007.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_008.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_008.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_008.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_009.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_009.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_009.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_010.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_010.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_010.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_011.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_011.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_011.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_012.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_012.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_012.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_013.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_013.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_013.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_014.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_014.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_014.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_015.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_015.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_015.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_016.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_016.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_016.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_017.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_017.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_017.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_018.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_018.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_018.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_019.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_019.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_019.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_020.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_020.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_020.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_021.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_021.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_021.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_022.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_022.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_022.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_023.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_023.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_023.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_024.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_024.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_024.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_025.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_025.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_025.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_026.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_026.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_026.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_027.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_027.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_027.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_028.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_028.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_028.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_029.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_029.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_029.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_030.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_030.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_030.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_031.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_031.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_031.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_032.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_032.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_032.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_033.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_033.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_033.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_034.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_034.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_034.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_035.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_035.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_035.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_036.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_036.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_036.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_037.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_037.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_037.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_038.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_038.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_038.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_039.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_039.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_039.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_040.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_040.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_040.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_041.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_041.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_041.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_042.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_042.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_042.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_043.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_043.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_043.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_044.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_044.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_044.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_045.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_045.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_045.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_046.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_046.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_046.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_047.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_047.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_047.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_048.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_048.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_048.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_049.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_049.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_049.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_050.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_050.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_050.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_051.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_051.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_051.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_052.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_052.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_052.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_053.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_053.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_053.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_054.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_054.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_054.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_055.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_055.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_055.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_056.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_056.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_056.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_057.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_057.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_057.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_058.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_058.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_058.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_059.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_059.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_059.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_060.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_060.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_060.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_061.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_061.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_061.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_062.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_062.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_062.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_063.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_063.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_063.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_064.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_064.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_064.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_065.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_065.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_065.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_066.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_066.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_066.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_067.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_067.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_067.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_068.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_068.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_068.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_069.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_069.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_069.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_070.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_070.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_070.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_071.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_071.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_071.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_072.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_072.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_072.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_073.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_073.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_073.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_074.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_074.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_074.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_075.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_075.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_075.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_076.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_076.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_076.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_077.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_077.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_077.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_078.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_078.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_078.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_079.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_079.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_079.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_080.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_080.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_080.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_081.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_081.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_081.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_082.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_082.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_082.jpg
+
+newmtl 6070dddeb69d474392b54d5f852c4fd5_083.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_083.jpg
+map_Ka /Users/Anna/Downloads/matterpak_wGTYUFyfmhn/6070dddeb69d474392b54d5f852c4fd5_083.jpg

@@ -281,7 +281,19 @@ public class akplay : MonoBehaviour {
             superDebug("color resolution int: " + (int)color_resolution);
         }
 
-        if(color_resolution == k4a_color_resolution_t.K4A_COLOR_RESOLUTION_720P)
+        if(color_resolution == k4a_color_resolution_t.K4A_COLOR_RESOLUTION_1080P)
+        {
+            if (verbose)
+            {
+                superDebug("1080p found");
+            }
+            color_width = 1920;
+            color_height = 1080;
+            //depth_width = color_width;
+            //depth_height = color_height;
+        }
+
+        if (color_resolution == k4a_color_resolution_t.K4A_COLOR_RESOLUTION_720P)
         {
             if (verbose)
             {

@@ -1,52 +1,9 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  api=4 insize=17632 outsize=1737 ok=1
+  api=4 insize=11162 outsize=593 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=19202 outsize=865 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19334 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19335 outsize=293 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(299): undeclared identifier 'depth_width'
-  api=4 insize=19414 outsize=0 ok=0
-Cmd: compileComputeKernel
-  api=4 insize=19448 outsize=4693 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19452 outsize=2189 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at AK_voxel.compute(336): undeclared identifier 'flying_count'
-  api=4 insize=19468 outsize=0 ok=0
-Cmd: compileComputeKernel
-  api=4 insize=19466 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19528 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19530 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19544 outsize=293 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19930 outsize=865 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=17941 outsize=4141 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=17957 outsize=4141 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=18398 outsize=4025 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=18405 outsize=11385 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=20229 outsize=4693 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=20229 outsize=3561 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=20230 outsize=4693 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19012 outsize=11677 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19094 outsize=11661 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19133 outsize=4413 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=19134 outsize=4413 ok=1
+  api=4 insize=11160 outsize=605 ok=1
+Unhandled exception: Protocol error - failed to read correct magic number
+
+Quitting shader compiler process

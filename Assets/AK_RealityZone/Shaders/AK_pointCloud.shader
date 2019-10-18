@@ -34,6 +34,10 @@ Shader "Custom/AK_pointCloud"
 
 			Pass
 			{
+				//Tags{"Queue"="Overlay"}
+				//ZWrite On
+				//ZTest Always
+
 				Cull Off
 				CGPROGRAM
 				#pragma target 5.0
@@ -229,8 +233,8 @@ Shader "Custom/AK_pointCloud"
 
 
 					//float4 color_uv = float4(uv.x, uv.y, 0.0f, 0.0f);
-					o.color = float4(tex2Dlod(_ColorTex, color_uv).rgb, 1.0f);
-					
+					o.color = float4(tex2Dlod(_ColorTex, color_uv).rgb, 0.5f);
+					//o.color = float4(1,1,1,1);
 					/*
 					if (color_uv.x < 0 || color_uv.x >1.0 || color_uv.y < 0.0 || color_uv.y>1.0) {
 					//if ((colorPos.x / colorPos.z*_color_fx + _color_cx)* _ColorTex_TexelSize.x < _Play) {

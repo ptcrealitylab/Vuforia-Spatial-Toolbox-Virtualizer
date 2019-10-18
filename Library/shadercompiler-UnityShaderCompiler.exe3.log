@@ -1,8 +1,11 @@
 Base path: F:/RealityBeast/setup/studios/unity/unity2017/Editor/Data
 Cmd: initializeCompiler
 Cmd: compileComputeKernel
-  error: 1 plat 4 at ICP.compute(46): signed/unsigned mismatch, unsigned assumed
-  api=4 insize=2242 outsize=1181 ok=1
+  api=4 insize=11160 outsize=589 ok=1
 Cmd: compileComputeKernel
-  error: 1 plat 4 at AK_radiusFeatureDetector.compute(302): 'xx': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
-  api=4 insize=13147 outsize=1893 ok=1
+  api=4 insize=11162 outsize=761 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=11162 outsize=605 ok=1
+Unhandled exception: Protocol error - failed to read correct magic number
+
+Quitting shader compiler process

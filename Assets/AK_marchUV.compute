@@ -186,7 +186,7 @@ void CSMarchUV(uint3 id : SV_DispatchThreadID)
 
 	float4 col = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	if (det >= 0) {
-		col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+		col = float4(0.0f, 0.0f, 0.0f, 0.0f);
 		//found = true;
 		
 
@@ -533,7 +533,7 @@ void CSMarchUV(uint3 id : SV_DispatchThreadID)
 								colorTestPoint4.y = -colorTestPoint4.y;
 
 
-								uint color_pixel_x = uint(_CamInfoBuffer[aa].color_fx * colorTestPoint4.x / colorTestPoint4.z + _CamInfoBuffer[aa].color_cx-9.0f);
+								uint color_pixel_x = uint(_CamInfoBuffer[aa].color_fx * colorTestPoint4.x / colorTestPoint4.z + _CamInfoBuffer[aa].color_cx-9.0f); //THIS IS A HACK UNTIL I FIGURE OUT WHAT'S GOING ON
 								uint color_pixel_y = uint(-_CamInfoBuffer[aa].color_fy * colorTestPoint4.y / colorTestPoint4.z + _CamInfoBuffer[aa].color_cy);
 
 								//uint color_pixel_x = uint(_CamInfoBuffer[aa].color_fx * colorTestPoint4.x / colorTestPoint4.z + _CamInfoBuffer[aa].color_cx);
