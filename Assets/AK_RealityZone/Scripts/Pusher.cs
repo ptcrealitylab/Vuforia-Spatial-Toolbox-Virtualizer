@@ -8,6 +8,7 @@ using BestHTTP.SocketIO;
 using SimpleJSON;
 //using VacuumShaders.TextureAdjustments;
 using VacuumShaders.TextureExtensions;
+using System.Threading.Tasks;
 
 public class Pusher : MonoBehaviour {
 
@@ -20,12 +21,12 @@ public class Pusher : MonoBehaviour {
     public GameObject cloner;
     public GameObject gifRecorder;
 
+    private Task pushTask = Task.CompletedTask;
 
     public bool connected = false;
     //public Vector3 debugVector;
     // Use this for initialization
     void Start () {
-
         emergencyTex = new Texture2D(2, 2);
 
         cam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
@@ -69,12 +70,15 @@ public class Pusher : MonoBehaviour {
 		if(Time.time - lastTime > 1.0f/fps)
         {
             lastTime = Time.time;
-            if (connected)
+            if (connected && pushTask.IsCompleted)
             {
-                //send message!
-                string encodedBytes = getScreenShot();
-                //string encodedDepthBytes = getDepthScreenshot();
-                Manager.Socket.Emit("image", encodedBytes);
+                pushTask = Task.Run(() =>
+                {
+                    //send message!
+                    string encodedBytes = getScreenShot();
+                    //string encodedDepthBytes = getDepthScreenshot();
+                    Manager.Socket.Emit("image", encodedBytes);
+                });
             }
         }
 
