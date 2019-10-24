@@ -139,7 +139,7 @@ public class AK_visualization : MonoBehaviour {
             //int numberPoints = 100;
             mat.SetMatrix("_Position", transform.localToWorldMatrix);
             mat.SetPass(0);
-            Graphics.DrawProcedural(MeshTopology.Points, 1, numberPoints);
+            Graphics.DrawProcedural(MeshTopology.Points, numberPoints, 1);
         }
     }
 }

@@ -52,8 +52,9 @@ Shader "Custom/AK_pointCloud"
 				struct PS_INPUT
 				{
 					float4 position : SV_POSITION;
-					float4 color : COLOR;
+					float2 color_uv : TEXCOORD0;
 					float3 normal : NORMAL;
+					float depth : PDEPTH;
 					//float size : PSIZE;
 
 				};
@@ -62,10 +63,9 @@ Shader "Custom/AK_pointCloud"
 				struct GEOM_OUTPUT
 				{
 					float4 position : SV_POSITION;
-					float4 color : COLOR;
+					float2 color_uv : TEXCOORD0;
 					float3 normal : NORMAL;
 					//float size : PSIZE;
-
 				};
 
 
@@ -162,13 +162,18 @@ Shader "Custom/AK_pointCloud"
 					PS_INPUT o;
 					o.normal = v.normal;
 
-					//this converts the instance_id into a uv position
+					//this converts the vertex_id into a uv position
 					//stolen from the ZED shader
-					float2 uv = float2(
-						clamp(fmod(instance_id, _DepthTex_TexelSize.z) * _DepthTex_TexelSize.x, _DepthTex_TexelSize.x, 1.0 - _DepthTex_TexelSize.x),
-						clamp(((instance_id - fmod(instance_id, _DepthTex_TexelSize.z) * _DepthTex_TexelSize.x) / _DepthTex_TexelSize.z) * _DepthTex_TexelSize.y, _DepthTex_TexelSize.y, 1.0 - _DepthTex_TexelSize.y)
-						);
-					float4 uv4 = float4(uv.x, (uv.y), 0.0, 0.0);
+					// this is notably very brittle and should somehow incorporate the actual position of
+					// the vert instead of just assuming that there's 1 vert per depth pixel
+					uint id = vertex_id;
+					float _u = fmod(id, _DepthTex_TexelSize.z) * _DepthTex_TexelSize.x;
+					float _v = (id - fmod(id, _DepthTex_TexelSize.z)) * _DepthTex_TexelSize.x * _DepthTex_TexelSize.y;
+					float2 uv = float2(_u, _v);
+						//clamp(u, _DepthTex_TexelSize.x, 1.0 - _DepthTex_TexelSize.x),
+						//clamp(((id - fmod(id, _DepthTex_TexelSize.z) * _DepthTex_TexelSize.x) / _DepthTex_TexelSize.z) * _DepthTex_TexelSize.y, _DepthTex_TexelSize.y, 1.0 - _DepthTex_TexelSize.y)
+						//);
+					float4 uv4 = float4(uv.x, uv.y, 0.0, 0.0);
 
 					//get XYZ position:
 					float4 XYZpos = float4(0.0, 0.0, 0.0, 1.0);
@@ -181,6 +186,7 @@ Shader "Custom/AK_pointCloud"
 					XYZpos.x = depth * distortionCorrection.x ;
 					XYZpos.y = depth * distortionCorrection.y ;
 					XYZpos.z = depth;
+					o.depth = depth;
 
 					//get color info:
 					
@@ -233,8 +239,10 @@ Shader "Custom/AK_pointCloud"
 
 
 					//float4 color_uv = float4(uv.x, uv.y, 0.0f, 0.0f);
-					o.color = float4(tex2Dlod(_ColorTex, color_uv).rgb, 0.5f);
+					//o.color = float4(tex2Dlod(_ColorTex, color_uv).rgb, 0.5f);
 					//o.color = float4(1,1,1,1);
+					o.color_uv = float2(color_uv.x, color_uv.y);
+
 					/*
 					if (color_uv.x < 0 || color_uv.x >1.0 || color_uv.y < 0.0 || color_uv.y>1.0) {
 					//if ((colorPos.x / colorPos.z*_color_fx + _color_cx)* _ColorTex_TexelSize.x < _Play) {
@@ -289,33 +297,56 @@ Shader "Custom/AK_pointCloud"
 				[maxvertexcount(4)]
 				void geom(point PS_INPUT i[1], inout TriangleStream<GEOM_OUTPUT> triStream)
 				{
+				
+					GEOM_OUTPUT o;
+					o.position = i[0].position;
+					o.color_uv = i[0].color_uv;
+					o.normal = i[0].normal;
+
+					float size = _Size * i[0].depth / 2;
+					float aspect = 1.9;
+					float colorSize = 1;
+					float4 offset1 = float4(-0.1, 0.1 * aspect, 0, 0)*size;
+					o.position = o.position + offset1;
+					o.color_uv = i[0].color_uv + colorSize * float2(-_DepthTex_TexelSize.x, _DepthTex_TexelSize.y);
+					triStream.Append(o);
+					o.position = o.position - offset1;
+
+					float4 offset2 = float4(-0.1, -0.1 * aspect, 0, 0)*size;
+					o.position = o.position + offset2;
+					o.color_uv = i[0].color_uv + colorSize * float2(-_DepthTex_TexelSize.x, -_DepthTex_TexelSize.y);
+					triStream.Append(o);
+					o.position = o.position - offset2;
+
+					float4 offset3 = float4(0.1, 0.1 * aspect, 0, 0)*size;
+					o.position = o.position + offset3;
+					o.color_uv = i[0].color_uv + colorSize * float2(_DepthTex_TexelSize.x, _DepthTex_TexelSize.y);
+					triStream.Append(o);
+					o.position = o.position - offset3;
+
+					float4 offset4 = float4(0.1, -0.1 * aspect, 0, 0)*size;
+					o.position = o.position + offset4;
+					o.color_uv = i[0].color_uv + colorSize * float2(_DepthTex_TexelSize.x, -_DepthTex_TexelSize.y);
+					triStream.Append(o);
+					o.position = o.position - offset4;
+					// */
+					/*
 					GEOM_OUTPUT o;
 					o.position = i[0].position;
 					o.color = i[0].color;
 					o.normal = i[0].normal;
-
+					triStream.Append(o);
 					
-					float4 offset1 = float4(-0.1, 0.1, 0, 0)*_Size;
-					o.position = o.position + offset1;
+					o.position = i[1].position;
+					o.color = i[1].color;
+					o.normal = i[1].normal;
 					triStream.Append(o);
-					o.position = o.position - offset1;
-
-					float4 offset2 = float4(-0.1, -0.1, 0, 0)*_Size;
-					o.position = o.position + offset2;
-					triStream.Append(o);
-					o.position = o.position - offset2;
-
-					float4 offset3 = float4(0.1, 0.1, 0, 0)*_Size;
-					o.position = o.position + offset3;
-					triStream.Append(o);
-					o.position = o.position - offset3;
-
-					float4 offset4 = float4(0.1, -0.1, 0, 0)*_Size;
-					o.position = o.position + offset4;
-					triStream.Append(o);
-					o.position = o.position - offset4;
 					
-
+					o.position = i[2].position;
+					o.color = i[2].color;
+					o.normal = i[2].normal;
+					triStream.Append(o);
+					// */
 
 					//float4 v = i[0].position;
 					//triStream.Append(o);
@@ -334,7 +365,8 @@ Shader "Custom/AK_pointCloud"
 
 				fixed4 frag(PS_INPUT i) : SV_Target
 				{
-					return i.color;
+					float4 color_uv = float4(i.color_uv.x, i.color_uv.y, 0, 0);
+					return float4(tex2Dlod(_ColorTex, color_uv).rgb, 1.0f);
 				}
 				ENDCG
 			}

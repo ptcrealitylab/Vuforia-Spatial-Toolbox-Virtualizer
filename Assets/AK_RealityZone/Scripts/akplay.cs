@@ -20,7 +20,7 @@ public class akplay : MonoBehaviour {
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
-    
+
     //Plugin entry point
     #region
     [DllImport(dllName, EntryPoint = "enumerateDevices")]
