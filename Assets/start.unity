@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -2485,6 +2485,9 @@ MonoBehaviour:
   visualizationArray: []
   visualizationPrefab: {fileID: 1780632497081576, guid: 10d925ef3c61d90429b4e40cde17a47b,
     type: 2}
+  jointPrefab: {fileID: 1439034298357874, guid: 11d2e21259fa73e40b355f6605848bc4,
+    type: 2}
+  bonePrefab: {fileID: 1761708124201992, guid: f4eddd13c1ff268448453c66c93e8ac0, type: 2}
   AK_pointCloudShader: {fileID: 4800000, guid: 7116e3d659d91fe45b4946933e9f5658, type: 3}
   camerasReady: 0
   color_resolution: 4

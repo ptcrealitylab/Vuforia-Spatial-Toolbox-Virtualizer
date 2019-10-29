@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
@@ -16,7 +17,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin88";
+    const string dllName = "AKPlugin102";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -94,13 +95,14 @@ public class akplay : MonoBehaviour {
     [DllImport(dllName, EntryPoint = "doStuff")]
     public static extern int doStuff(IntPtr resultColorPtr);
 
-
-
     #endregion
 
 
     public GameObject[] visualizationArray;
     public GameObject visualizationPrefab;
+    public List<SkeletonVis>[] skeletonVisArray;
+    public GameObject jointPrefab;
+    public GameObject bonePrefab;
     public Shader AK_pointCloudShader;
 
     public bool camerasReady = false;
@@ -152,58 +154,129 @@ public class akplay : MonoBehaviour {
     {
         K4A_WIRED_SYNC_MODE_STANDALONE, //**< Neither 'Sync In' or 'Sync Out' connections are used. */
         K4A_WIRED_SYNC_MODE_MASTER,     //**< The 'Sync Out' jack is enabled and synchronization data it driven out the
-                                       //connected wire.*/
+                                        //connected wire.*/
         K4A_WIRED_SYNC_MODE_SUBORDINATE //**< The 'Sync In' jack is used for synchronization and 'Sync Out' is driven for the
-                                       //next device in the chain. 'Sync Out' is a mirror of 'Sync In' for this mode.
-                                     //*/
+                                        //next device in the chain. 'Sync Out' is a mirror of 'Sync In' for this mode.
+                                        //*/
     }
 
-    public enum k4abt_joint_id_t {
-     K4ABT_JOINT_PELVIS = 0,
-     K4ABT_JOINT_SPINE_NAVAL,
-     K4ABT_JOINT_SPINE_CHEST,
-     K4ABT_JOINT_NECK,
-     K4ABT_JOINT_CLAVICLE_LEFT,
-     K4ABT_JOINT_SHOULDER_LEFT,
-     K4ABT_JOINT_ELBOW_LEFT,
-     K4ABT_JOINT_WRIST_LEFT,
-     K4ABT_JOINT_CLAVICLE_RIGHT,
-     K4ABT_JOINT_SHOULDER_RIGHT,
-     K4ABT_JOINT_ELBOW_RIGHT,
-     K4ABT_JOINT_WRIST_RIGHT,
-     K4ABT_JOINT_HIP_LEFT,
-     K4ABT_JOINT_KNEE_LEFT,
-     K4ABT_JOINT_ANKLE_LEFT,
-     K4ABT_JOINT_FOOT_LEFT,
-     K4ABT_JOINT_HIP_RIGHT,
-     K4ABT_JOINT_KNEE_RIGHT,
-     K4ABT_JOINT_ANKLE_RIGHT,
-     K4ABT_JOINT_FOOT_RIGHT,
-     K4ABT_JOINT_HEAD,
-     K4ABT_JOINT_NOSE,
-     K4ABT_JOINT_EYE_LEFT,
-     K4ABT_JOINT_EAR_LEFT,
-     K4ABT_JOINT_EYE_RIGHT,
-     K4ABT_JOINT_EAR_RIGHT,
-     K4ABT_JOINT_COUNT
+    public enum k4abt_joint_id_t : int {
+        K4ABT_JOINT_PELVIS = 0,
+        K4ABT_JOINT_SPINE_NAVEL, // sdk has this as naval
+        K4ABT_JOINT_SPINE_CHEST,
+        K4ABT_JOINT_NECK,
+        K4ABT_JOINT_CLAVICLE_LEFT,
+        K4ABT_JOINT_SHOULDER_LEFT,
+        K4ABT_JOINT_ELBOW_LEFT,
+        K4ABT_JOINT_WRIST_LEFT,
+        K4ABT_JOINT_HAND_LEFT,
+        K4ABT_JOINT_HANDTIP_LEFT,
+        K4ABT_JOINT_THUMB_LEFT,
+        K4ABT_JOINT_CLAVICLE_RIGHT,
+        K4ABT_JOINT_SHOULDER_RIGHT,
+        K4ABT_JOINT_ELBOW_RIGHT,
+        K4ABT_JOINT_WRIST_RIGHT,
+        K4ABT_JOINT_HAND_RIGHT,
+        K4ABT_JOINT_HANDTIP_RIGHT,
+        K4ABT_JOINT_THUMB_RIGHT,
+        K4ABT_JOINT_HIP_LEFT,
+        K4ABT_JOINT_KNEE_LEFT,
+        K4ABT_JOINT_ANKLE_LEFT,
+        K4ABT_JOINT_FOOT_LEFT,
+        K4ABT_JOINT_HIP_RIGHT,
+        K4ABT_JOINT_KNEE_RIGHT,
+        K4ABT_JOINT_ANKLE_RIGHT,
+        K4ABT_JOINT_FOOT_RIGHT,
+        K4ABT_JOINT_HEAD,
+        K4ABT_JOINT_NOSE,
+        K4ABT_JOINT_EYE_LEFT,
+        K4ABT_JOINT_EAR_LEFT,
+        K4ABT_JOINT_EYE_RIGHT,
+        K4ABT_JOINT_EAR_RIGHT,
+        K4ABT_JOINT_COUNT
     }
 
+    private Dictionary<k4abt_joint_id_t, k4abt_joint_id_t> jointConnections = new Dictionary<k4abt_joint_id_t, k4abt_joint_id_t>() {
+        { k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_THUMB_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT},
+        { k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT, k4abt_joint_id_t.K4ABT_JOINT_WRIST_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_WRIST_LEFT, k4abt_joint_id_t.K4ABT_JOINT_ELBOW_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_ELBOW_LEFT, k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT, k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+
+        { k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_THUMB_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT},
+        { k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_WRIST_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_WRIST_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_ELBOW_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_ELBOW_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+
+        { k4abt_joint_id_t.K4ABT_JOINT_EAR_LEFT, k4abt_joint_id_t.K4ABT_JOINT_EYE_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_EYE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NOSE },
+
+        { k4abt_joint_id_t.K4ABT_JOINT_EAR_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_NOSE },
+
+        { k4abt_joint_id_t.K4ABT_JOINT_NOSE, k4abt_joint_id_t.K4ABT_JOINT_HEAD },
+        { k4abt_joint_id_t.K4ABT_JOINT_HEAD, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+
+        { k4abt_joint_id_t.K4ABT_JOINT_NECK, k4abt_joint_id_t.K4ABT_JOINT_SPINE_CHEST },
+        { k4abt_joint_id_t.K4ABT_JOINT_SPINE_CHEST, k4abt_joint_id_t.K4ABT_JOINT_SPINE_NAVEL },
+        { k4abt_joint_id_t.K4ABT_JOINT_SPINE_NAVEL, k4abt_joint_id_t.K4ABT_JOINT_PELVIS },
+
+        { k4abt_joint_id_t.K4ABT_JOINT_FOOT_LEFT, k4abt_joint_id_t.K4ABT_JOINT_ANKLE_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_ANKLE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_KNEE_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_KNEE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HIP_LEFT },
+        { k4abt_joint_id_t.K4ABT_JOINT_HIP_LEFT, k4abt_joint_id_t.K4ABT_JOINT_PELVIS },
+
+        { k4abt_joint_id_t.K4ABT_JOINT_FOOT_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_ANKLE_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_ANKLE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_KNEE_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_KNEE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HIP_RIGHT },
+        { k4abt_joint_id_t.K4ABT_JOINT_HIP_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_PELVIS },
+    };
+
+
+    public enum k4abt_joint_confidence_level : int
+    {
+        K4ABT_JOINT_CONFIDENCE_NONE = 0,
+        K4ABT_JOINT_CONFIDENCE_LOW,
+        K4ABT_JOINT_CONFIDENCE_MEDIUM,
+        K4ABT_JOINT_CONFIDENCE_HIGH,
+        K4ABT_JOINT_CONFIDENCE_COUNT,
+    }
+
+    public struct AKJoint
+    {
+        public Vector3 position;
+        public Quaternion orientation;
+        public k4abt_joint_confidence_level confidence_level;
+    }
+
+    public struct AKSkeleton
+    {
+        public AKJoint[] joints;
+    }
+
+    /* C#/c interop?????
     public struct k4abt_joint_t {
-      public float x;
-      public float y;
-      public float z;
-      public fixed float q[4];
+        public float x;
+        public float y;
+        public float z;
+        public fixed float q[4];
     }
-
+    
     public struct k4abt_skeleton_t {
       public fixed k4abt_joint_t joints[K4ABT_JOINT_COUNT];
     }
+    */
     #endregion
 
     const int MAX_SKELETONS = 32; // should be impossible
 
-    public k4a_color_resolution_t color_resolution = k4a_color_resolution_t.K4A_COLOR_RESOLUTION_720P;
-    public k4a_depth_mode_t depth_mode = k4a_depth_mode_t.K4A_DEPTH_MODE_WFOV_UNBINNED;
+    public k4a_color_resolution_t color_resolution = k4a_color_resolution_t.K4A_COLOR_RESOLUTION_2160P;
+    public k4a_depth_mode_t depth_mode = k4a_depth_mode_t.K4A_DEPTH_MODE_NFOV_UNBINNED;
     public k4a_fps_t fps_mode = k4a_fps_t.K4A_FRAMES_PER_SECOND_30;
 
     public struct camInfo
@@ -244,13 +317,15 @@ public class akplay : MonoBehaviour {
         public byte[] colorBytes;
         public byte[] depthBytes;
 
-        public k4abt_skeleton_t[] skeletonStructs;
+        public byte[] skeletonBytes;
+        public AKSkeleton[] skeletons;
 
         public float[] XYZMap;
         public byte[] XYZMapBytes;
 
         public GCHandle colorHandle;
         public GCHandle depthHandle;
+        public GCHandle skeletonHandle;
 
         //public GameObject registeredCube;
 
@@ -363,6 +438,26 @@ public class akplay : MonoBehaviour {
 
     public float slider = 1.0f;
 
+    public class SkeletonVis
+    {
+        public GameObject[] joints;
+        public GameObject[] bones;
+
+        public SkeletonVis(GameObject jointPrefab, GameObject bonePrefab)
+        {
+            joints = new GameObject[(int)k4abt_joint_id_t.K4ABT_JOINT_COUNT];
+            bones = new GameObject[(int)k4abt_joint_id_t.K4ABT_JOINT_COUNT - 1];
+            for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
+            {
+                joints[j] = GameObject.Instantiate(jointPrefab);
+                if (j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT - 1)
+                {
+                    bones[j] = GameObject.Instantiate(bonePrefab);
+                }
+            }
+        }
+    }
+
 
     void adjustVisualizationArray(int numCameras)
     {
@@ -370,26 +465,35 @@ public class akplay : MonoBehaviour {
         if (visualizationArray.Length != numCameras)
         {
             GameObject[] vizArrayTemp = new GameObject[numCameras];
+            List<SkeletonVis>[] skelVisArrayTemp = new List<SkeletonVis>[numCameras];
+
             if (visualizationArray.Length < numCameras)
             {
                 for (int i = 0; i < visualizationArray.Length; i++)
                 {
                     vizArrayTemp[i] = visualizationArray[i];
+                    skelVisArrayTemp[i] = skeletonVisArray[i];
                 }
                 for (int i = visualizationArray.Length; i < numCameras; i++)
                 {
                     vizArrayTemp[i] = GameObject.Instantiate(visualizationPrefab);
                     vizArrayTemp[i].name = "Visualization_" + i;
+
+
+                    skelVisArrayTemp[i] = new List<SkeletonVis>();
                 }
                 visualizationArray = vizArrayTemp;
+                skeletonVisArray = skelVisArrayTemp;
             }
             else
             {
                 for (int i = 0; i < numCameras; i++)
                 {
                     vizArrayTemp[i] = visualizationArray[i];
+                    skelVisArrayTemp[i] = skeletonVisArray[i];
                 }
                 visualizationArray = vizArrayTemp;
+                skeletonVisArray = skelVisArrayTemp;
             }
         }
     }
@@ -398,7 +502,8 @@ public class akplay : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
+        System.Environment.SetEnvironmentVariable("K4ABT_ENABLE_LOG_TO_A_FILE", "C:\\Users\\realityLabDemo01\\Desktop\\aaa.log");
+        System.Environment.SetEnvironmentVariable("K4ABT_LOG_LEVEL", "i");
 
 
         filePath = Application.dataPath + "/AKPlugin_result.txt";
@@ -408,6 +513,8 @@ public class akplay : MonoBehaviour {
         {
             superDebug("Enumerating devices...");
         }
+
+        // superDebug("DEATH COMES: " + TestKinect_main());
 
         int numCameras = enumerateDevices();
         for (int i = 0; i < numCameras; i++)
@@ -468,7 +575,15 @@ public class akplay : MonoBehaviour {
 
             ci.colorBytes = new byte[ci.color_width * ci.color_height * 4];
             ci.depthBytes = new byte[ci.depth_width * ci.depth_height * 2];
-            ci.skeletonStructs = new k4abt_skeleton_t[MAX_SKELETONS];
+            // position quaternion confidence_level
+            const uint SIZEOF_K4ABT_JOINT_T = sizeof(float) * (3 + 4) + sizeof(int);
+            const uint SIZEOF_K4ABT_SKELETON_T = SIZEOF_K4ABT_JOINT_T * (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT;
+            ci.skeletonBytes = new byte[SIZEOF_K4ABT_SKELETON_T * MAX_SKELETONS];
+            ci.skeletons = new AKSkeleton[MAX_SKELETONS];
+            for (int ji = 0; ji < MAX_SKELETONS; ji++)
+            {
+                ci.skeletons[ji].joints = new AKJoint[(int)k4abt_joint_id_t.K4ABT_JOINT_COUNT];
+            }
             if (verbose)
             {
                 superDebug("setting color bytes length for camera: " + i + " to: " + ci.colorBytes.Length);
@@ -480,7 +595,7 @@ public class akplay : MonoBehaviour {
 
             ci.colorHandle = GCHandle.Alloc(ci.colorBytes, GCHandleType.Pinned);
             ci.depthHandle = GCHandle.Alloc(ci.depthBytes, GCHandleType.Pinned);
-            ci.skeletonHandle = GCHandle.Alloc(ci.skeletonStructs, GCHandleType.Pinned);
+            ci.skeletonHandle = GCHandle.Alloc(ci.skeletonBytes, GCHandleType.Pinned);
 
             ci.XYZMap = new float[ci.depth_width * ci.depth_height * 2];
             ci.XYZMapBytes = new byte[ci.depth_width * ci.depth_height * 8];
@@ -1011,7 +1126,7 @@ public class akplay : MonoBehaviour {
 
                 //resize on a compute shader:
 
-
+                ReadSkeletons(i);
 
             }
         }
@@ -1019,6 +1134,72 @@ public class akplay : MonoBehaviour {
 
 
 	}
+
+    private void ReadSkeletons(int i)
+    {
+        var reader = new BinaryReader(new MemoryStream(camInfoList[i].skeletonBytes));
+        bool anyRead = false;
+        for (int skelI = 0; skelI < MAX_SKELETONS; skelI++)
+        {
+            var firstFloat = reader.ReadSingle();
+            if (firstFloat == 0)
+            {
+                break;
+            }
+
+            anyRead = true;
+
+            for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
+            {
+                float x = firstFloat;
+                if (j != 0)
+                {
+                    x = reader.ReadSingle();
+                }
+                float y = reader.ReadSingle();
+                float z = reader.ReadSingle();
+                float qw = reader.ReadSingle();
+                float qx = reader.ReadSingle();
+                float qy = reader.ReadSingle();
+                float qz = reader.ReadSingle();
+                int confidence = reader.ReadInt32();
+
+                const float mmToM = 0.001f;
+                camInfoList[i].skeletons[skelI].joints[j].position = new Vector3(x * mmToM, -y * mmToM, z * mmToM);
+                camInfoList[i].skeletons[skelI].joints[j].orientation = new Quaternion(qw, qx, qy, qz);
+                camInfoList[i].skeletons[skelI].joints[j].confidence_level = (k4abt_joint_confidence_level)confidence;
+            }
+            if (skelI >= skeletonVisArray[i].Count)
+            {
+                skeletonVisArray[i].Add(new SkeletonVis(jointPrefab, bonePrefab));
+            }
+            updateSkeletonVis(camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
+            
+        }
+        // Debug.Log(camInfoList[i].skeletonFloats);
+    }
+
+    private void updateSkeletonVis(AKSkeleton skeleton, SkeletonVis vis)
+    {
+        for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
+        {
+            vis.joints[j].transform.position = skeleton.joints[j].position;
+        }
+
+        // Iterate over all bones, skipping pelvis
+        for (int b = 1; b < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; b++)
+        {
+            var bone = vis.bones[b - 1];
+            var jointA = skeleton.joints[b];
+            var jointB = skeleton.joints[(int)jointConnections[(k4abt_joint_id_t)b]];
+            var avgPosition = jointA.position + jointB.position;
+            avgPosition.Scale(new Vector3(0.5f, 0.5f, 0.5f));
+
+            bone.transform.position = avgPosition;
+            bone.transform.up = jointB.position - jointA.position;
+            bone.transform.localScale = new Vector3(0.1f, (jointB.position - jointA.position).magnitude / 2.0f, 0.1f);
+        }
+    }
 
     private void OnApplicationQuit()
     {
