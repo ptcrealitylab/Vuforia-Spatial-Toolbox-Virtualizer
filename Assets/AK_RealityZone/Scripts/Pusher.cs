@@ -72,10 +72,11 @@ public class Pusher : MonoBehaviour {
             lastTime = Time.time;
             if (connected && pushTask.IsCompleted)
             {
+                string encodedBytes = getScreenshot();
+
                 pushTask = Task.Run(() =>
                 {
                     //send message!
-                    string encodedBytes = getScreenShot();
                     //string encodedDepthBytes = getDepthScreenshot();
                     Manager.Socket.Emit("image", encodedBytes);
                 });
@@ -109,7 +110,7 @@ public class Pusher : MonoBehaviour {
     Texture2D emergencyTex;
 
     public bool rescale = false;
-    string getScreenShot()
+    string getScreenshot()
     {
         RenderTexture rt = new RenderTexture(resWidth, resHeight, 32);
         //RenderTexture rt = new RenderTexture(resWidth, resHeight, 24, RenderTextureFormat.Depth);
@@ -140,7 +141,7 @@ public class Pusher : MonoBehaviour {
 
             //TextureScale.Bilinear(tex, (int)(resWidth/resolutionFactor), (int)(resHeight/resolutionFactor));
             emergencyDebugCube.GetComponent<Renderer>().material.mainTexture = resizedTex;
-            
+
         }
 
         //debugCube.GetComponent<Renderer>().material.mainTexture = tex;
@@ -148,7 +149,6 @@ public class Pusher : MonoBehaviour {
         cam.GetComponent<Camera>().targetTexture = null;
         RenderTexture.active = null; // JC: added to avoid errors
         Destroy(rt);
-
         byte[] bytes;
         string output;
         if (useJPG)
@@ -161,7 +161,6 @@ public class Pusher : MonoBehaviour {
             {
                 bytes = tex.EncodeToJPG();
             }
-
             output = "data:image/jpg;base64," + System.Convert.ToBase64String(bytes);
         }
         else
