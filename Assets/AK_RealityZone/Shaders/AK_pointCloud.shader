@@ -232,7 +232,6 @@ Shader "Custom/AK_pointCloud"
 					//color_uv.x = color_uv.x * _ColorTex_TexelSize.x;
 					//color_uv.y = _Play - (color_uv.y * _ColorTex_TexelSize.y);
 					//color_uv.y = _Play;
-
 					color_uv.x = dx * _ColorTex_TexelSize.x;
 					color_uv.y = dy * _ColorTex_TexelSize.y;
 
@@ -305,7 +304,7 @@ Shader "Custom/AK_pointCloud"
 
 					float size = _Size * i[0].depth / 2;
 					float aspect = 1.9;
-					float colorSize = 1;
+					float colorSize = 0.5;
 					float4 offset1 = float4(-0.1, 0.1 * aspect, 0, 0)*size;
 					o.position = o.position + offset1;
 					o.color_uv = i[0].color_uv + colorSize * float2(-_DepthTex_TexelSize.x, _DepthTex_TexelSize.y);
@@ -366,7 +365,7 @@ Shader "Custom/AK_pointCloud"
 				fixed4 frag(PS_INPUT i) : SV_Target
 				{
 					float4 color_uv = float4(i.color_uv.x, i.color_uv.y, 0, 0);
-					return float4(tex2Dlod(_ColorTex, color_uv).rgb, 1.0f);
+					return float4(tex2Dlod(_ColorTex, color_uv).rgb, 0.5f);
 				}
 				ENDCG
 			}
