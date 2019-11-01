@@ -17,7 +17,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin102";
+    const string dllName = "AKPlugin103";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -275,9 +275,9 @@ public class akplay : MonoBehaviour {
 
     const int MAX_SKELETONS = 32; // should be impossible
 
-    public k4a_color_resolution_t color_resolution = k4a_color_resolution_t.K4A_COLOR_RESOLUTION_2160P;
+    public k4a_color_resolution_t color_resolution = k4a_color_resolution_t.K4A_COLOR_RESOLUTION_1536P;
     public k4a_depth_mode_t depth_mode = k4a_depth_mode_t.K4A_DEPTH_MODE_NFOV_UNBINNED;
-    public k4a_fps_t fps_mode = k4a_fps_t.K4A_FRAMES_PER_SECOND_30;
+    public k4a_fps_t fps_mode = k4a_fps_t.K4A_FRAMES_PER_SECOND_15;
 
     public struct camInfo
     {
@@ -1173,31 +1173,32 @@ public class akplay : MonoBehaviour {
             {
                 skeletonVisArray[i].Add(new SkeletonVis(jointPrefab, bonePrefab));
             }
-            updateSkeletonVis(camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
+            updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
             
         }
         // Debug.Log(camInfoList[i].skeletonFloats);
     }
 
-    private void updateSkeletonVis(AKSkeleton skeleton, SkeletonVis vis)
+    private void updateSkeletonVis(GameObject cameraVis, AKSkeleton skeleton, SkeletonVis vis)
     {
         for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
         {
-            vis.joints[j].transform.position = skeleton.joints[j].position;
+            vis.joints[j].transform.parent = cameraVis.transform;
+            vis.joints[j].transform.localPosition = skeleton.joints[j].position;
         }
 
         // Iterate over all bones, skipping pelvis
         for (int b = 1; b < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; b++)
         {
             var bone = vis.bones[b - 1];
-            var jointA = skeleton.joints[b];
-            var jointB = skeleton.joints[(int)jointConnections[(k4abt_joint_id_t)b]];
-            var avgPosition = jointA.position + jointB.position;
+            var jointAPos = vis.joints[b].transform.position;
+            var jointBPos = vis.joints[(int)jointConnections[(k4abt_joint_id_t)b]].transform.position;
+            var avgPosition = jointAPos + jointBPos;
             avgPosition.Scale(new Vector3(0.5f, 0.5f, 0.5f));
 
             bone.transform.position = avgPosition;
-            bone.transform.up = jointB.position - jointA.position;
-            bone.transform.localScale = new Vector3(0.1f, (jointB.position - jointA.position).magnitude / 2.0f, 0.1f);
+            bone.transform.up = jointBPos - jointAPos;
+            bone.transform.localScale = new Vector3(0.1f, (jointBPos - jointAPos).magnitude / 2.0f, 0.1f);
         }
     }
 
