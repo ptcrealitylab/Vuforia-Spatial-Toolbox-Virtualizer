@@ -458,6 +458,18 @@ public class akplay : MonoBehaviour {
                 }
             }
         }
+
+        public void Remove()
+        {
+            foreach (GameObject joint in joints)
+            {
+                Destroy(joint);
+            }
+            foreach (GameObject bone in bones)
+            {
+                Destroy(bone);
+            }
+        }
     }
 
 
@@ -1141,7 +1153,8 @@ public class akplay : MonoBehaviour {
     {
         var reader = new BinaryReader(new MemoryStream(camInfoList[i].skeletonBytes));
         bool anyRead = false;
-        for (int skelI = 0; skelI < MAX_SKELETONS; skelI++)
+        int skelI = 0;
+        for (skelI = 0; skelI < MAX_SKELETONS; skelI++)
         {
             var firstFloat = reader.ReadSingle();
             if (firstFloat == 0)
@@ -1177,6 +1190,12 @@ public class akplay : MonoBehaviour {
             }
             updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
             
+        }
+        while (skelI < skeletonVisArray[i].Count)
+        {
+            var excessSkelVis = skeletonVisArray[i][skeletonVisArray[i].Count - 1];
+            excessSkelVis.Remove();
+            skeletonVisArray[i].RemoveAt(skeletonVisArray[i].Count - 1);
         }
         SendSkeletonData();
         // Debug.Log(camInfoList[i].skeletonFloats);
