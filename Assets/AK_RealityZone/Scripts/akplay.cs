@@ -4,12 +4,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using AOT;
 using System.Threading;
-//using SimpleJSON;
+
 //using OpenCVForUnity;
 
 public class akplay : MonoBehaviour {
@@ -104,6 +105,7 @@ public class akplay : MonoBehaviour {
     public GameObject jointPrefab;
     public GameObject bonePrefab;
     public Shader AK_pointCloudShader;
+    public Pusher pusher;
 
     public bool camerasReady = false;
 
@@ -1176,6 +1178,7 @@ public class akplay : MonoBehaviour {
             updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
             
         }
+        SendSkeletonData();
         // Debug.Log(camInfoList[i].skeletonFloats);
     }
 
@@ -1200,6 +1203,51 @@ public class akplay : MonoBehaviour {
             bone.transform.up = jointBPos - jointAPos;
             bone.transform.localScale = new Vector3(0.1f, (jointBPos - jointAPos).magnitude / 2.0f, 0.1f);
         }
+    }
+
+    private void SendSkeletonData()
+    {
+        // return [[sk0, sk1], [sk0, sk1]]
+        // sk0 = {joints: [j0, j1]}
+        // j0 = {x, y, z}
+
+        StringBuilder sb = new StringBuilder("[");
+        for (int camI = 0; camI < skeletonVisArray.Length; camI++)
+        {
+            // Sends over the visualization's coordinates for each camera since those have been transformed into world space
+            var skelVisualizations = skeletonVisArray[camI];
+            sb.Append("[");
+            for (int visI = 0; visI < skelVisualizations.Count; visI++)
+            {
+                sb.Append("[");
+                var skeleton = skelVisualizations[visI];
+
+                for (int j = 0; j < skeleton.joints.Length; j++)
+                {
+                    var joint = skeleton.joints[j];
+                    sb.AppendFormat("{{\"x\":{0},\"y\":{1},\"z\":{2}}}",
+                        joint.transform.position.x,
+                        joint.transform.position.y,
+                        joint.transform.position.z);
+                    if (j < skeleton.joints.Length - 1)
+                    {
+                        sb.Append(",");
+                    }
+                }
+                sb.Append("]");
+                if (visI < skelVisualizations.Count - 1)
+                {
+                    sb.Append(",");
+                }
+            }
+            sb.Append("]");
+            if (camI < skeletonVisArray.Length - 1)
+            {
+                sb.Append(",");
+            }
+        }
+        sb.Append("]");
+        pusher.SendSkeleton(sb.ToString());
     }
 
     private void OnApplicationQuit()

@@ -366,6 +366,14 @@ public class Pusher : MonoBehaviour {
         
     }
 
+    public void SendSkeleton(string skeletonObject)
+    {
+        if (connected)
+        {
+            Manager.Socket.Emit("realityZoneSkeleton", skeletonObject);
+        }
+    }
+
     void OnPhoneResolution(Socket socket, Packet packet, params object[] args)
     {
         Debug.Log("phone resolution received: " + packet);
