@@ -18,7 +18,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin103";
+    const string dllName = "AKPlugin107";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -1197,7 +1197,7 @@ public class akplay : MonoBehaviour {
             excessSkelVis.Remove();
             skeletonVisArray[i].RemoveAt(skeletonVisArray[i].Count - 1);
         }
-        SendSkeletonData();
+        // SendSkeletonData();
         // Debug.Log(camInfoList[i].skeletonFloats);
     }
 
@@ -1226,6 +1226,10 @@ public class akplay : MonoBehaviour {
 
     private void SendSkeletonData()
     {
+        if (!pusher)
+        {
+            return;
+        }
         // return [[sk0, sk1], [sk0, sk1]]
         // sk0 = {joints: [j0, j1]}
         // j0 = {x, y, z}
