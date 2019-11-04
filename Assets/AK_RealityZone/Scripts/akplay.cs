@@ -101,7 +101,7 @@ public class akplay : MonoBehaviour {
 
     public GameObject[] visualizationArray;
     public GameObject visualizationPrefab;
-    public List<SkeletonVis>[] skeletonVisArray;
+    public Dictionary<uint, SkeletonVis>[] skeletonVisArray;
     public GameObject jointPrefab;
     public GameObject bonePrefab;
     public GameObject humanMarkerPrefab;
@@ -442,12 +442,14 @@ public class akplay : MonoBehaviour {
 
     public float slider = 1.0f;
 
+
     public class SkeletonVis
     {
         public uint id;
         public GameObject[] joints;
         public GameObject[] bones;
         public GameObject humanMarker;
+        public bool seen = true;
 
         public SkeletonVis(uint _id, GameObject jointPrefab, GameObject bonePrefab, GameObject humanMarkerPrefab)
         {
@@ -463,6 +465,7 @@ public class akplay : MonoBehaviour {
                 }
             }
             humanMarker = GameObject.Instantiate(humanMarkerPrefab);
+            humanMarker.GetComponent<MeshRenderer>().material.SetColor("_Color", markerColors[id % markerColors.Length]);
         }
 
         public void Remove()
@@ -477,6 +480,19 @@ public class akplay : MonoBehaviour {
             }
             Destroy(humanMarker);
         }
+
+        private static readonly UnityEngine.Color[] markerColors = {
+            new UnityEngine.Color(0x4e / 255.0f, 0x79 / 255.0f, 0xa7 / 255.0f, 1),
+            new UnityEngine.Color(0xf2 / 255.0f, 0x8e / 255.0f, 0x2c / 255.0f, 1),
+            new UnityEngine.Color(0xe1 / 255.0f, 0x57 / 255.0f, 0x59 / 255.0f, 1),
+            new UnityEngine.Color(0x76 / 255.0f, 0xb7 / 255.0f, 0xb2 / 255.0f, 1),
+            new UnityEngine.Color(0x59 / 255.0f, 0xa1 / 255.0f, 0x4f / 255.0f, 1),
+            new UnityEngine.Color(0xed / 255.0f, 0xc9 / 255.0f, 0x49 / 255.0f, 1),
+            new UnityEngine.Color(0xaf / 255.0f, 0x7a / 255.0f, 0xa1 / 255.0f, 1),
+            new UnityEngine.Color(0xff / 255.0f, 0x9d / 255.0f, 0xa7 / 255.0f, 1),
+            new UnityEngine.Color(0x9c / 255.0f, 0x75 / 255.0f, 0x5f / 255.0f, 1),
+            new UnityEngine.Color(0xba / 255.0f, 0xb0 / 255.0f, 0xab / 255.0f, 1)
+        };
     }
 
 
@@ -486,7 +502,7 @@ public class akplay : MonoBehaviour {
         if (visualizationArray.Length != numCameras)
         {
             GameObject[] vizArrayTemp = new GameObject[numCameras];
-            List<SkeletonVis>[] skelVisArrayTemp = new List<SkeletonVis>[numCameras];
+            Dictionary<uint, SkeletonVis>[] skelVisArrayTemp = new Dictionary<uint, SkeletonVis>[numCameras];
 
             if (visualizationArray.Length < numCameras)
             {
@@ -501,7 +517,7 @@ public class akplay : MonoBehaviour {
                     vizArrayTemp[i].name = "Visualization_" + i;
 
 
-                    skelVisArrayTemp[i] = new List<SkeletonVis>();
+                    skelVisArrayTemp[i] = new Dictionary<uint, SkeletonVis>();
                 }
                 visualizationArray = vizArrayTemp;
                 skeletonVisArray = skelVisArrayTemp;
@@ -1167,6 +1183,9 @@ public class akplay : MonoBehaviour {
     {
         var reader = new BinaryReader(new MemoryStream(camInfoList[i].skeletonBytes));
         int skelI = 0;
+        foreach (KeyValuePair<uint, SkeletonVis> entry in skeletonVisArray[i]) {
+            entry.Value.seen = false;
+        }
         for (skelI = 0; skelI < MAX_SKELETONS; skelI++)
         {
             uint id = reader.ReadUInt32();
@@ -1193,30 +1212,23 @@ public class akplay : MonoBehaviour {
                 camInfoList[i].skeletons[skelI].joints[j].orientation = new Quaternion(qw, qx, qy, qz);
                 camInfoList[i].skeletons[skelI].joints[j].confidence_level = (k4abt_joint_confidence_level)confidence;
             }
-            if (skelI >= skeletonVisArray[i].Count)
+            if (!skeletonVisArray[i].ContainsKey(id))
             {
-                skeletonVisArray[i].Add(new SkeletonVis(camInfoList[i].skeletons[skelI].id, jointPrefab, bonePrefab, humanMarkerPrefab));
+                skeletonVisArray[i].Add(id, new SkeletonVis(id, jointPrefab, bonePrefab, humanMarkerPrefab));
             }
-        }
-        
-        while (skelI < skeletonVisArray[i].Count)
-        {
-            var excessSkelVis = skeletonVisArray[i][skeletonVisArray[i].Count - 1];
-            excessSkelVis.Remove();
-            skeletonVisArray[i].RemoveAt(skeletonVisArray[i].Count - 1);
+            skeletonVisArray[i][id].seen = true;
+            updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][id]);
         }
 
-        Array.Sort(camInfoList[i].skeletons, 0, skelI, new AKSkeletonComparer());
-        
-        for (skelI = 0; skelI < skeletonVisArray[i].Count; skelI++)
-        {
-            if (skeletonVisArray[i][skelI].id != camInfoList[i].skeletons[skelI].id)
+        foreach (KeyValuePair<uint, SkeletonVis> entry in skeletonVisArray[i]) {
+            if (!entry.Value.seen)
             {
-                skeletonVisArray[i][skelI].Remove();
-                skeletonVisArray[i][skelI] = new SkeletonVis(camInfoList[i].skeletons[skelI].id, jointPrefab, bonePrefab, humanMarkerPrefab);
+                entry.Value.Remove();
+                skeletonVisArray[i].Remove(entry.Key);
             }
-            updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
         }
+
+        
         // SendSkeletonData();
         // Debug.Log(camInfoList[i].skeletonFloats);
     }
@@ -1262,12 +1274,16 @@ public class akplay : MonoBehaviour {
         for (int camI = 0; camI < skeletonVisArray.Length; camI++)
         {
             // Sends over the visualization's coordinates for each camera since those have been transformed into world space
-            var skelVisualizations = skeletonVisArray[camI];
+            SkeletonVis[] skelVisualizations = new SkeletonVis[skeletonVisArray[camI].Count];
+            skeletonVisArray[camI].Values.CopyTo(skelVisualizations, 0);
+
             sb.Append("[");
-            for (int visI = 0; visI < skelVisualizations.Count; visI++)
+            for (int visI = 0; visI < skelVisualizations.Length; visI++)
             {
-                sb.Append("[");
                 var skeleton = skelVisualizations[visI];
+                sb.Append("{");
+                sb.AppendFormat("\"id\":{0},", skeleton.id);
+                sb.Append("\"joints\":[");
 
                 for (int j = 0; j < skeleton.joints.Length; j++)
                 {
@@ -1281,8 +1297,8 @@ public class akplay : MonoBehaviour {
                         sb.Append(",");
                     }
                 }
-                sb.Append("]");
-                if (visI < skelVisualizations.Count - 1)
+                sb.Append("]}");
+                if (visI < skelVisualizations.Length - 1)
                 {
                     sb.Append(",");
                 }
