@@ -274,6 +274,7 @@
     <Compile Include="Assets\AK_RealityZone\Scripts\MachinePositionHack.cs" />
     <Compile Include="Assets\AK_RealityZone\Scripts\Pusher.cs" />
     <Compile Include="Assets\AK_RealityZone\Scripts\RANSAC3D.cs" />
+    <Compile Include="Assets\AK_RealityZone\Scripts\RobotController.cs" />
     <Compile Include="Assets\AK_RealityZone\Scripts\rotationTest.cs" />
     <Compile Include="Assets\AK_RealityZone\Scripts\ShadingController.cs" />
     <Compile Include="Assets\AK_RealityZone\Scripts\SimpleJSON.cs" />

@@ -18,7 +18,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin107";
+    const string dllName = "AKPlugin109";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -104,6 +104,7 @@ public class akplay : MonoBehaviour {
     public List<SkeletonVis>[] skeletonVisArray;
     public GameObject jointPrefab;
     public GameObject bonePrefab;
+    public GameObject humanMarkerPrefab;
     public Shader AK_pointCloudShader;
     public Pusher pusher;
 
@@ -258,6 +259,7 @@ public class akplay : MonoBehaviour {
 
     public struct AKSkeleton
     {
+        public uint id;
         public AKJoint[] joints;
     }
 
@@ -442,11 +444,14 @@ public class akplay : MonoBehaviour {
 
     public class SkeletonVis
     {
+        public uint id;
         public GameObject[] joints;
         public GameObject[] bones;
+        public GameObject humanMarker;
 
-        public SkeletonVis(GameObject jointPrefab, GameObject bonePrefab)
+        public SkeletonVis(uint _id, GameObject jointPrefab, GameObject bonePrefab, GameObject humanMarkerPrefab)
         {
+            id = _id;
             joints = new GameObject[(int)k4abt_joint_id_t.K4ABT_JOINT_COUNT];
             bones = new GameObject[(int)k4abt_joint_id_t.K4ABT_JOINT_COUNT - 1];
             for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
@@ -457,6 +462,7 @@ public class akplay : MonoBehaviour {
                     bones[j] = GameObject.Instantiate(bonePrefab);
                 }
             }
+            humanMarker = GameObject.Instantiate(humanMarkerPrefab);
         }
 
         public void Remove()
@@ -469,6 +475,7 @@ public class akplay : MonoBehaviour {
             {
                 Destroy(bone);
             }
+            Destroy(humanMarker);
         }
     }
 
@@ -591,8 +598,8 @@ public class akplay : MonoBehaviour {
             ci.depthBytes = new byte[ci.depth_width * ci.depth_height * 2];
             // position quaternion confidence_level
             const uint SIZEOF_K4ABT_JOINT_T = sizeof(float) * (3 + 4) + sizeof(int);
-            const uint SIZEOF_K4ABT_SKELETON_T = SIZEOF_K4ABT_JOINT_T * (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT;
-            ci.skeletonBytes = new byte[SIZEOF_K4ABT_SKELETON_T * MAX_SKELETONS];
+            const uint SIZEOF_K4ABT_BODY_T = sizeof(int) + SIZEOF_K4ABT_JOINT_T * (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT;
+            ci.skeletonBytes = new byte[SIZEOF_K4ABT_BODY_T * MAX_SKELETONS];
             ci.skeletons = new AKSkeleton[MAX_SKELETONS];
             for (int ji = 0; ji < MAX_SKELETONS; ji++)
             {
@@ -1148,29 +1155,31 @@ public class akplay : MonoBehaviour {
 
 
 	}
+    private class AKSkeletonComparer : IComparer<AKSkeleton>
+    {
+        public int Compare(AKSkeleton a, AKSkeleton b)
+        {
+            return a.id.CompareTo(b.id);
+        }
+    }
 
     private void ReadSkeletons(int i)
     {
         var reader = new BinaryReader(new MemoryStream(camInfoList[i].skeletonBytes));
-        bool anyRead = false;
         int skelI = 0;
         for (skelI = 0; skelI < MAX_SKELETONS; skelI++)
         {
-            var firstFloat = reader.ReadSingle();
-            if (firstFloat == 0)
+            uint id = reader.ReadUInt32();
+            if (id == 0)
             {
                 break;
             }
 
-            anyRead = true;
+            camInfoList[i].skeletons[skelI].id = id;
 
             for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
             {
-                float x = firstFloat;
-                if (j != 0)
-                {
-                    x = reader.ReadSingle();
-                }
+                float x = reader.ReadSingle();
                 float y = reader.ReadSingle();
                 float z = reader.ReadSingle();
                 float qw = reader.ReadSingle();
@@ -1186,16 +1195,27 @@ public class akplay : MonoBehaviour {
             }
             if (skelI >= skeletonVisArray[i].Count)
             {
-                skeletonVisArray[i].Add(new SkeletonVis(jointPrefab, bonePrefab));
+                skeletonVisArray[i].Add(new SkeletonVis(camInfoList[i].skeletons[skelI].id, jointPrefab, bonePrefab, humanMarkerPrefab));
             }
-            updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
-            
         }
+        
         while (skelI < skeletonVisArray[i].Count)
         {
             var excessSkelVis = skeletonVisArray[i][skeletonVisArray[i].Count - 1];
             excessSkelVis.Remove();
             skeletonVisArray[i].RemoveAt(skeletonVisArray[i].Count - 1);
+        }
+
+        Array.Sort(camInfoList[i].skeletons, 0, skelI, new AKSkeletonComparer());
+        
+        for (skelI = 0; skelI < skeletonVisArray[i].Count; skelI++)
+        {
+            if (skeletonVisArray[i][skelI].id != camInfoList[i].skeletons[skelI].id)
+            {
+                skeletonVisArray[i][skelI].Remove();
+                skeletonVisArray[i][skelI] = new SkeletonVis(camInfoList[i].skeletons[skelI].id, jointPrefab, bonePrefab, humanMarkerPrefab);
+            }
+            updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][skelI]);
         }
         // SendSkeletonData();
         // Debug.Log(camInfoList[i].skeletonFloats);
@@ -1222,6 +1242,10 @@ public class akplay : MonoBehaviour {
             bone.transform.up = jointBPos - jointAPos;
             bone.transform.localScale = new Vector3(0.1f, (jointBPos - jointAPos).magnitude / 2.0f, 0.1f);
         }
+
+        var head = vis.joints[(int)k4abt_joint_id_t.K4ABT_JOINT_HEAD];
+        vis.humanMarker.transform.position = head.transform.position;
+        vis.humanMarker.transform.position = vis.humanMarker.transform.position + new Vector3(0, 0.75f, 0);
     }
 
     private void SendSkeletonData()
