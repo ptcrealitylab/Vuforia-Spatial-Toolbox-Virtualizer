@@ -18,7 +18,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin109";
+    const string dllName = "AKPlugin114";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -450,6 +450,9 @@ public class akplay : MonoBehaviour {
         public GameObject[] bones;
         public GameObject humanMarker;
         public bool seen = true;
+        public float coalesceSqrMag = COALESCE_RANGE;
+        public uint coalescenceId = 0;
+        public int score;
 
         public SkeletonVis(uint _id, GameObject jointPrefab, GameObject bonePrefab, GameObject humanMarkerPrefab)
         {
@@ -481,6 +484,19 @@ public class akplay : MonoBehaviour {
             Destroy(humanMarker);
         }
 
+        public void SetActive(bool active)
+        {
+            foreach (GameObject joint in joints)
+            {
+                joint.SetActive(active);
+            }
+            foreach (GameObject bone in bones)
+            {
+                bone.SetActive(active);
+            }
+            humanMarker.SetActive(active);
+        }
+
         private static readonly UnityEngine.Color[] markerColors = {
             new UnityEngine.Color(0x4e / 255.0f, 0x79 / 255.0f, 0xa7 / 255.0f, 1),
             new UnityEngine.Color(0xf2 / 255.0f, 0x8e / 255.0f, 0x2c / 255.0f, 1),
@@ -493,6 +509,18 @@ public class akplay : MonoBehaviour {
             new UnityEngine.Color(0x9c / 255.0f, 0x75 / 255.0f, 0x5f / 255.0f, 1),
             new UnityEngine.Color(0xba / 255.0f, 0xb0 / 255.0f, 0xab / 255.0f, 1)
         };
+
+        public bool coalesced()
+        {
+            return coalescenceId != 0;
+        }
+
+        public void Reset()
+        {
+            coalesceSqrMag = COALESCE_RANGE;
+            coalescenceId = 0;
+            seen = false;
+        }
     }
 
 
@@ -1175,7 +1203,7 @@ public class akplay : MonoBehaviour {
         var reader = new BinaryReader(new MemoryStream(camInfoList[i].skeletonBytes));
         int skelI = 0;
         foreach (KeyValuePair<uint, SkeletonVis> entry in skeletonVisArray[i]) {
-            entry.Value.seen = false;
+            entry.Value.Reset();
         }
         for (skelI = 0; skelI < MAX_SKELETONS; skelI++)
         {
@@ -1211,30 +1239,120 @@ public class akplay : MonoBehaviour {
             updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][id]);
         }
 
-        foreach (KeyValuePair<uint, SkeletonVis> entry in skeletonVisArray[i]) {
+        var unseenSkeletons = new List<uint>();
+
+        foreach (KeyValuePair<uint, SkeletonVis> entry in skeletonVisArray[i])
+        {
             if (!entry.Value.seen)
             {
                 entry.Value.Remove();
-                skeletonVisArray[i].Remove(entry.Key);
+                unseenSkeletons.Add(entry.Key);
             }
+        }
+
+        foreach (uint id in unseenSkeletons)
+        {
+            skeletonVisArray[i].Remove(id);
         }
 
         // SendSkeletonData();
         // Debug.Log(camInfoList[i].skeletonFloats);
     }
 
+    private const float COALESCE_RANGE = 0.75f * 0.75f;
+
     private void HideExtraSkeletonVisualizations() {
         // For each skeletonVis check other camera's skeletonVis joints for
         // intersection and hide all with lower score
         // After each check mark all considered skeletons as coalesced
+        for (int i = 0; i < skeletonVisArray.Length; i++)
+        {
+            var mainSkelVis = skeletonVisArray[i];
+            Dictionary<uint, List<SkeletonVis>> allCoalescences = new Dictionary<uint, List<SkeletonVis>>();
+
+            foreach (KeyValuePair<uint, SkeletonVis> entry in skeletonVisArray[i])
+            {
+                var mainSV = entry.Value;
+                if (mainSV.coalesced())
+                {
+                    continue;
+                }
+
+                mainSV.coalescenceId = mainSV.id;
+                allCoalescences[mainSV.id] = new List<SkeletonVis>() { mainSV };
+
+                for (int j = i + 1; j < skeletonVisArray.Length; j++)
+                {
+                    foreach (KeyValuePair<uint, SkeletonVis> otherEntry in skeletonVisArray[j])
+                    {
+                        var otherSV = otherEntry.Value;
+
+                        var diff = mainSV.joints[(int)k4abt_joint_id_t.K4ABT_JOINT_PELVIS].transform.position -
+                            otherSV.joints[(int)k4abt_joint_id_t.K4ABT_JOINT_PELVIS].transform.position;
+
+                        var sqrMag = diff.sqrMagnitude;
+
+                        if (otherSV.coalesceSqrMag < sqrMag)
+                        {
+                            continue;
+                        }
+
+                        otherSV.coalesceSqrMag = sqrMag;
+                        otherSV.coalescenceId = mainSV.id;
+
+                        allCoalescences[mainSV.id].Add(otherSV);
+                    }
+                }
+                
+            }
+
+            foreach (KeyValuePair<uint, List<SkeletonVis>> entry in allCoalescences)
+            {
+                var coalescenceId = entry.Key;
+                var coalescence = entry.Value;
+                if (coalescence.Count == 0)
+                {
+                    continue;
+                }
+                var highestScoreI = 0;
+                for (int c = 1; c < coalescence.Count; c++)
+                {
+                    var otherSV = coalescence[c];
+                    // otherSV may have been stolen by a more-conflicting (closer) coalescence
+                    if (otherSV.coalescenceId != coalescenceId)
+                    {
+                        continue;
+                    }
+                    if (otherSV.score > coalescence[highestScoreI].score)
+                    {
+                        highestScoreI = c;
+                    }
+                }
+
+                for (int c = 0; c < coalescence.Count; c++)
+                {
+                    if (c == highestScoreI)
+                    {
+                        coalescence[c].SetActive(true);
+                    } else
+                    {
+                        coalescence[c].SetActive(false);
+                    }
+                    
+                }
+            }
+        }
     }
 
     private void updateSkeletonVis(GameObject cameraVis, AKSkeleton skeleton, SkeletonVis vis)
     {
+        vis.score = 0;
+
         for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
         {
             vis.joints[j].transform.parent = cameraVis.transform;
             vis.joints[j].transform.localPosition = skeleton.joints[j].position;
+            vis.score += (int)skeleton.joints[j].confidence_level;
         }
 
         // Iterate over all bones, skipping pelvis
