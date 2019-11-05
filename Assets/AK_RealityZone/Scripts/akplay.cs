@@ -18,7 +18,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin114";
+    const string dllName = "AKPlugin115";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -107,6 +107,9 @@ public class akplay : MonoBehaviour {
     public GameObject humanMarkerPrefab;
     public Shader AK_pointCloudShader;
     public Pusher pusher;
+    public GameObject lineRendererPrefab;
+    private Dictionary<uint, LineRenderer> lineRenderers = new Dictionary<uint, LineRenderer>();
+    private List<LineRenderer> defunctLineRenderers = new List<LineRenderer>();
 
     public bool camerasReady = false;
 
@@ -278,6 +281,7 @@ public class akplay : MonoBehaviour {
     #endregion
 
     const int MAX_SKELETONS = 32; // should be impossible
+    const uint MAX_BODY_IDS = 256; // Complete guess
 
     public k4a_color_resolution_t color_resolution = k4a_color_resolution_t.K4A_COLOR_RESOLUTION_1536P;
     public k4a_depth_mode_t depth_mode = k4a_depth_mode_t.K4A_DEPTH_MODE_NFOV_UNBINNED;
@@ -452,7 +456,8 @@ public class akplay : MonoBehaviour {
         public bool seen = true;
         public float coalesceSqrMag = COALESCE_RANGE;
         public uint coalescenceId = 0;
-        public int score;
+        public int score = 0;
+        public uint colorIndex = 0;
 
         public SkeletonVis(uint _id, GameObject jointPrefab, GameObject bonePrefab, GameObject humanMarkerPrefab)
         {
@@ -468,7 +473,6 @@ public class akplay : MonoBehaviour {
                 }
             }
             humanMarker = GameObject.Instantiate(humanMarkerPrefab);
-            humanMarker.GetComponent<MeshRenderer>().material.SetColor("_Color", markerColors[id % markerColors.Length]);
         }
 
         public void Remove()
@@ -495,9 +499,14 @@ public class akplay : MonoBehaviour {
                 bone.SetActive(active);
             }
             humanMarker.SetActive(active);
+
+            if (active)
+            {
+                UpdateMarkerColor();
+            }
         }
 
-        private static readonly UnityEngine.Color[] markerColors = {
+        public static readonly UnityEngine.Color[] markerColors = {
             new UnityEngine.Color(0x4e / 255.0f, 0x79 / 255.0f, 0xa7 / 255.0f, 1),
             new UnityEngine.Color(0xf2 / 255.0f, 0x8e / 255.0f, 0x2c / 255.0f, 1),
             new UnityEngine.Color(0xe1 / 255.0f, 0x57 / 255.0f, 0x59 / 255.0f, 1),
@@ -520,6 +529,11 @@ public class akplay : MonoBehaviour {
             coalesceSqrMag = COALESCE_RANGE;
             coalescenceId = 0;
             seen = false;
+        }
+
+        private void UpdateMarkerColor()
+        {
+            humanMarker.GetComponent<MeshRenderer>().material.SetColor("_Color", markerColors[colorIndex % markerColors.Length]);
         }
     }
 
@@ -567,9 +581,6 @@ public class akplay : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        System.Environment.SetEnvironmentVariable("K4ABT_ENABLE_LOG_TO_A_FILE", "C:\\Users\\realityLabDemo01\\Desktop\\aaa.log");
-        System.Environment.SetEnvironmentVariable("K4ABT_LOG_LEVEL", "i");
-
 
         filePath = Application.dataPath + "/AKPlugin_result.txt";
         System.IO.File.WriteAllText(filePath, "");
@@ -1195,6 +1206,7 @@ public class akplay : MonoBehaviour {
                 ReadSkeletons(i);
             }
             HideExtraSkeletonVisualizations();
+            AddPointsToHumanMarkerLines();
         }
     }
 
@@ -1314,6 +1326,21 @@ public class akplay : MonoBehaviour {
                 {
                     continue;
                 }
+
+                uint colorIndex = 0;
+                foreach (var skelVis in coalescence)
+                {
+                    if (skelVis.colorIndex != 0 && skelVis.coalescenceId == coalescenceId)
+                    {
+                        colorIndex = skelVis.colorIndex;
+                    }
+                }
+                if (colorIndex == 0)
+                {
+                    colorIndex = MAX_BODY_IDS * (uint)i + coalescenceId;
+                    coalescence[0].colorIndex = colorIndex;
+                }
+
                 var highestScoreI = 0;
                 for (int c = 1; c < coalescence.Count; c++)
                 {
@@ -1323,6 +1350,7 @@ public class akplay : MonoBehaviour {
                     {
                         continue;
                     }
+                    otherSV.colorIndex = colorIndex;
                     if (otherSV.score > coalescence[highestScoreI].score)
                     {
                         highestScoreI = c;
@@ -1338,10 +1366,47 @@ public class akplay : MonoBehaviour {
                     {
                         coalescence[c].SetActive(false);
                     }
-                    
                 }
             }
         }
+    }
+
+    private void AddPointsToHumanMarkerLines()
+    {
+        Dictionary<uint, LineRenderer> activeLineRenderers = new Dictionary<uint, LineRenderer>();
+
+        foreach (var skelVisArr in skeletonVisArray)
+        {
+            foreach (var entry in skelVisArr)
+            {
+                var skelVis = entry.Value;
+                if (!skelVis.humanMarker.activeSelf)
+                {
+                    continue;
+                }
+
+                if (!lineRenderers.ContainsKey(skelVis.colorIndex))
+                {
+                    var lrGO = GameObject.Instantiate(lineRendererPrefab);
+                    lineRenderers[skelVis.colorIndex] = lrGO.GetComponent<LineRenderer>();
+                    var color = SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
+                    lineRenderers[skelVis.colorIndex].material.SetColor("_Color", color);
+                }
+                var lr = lineRenderers[skelVis.colorIndex];
+                lr.positionCount += 1;
+                lr.SetPosition(lr.positionCount - 1, skelVis.humanMarker.transform.position);
+                activeLineRenderers[skelVis.colorIndex] = lr;
+            }
+        }
+        
+        foreach (var entry in lineRenderers) {
+            if (!activeLineRenderers.ContainsKey(entry.Key))
+            {
+                // Intentionally leaks inactive line renderers to persist line drawing process
+                defunctLineRenderers.Add(entry.Value);
+            }
+        }
+        lineRenderers = activeLineRenderers;
     }
 
     private void updateSkeletonVis(GameObject cameraVis, AKSkeleton skeleton, SkeletonVis vis)
