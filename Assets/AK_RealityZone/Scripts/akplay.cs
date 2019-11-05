@@ -1072,8 +1072,9 @@ public class akplay : MonoBehaviour {
 
     public float fps = 30.0f;
     float lastTime = 0.0f;
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
         //Debug.Log("************* setting cameras ready to true");
         camerasReady = true;
         //return;
@@ -1164,18 +1165,8 @@ public class akplay : MonoBehaviour {
                 //resize on a compute shader:
 
                 ReadSkeletons(i);
-
             }
-        }
-
-
-
-	}
-    private class AKSkeletonComparer : IComparer<AKSkeleton>
-    {
-        public int Compare(AKSkeleton a, AKSkeleton b)
-        {
-            return a.id.CompareTo(b.id);
+            HideExtraSkeletonVisualizations();
         }
     }
 
@@ -1228,9 +1219,14 @@ public class akplay : MonoBehaviour {
             }
         }
 
-        
         // SendSkeletonData();
         // Debug.Log(camInfoList[i].skeletonFloats);
+    }
+
+    private void HideExtraSkeletonVisualizations() {
+        // For each skeletonVis check other camera's skeletonVis joints for
+        // intersection and hide all with lower score
+        // After each check mark all considered skeletons as coalesced
     }
 
     private void updateSkeletonVis(GameObject cameraVis, AKSkeleton skeleton, SkeletonVis vis)
