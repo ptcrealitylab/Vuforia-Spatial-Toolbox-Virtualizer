@@ -459,6 +459,7 @@ public class akplay : MonoBehaviour {
         public bool seen = true;
         public float coalesceSqrMag = COALESCE_RANGE;
         public uint coalescenceId = 0;
+        // 37 is bad, 40-50 is iffy, 64 is perfect
         public int score = 0;
         public uint colorIndex = 0;
 
