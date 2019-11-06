@@ -111,6 +111,9 @@ public class akplay : MonoBehaviour {
     private Dictionary<uint, LineRenderer> lineRenderers = new Dictionary<uint, LineRenderer>();
     private List<LineRenderer> defunctLineRenderers = new List<LineRenderer>();
 
+
+    private bool showTrackedBodies = true;
+
     public bool camerasReady = false;
 
 
@@ -1112,12 +1115,51 @@ public class akplay : MonoBehaviour {
     public float fps = 30.0f;
     float lastTime = 0.0f;
 
+
     // Update is called once per frame
     void Update () {
         //Debug.Log("************* setting cameras ready to true");
         camerasReady = true;
-        //return;
-        if((Time.time-lastTime) > (1.0f / fps))
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            foreach (var defunctLine in defunctLineRenderers)
+            {
+                GameObject.Destroy(defunctLine.gameObject);
+            }
+            defunctLineRenderers.Clear();
+        }
+
+        if (Input.GetKeyDown(KeyCode.S) && visualizationArray.Length > 0)
+        {
+            var newActive = !visualizationArray[0].activeSelf;
+            foreach (var vis in visualizationArray)
+            {
+                vis.SetActive(newActive);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            showTrackedBodies = !showTrackedBodies;
+            foreach (var entry in lineRenderers)
+            {
+                entry.Value.gameObject.SetActive(showTrackedBodies);
+            }
+            foreach (var lr in defunctLineRenderers)
+            {
+                lr.gameObject.SetActive(showTrackedBodies);
+            }
+            foreach (var svArray in skeletonVisArray)
+            {
+                foreach (var entry in svArray)
+                {
+                    entry.Value.SetActive(showTrackedBodies);
+                }
+            }
+        }
+
+        if ((Time.time-lastTime) > (1.0f / fps))
         {
             lastTime = Time.time;
 
@@ -1390,19 +1432,27 @@ public class akplay : MonoBehaviour {
                     var lrGO = GameObject.Instantiate(lineRendererPrefab);
                     lineRenderers[skelVis.colorIndex] = lrGO.GetComponent<LineRenderer>();
                     var color = SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
+                    color.a = 0.5f;
                     lineRenderers[skelVis.colorIndex].material.SetColor("_Color", color);
                 }
                 var lr = lineRenderers[skelVis.colorIndex];
                 lr.positionCount += 1;
-                lr.SetPosition(lr.positionCount - 1, skelVis.humanMarker.transform.position);
+                var linePos = skelVis.humanMarker.transform.position;
+                // linePos.y = 0.1f;
+                lr.SetPosition(lr.positionCount - 1, linePos);
                 activeLineRenderers[skelVis.colorIndex] = lr;
+
+                if (!showTrackedBodies)
+                {
+                    lr.gameObject.SetActive(showTrackedBodies);
+                    skelVis.SetActive(showTrackedBodies);
+                }
             }
         }
         
         foreach (var entry in lineRenderers) {
             if (!activeLineRenderers.ContainsKey(entry.Key))
             {
-                // Intentionally leaks inactive line renderers to persist line drawing process
                 defunctLineRenderers.Add(entry.Value);
             }
         }
@@ -1436,7 +1486,10 @@ public class akplay : MonoBehaviour {
 
         var head = vis.joints[(int)k4abt_joint_id_t.K4ABT_JOINT_HEAD];
         vis.humanMarker.transform.position = head.transform.position;
-        vis.humanMarker.transform.position = vis.humanMarker.transform.position + new Vector3(0, 0.75f, 0);
+        vis.humanMarker.transform.position = vis.humanMarker.transform.position + new Vector3(0, 0.5f, 0);
+
+        
+        // Debug.Log("score: " + vis.score);
     }
 
     private void SendSkeletonData()
