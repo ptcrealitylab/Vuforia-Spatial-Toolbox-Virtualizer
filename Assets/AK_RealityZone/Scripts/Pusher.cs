@@ -25,7 +25,7 @@ public class Pusher : MonoBehaviour {
     private Material depthMat;
 
     private RenderTexture rt;
-    public bool sendColor = true;
+    public bool sendColorOnly = false;
     private Task pushTask = Task.CompletedTask;
 
     public bool connected = false;
@@ -82,18 +82,18 @@ public class Pusher : MonoBehaviour {
             lastTime = Time.time;
             if (connected && pushTask.IsCompleted)
             {
-                string encodedBytes = sendColor ? getScreenshot() : "";
-                string encodedDepthBytes = sendColor ? "" : getDepthScreenshot();
+                string encodedBytes = getScreenshot();
+                string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
 
                 pushTask = Task.Run(() =>
                 {
                     //send message!
-                    if (sendColor)
+                    if (sendColorOnly)
                     {
                         Manager.Socket.Emit("image", encodedBytes);
                     } else
                     {
-                        Manager.Socket.Emit("image", encodedDepthBytes);
+                        Manager.Socket.Emit("image", encodedBytes + ";_;" + encodedDepthBytes);
                     }
                 });
             }
