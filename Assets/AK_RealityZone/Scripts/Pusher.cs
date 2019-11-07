@@ -21,15 +21,25 @@ public class Pusher : MonoBehaviour {
     public GameObject cloner;
     public GameObject gifRecorder;
 
+    public Shader depthShader;
+    private Material depthMat;
+
+    private RenderTexture rt;
+    public bool sendColor = true;
     private Task pushTask = Task.CompletedTask;
 
     public bool connected = false;
     //public Vector3 debugVector;
     // Use this for initialization
     void Start () {
+        depthMat = new Material(depthShader);
         emergencyTex = new Texture2D(2, 2);
 
+        rt = new RenderTexture(resWidth, resHeight, 32);
         cam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
+        cam.GetComponent<Camera>().targetTexture = rt;
+        cam.GetComponent<Camera>().SetTargetBuffers(rt.colorBuffer, rt.depthBuffer);
+
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
 
@@ -58,7 +68,7 @@ public class Pusher : MonoBehaviour {
         Manager.Open();
 
         //connected = true;
-        tex = new Texture2D(resWidth,resHeight, TextureFormat.ARGB32, false);
+        tex = new Texture2D(resWidth, resHeight, TextureFormat.ARGB32, false);
     }
 
     float lastTime = 0.0f;
@@ -72,13 +82,19 @@ public class Pusher : MonoBehaviour {
             lastTime = Time.time;
             if (connected && pushTask.IsCompleted)
             {
-                string encodedBytes = getScreenshot();
+                string encodedBytes = sendColor ? getScreenshot() : "";
+                string encodedDepthBytes = sendColor ? "" : getDepthScreenshot();
 
                 pushTask = Task.Run(() =>
                 {
                     //send message!
-                    //string encodedDepthBytes = getDepthScreenshot();
-                    Manager.Socket.Emit("image", encodedBytes);
+                    if (sendColor)
+                    {
+                        Manager.Socket.Emit("image", encodedBytes);
+                    } else
+                    {
+                        Manager.Socket.Emit("image", encodedDepthBytes);
+                    }
                 });
             }
         }
@@ -112,17 +128,15 @@ public class Pusher : MonoBehaviour {
     public bool rescale = false;
     string getScreenshot()
     {
-        RenderTexture rt = new RenderTexture(resWidth, resHeight, 32);
         //RenderTexture rt = new RenderTexture(resWidth, resHeight, 24, RenderTextureFormat.Depth);
         //Debug.Log("capturing screen at: " + resWidth + " " + resHeight);
-        cam.GetComponent<Camera>().targetTexture = rt;
         cam.GetComponent<Camera>().Render();
         RenderTexture.active = rt;
         tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
         tex.Apply();
 
-        emergencyTex = tex;
-        emergencyDebugCube2.GetComponent<Renderer>().material.mainTexture = tex;
+        //emergencyTex = tex;
+        //emergencyDebugCube2.GetComponent<Renderer>().material.mainTexture = tex;
 
         if (rescale) {
             //TextureScale.Bilinear(tex, 512, 256);
@@ -146,9 +160,7 @@ public class Pusher : MonoBehaviour {
 
         //debugCube.GetComponent<Renderer>().material.mainTexture = tex;
 
-        cam.GetComponent<Camera>().targetTexture = null;
         RenderTexture.active = null; // JC: added to avoid errors
-        Destroy(rt);
         byte[] bytes;
         string output;
         if (useJPG)
@@ -187,8 +199,47 @@ public class Pusher : MonoBehaviour {
 
     string getDepthScreenshot()
     {
-        RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
-        return "";
+        cam.GetComponent<Camera>().Render();
+        RenderTexture.active = rt;
+        tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+        tex.Apply();
+        Graphics.Blit(tex, rt, depthMat);
+        tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+        tex.Apply();
+
+        if (rescale)
+        {
+            tex.ResizePro((int)(resWidth * resolutionFactor), (int)(resHeight * resolutionFactor), out resizedTex, false);
+        }
+
+        RenderTexture.active = null; // JC: added to avoid errors
+        byte[] bytes;
+        string output;
+        if (useJPG)
+        {
+            if (rescale)
+            {
+                bytes = resizedTex.EncodeToJPG();
+            }
+            else
+            {
+                bytes = tex.EncodeToJPG();
+            }
+            output = "data:image/jpg;base64," + System.Convert.ToBase64String(bytes);
+        }
+        else
+        {
+            if (rescale)
+            {
+                bytes = resizedTex.EncodeToPNG();
+            }
+            else
+            {
+                bytes = tex.EncodeToPNG();
+            }
+            output = output = "data:image/png;base64," + System.Convert.ToBase64String(bytes);
+        }
+        return output;
     }
 
     void OnDestroy()
@@ -361,9 +412,16 @@ public class Pusher : MonoBehaviour {
         //resWidth = 1920;
         //resHeight = 1080;
         //resHeight = resHeight * 2;
+        Destroy(tex);
         tex = new Texture2D(resWidth, resHeight, TextureFormat.ARGB32, false);
         cam.GetComponent<Camera>().aspect = (float)resWidth / (float)resHeight;
-        
+        Destroy(rt);
+        rt = new RenderTexture(resWidth, resHeight, 32);
+        cam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
+        cam.GetComponent<Camera>().targetTexture = rt;
+        cam.GetComponent<Camera>().SetTargetBuffers(rt.colorBuffer, rt.depthBuffer);
+
+
     }
 
     public void SendSkeleton(string skeletonObject)

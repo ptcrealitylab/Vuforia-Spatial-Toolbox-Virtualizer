@@ -1909,6 +1909,8 @@ MonoBehaviour:
   pusherOrigin: {fileID: 2110464627}
   cloner: {fileID: 0}
   gifRecorder: {fileID: 0}
+  depthShader: {fileID: 4800000, guid: f7e343e22108d2644a12220ff405390c, type: 3}
+  sendColor: 1
   connected: 0
   fps: 60
   resWidth: 480
