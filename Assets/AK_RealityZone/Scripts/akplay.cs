@@ -103,6 +103,7 @@ public class akplay : MonoBehaviour {
     public GameObject visualizationPrefab;
     public Dictionary<uint, SkeletonVis>[] skeletonVisArray;
     public GameObject jointPrefab;
+    public GameObject boringJointPrefab;
     public GameObject bonePrefab;
     public GameObject humanMarkerPrefab;
     public Shader AK_pointCloudShader;
@@ -205,31 +206,45 @@ public class akplay : MonoBehaviour {
         K4ABT_JOINT_COUNT
     }
 
-    private Dictionary<k4abt_joint_id_t, k4abt_joint_id_t> jointConnections = new Dictionary<k4abt_joint_id_t, k4abt_joint_id_t>() {
+    public static readonly Dictionary<k4abt_joint_id_t, bool> boringJoints = new Dictionary<k4abt_joint_id_t, bool>()
+    {
+        {k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_LEFT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_RIGHT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_HEAD, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_NOSE, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_EYE_LEFT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_EAR_LEFT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_EAR_RIGHT, true },
+    };
+
+    public static readonly Dictionary<k4abt_joint_id_t, k4abt_joint_id_t> jointConnections = new Dictionary<k4abt_joint_id_t, k4abt_joint_id_t>() {
         { k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT },
         { k4abt_joint_id_t.K4ABT_JOINT_THUMB_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT},
         { k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT, k4abt_joint_id_t.K4ABT_JOINT_WRIST_LEFT },
         { k4abt_joint_id_t.K4ABT_JOINT_WRIST_LEFT, k4abt_joint_id_t.K4ABT_JOINT_ELBOW_LEFT },
         { k4abt_joint_id_t.K4ABT_JOINT_ELBOW_LEFT, k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT },
-        { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT, k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_LEFT },
-        { k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+        // { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT, k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_LEFT },
+        // { k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+        { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
 
         { k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT },
         { k4abt_joint_id_t.K4ABT_JOINT_THUMB_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT},
         { k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_WRIST_RIGHT },
         { k4abt_joint_id_t.K4ABT_JOINT_WRIST_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_ELBOW_RIGHT },
         { k4abt_joint_id_t.K4ABT_JOINT_ELBOW_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_RIGHT },
-        { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_RIGHT },
-        { k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+        // { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_RIGHT },
+        // { k4abt_joint_id_t.K4ABT_JOINT_CLAVICLE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+        { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
 
-        { k4abt_joint_id_t.K4ABT_JOINT_EAR_LEFT, k4abt_joint_id_t.K4ABT_JOINT_EYE_LEFT },
-        { k4abt_joint_id_t.K4ABT_JOINT_EYE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NOSE },
+        // { k4abt_joint_id_t.K4ABT_JOINT_EAR_LEFT, k4abt_joint_id_t.K4ABT_JOINT_EYE_LEFT },
+        // { k4abt_joint_id_t.K4ABT_JOINT_EYE_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NOSE },
 
-        { k4abt_joint_id_t.K4ABT_JOINT_EAR_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT },
-        { k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_NOSE },
+        // { k4abt_joint_id_t.K4ABT_JOINT_EAR_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT },
+        // { k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_NOSE },
 
-        { k4abt_joint_id_t.K4ABT_JOINT_NOSE, k4abt_joint_id_t.K4ABT_JOINT_HEAD },
-        { k4abt_joint_id_t.K4ABT_JOINT_HEAD, k4abt_joint_id_t.K4ABT_JOINT_NECK },
+        // { k4abt_joint_id_t.K4ABT_JOINT_NOSE, k4abt_joint_id_t.K4ABT_JOINT_HEAD },
+        // { k4abt_joint_id_t.K4ABT_JOINT_HEAD, k4abt_joint_id_t.K4ABT_JOINT_NECK },
 
         { k4abt_joint_id_t.K4ABT_JOINT_NECK, k4abt_joint_id_t.K4ABT_JOINT_SPINE_CHEST },
         { k4abt_joint_id_t.K4ABT_JOINT_SPINE_CHEST, k4abt_joint_id_t.K4ABT_JOINT_SPINE_NAVEL },
@@ -463,20 +478,28 @@ public class akplay : MonoBehaviour {
         public int score = 0;
         public uint colorIndex = 0;
 
-        public SkeletonVis(uint _id, GameObject jointPrefab, GameObject bonePrefab, GameObject humanMarkerPrefab)
+        public SkeletonVis(uint _id, GameObject jointPrefab, GameObject boringJointPrefab, GameObject bonePrefab, GameObject humanMarkerPrefab)
         {
             id = _id;
             joints = new GameObject[(int)k4abt_joint_id_t.K4ABT_JOINT_COUNT];
-            bones = new GameObject[(int)k4abt_joint_id_t.K4ABT_JOINT_COUNT - 1];
+            bones = new GameObject[jointConnections.Count];
             for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
             {
-                joints[j] = GameObject.Instantiate(jointPrefab);
-                if (j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT - 1)
+                if (boringJoints.ContainsKey((k4abt_joint_id_t)j))
                 {
-                    bones[j] = GameObject.Instantiate(bonePrefab);
+                    joints[j] = GameObject.Instantiate(boringJointPrefab);
+                }
+                else
+                {
+                    joints[j] = GameObject.Instantiate(jointPrefab);
                 }
             }
+            for (int j = 0; j < jointConnections.Count; j++)
+            {
+                bones[j] = GameObject.Instantiate(bonePrefab);
+            }
             humanMarker = GameObject.Instantiate(humanMarkerPrefab);
+            SetActive(true);
         }
 
         public void Remove()
@@ -494,9 +517,16 @@ public class akplay : MonoBehaviour {
 
         public void SetActive(bool active)
         {
-            foreach (GameObject joint in joints)
+            for (int j = 0; j < joints.Length; j++)
             {
-                joint.SetActive(active);
+                var joint = joints[j];
+                if (boringJoints.ContainsKey((k4abt_joint_id_t)j))
+                {
+                    joint.SetActive(false);
+                } else
+                {
+                    joint.SetActive(active);
+                }
             }
             foreach (GameObject bone in bones)
             {
@@ -537,7 +567,7 @@ public class akplay : MonoBehaviour {
 
         private void UpdateMarkerColor()
         {
-            humanMarker.GetComponent<MeshRenderer>().material.SetColor("_Color", markerColors[colorIndex % markerColors.Length]);
+            // humanMarker.GetComponent<MeshRenderer>().material.SetColor("_Color", markerColors[colorIndex % markerColors.Length]);
         }
     }
 
@@ -1288,7 +1318,7 @@ public class akplay : MonoBehaviour {
             }
             if (!skeletonVisArray[i].ContainsKey(id))
             {
-                skeletonVisArray[i].Add(id, new SkeletonVis(id, jointPrefab, bonePrefab, humanMarkerPrefab));
+                skeletonVisArray[i].Add(id, new SkeletonVis(id, jointPrefab, boringJointPrefab, bonePrefab, humanMarkerPrefab));
             }
             skeletonVisArray[i][id].seen = true;
             updateSkeletonVis(camInfoList[i].visualization, camInfoList[i].skeletons[skelI], skeletonVisArray[i][id]);
@@ -1432,7 +1462,7 @@ public class akplay : MonoBehaviour {
                 {
                     var lrGO = GameObject.Instantiate(lineRendererPrefab);
                     lineRenderers[skelVis.colorIndex] = lrGO.GetComponent<LineRenderer>();
-                    var color = SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
+                    var color = UnityEngine.Color.HSVToRGB(skelVis.colorIndex * 0.37f % 1.0f, 0.9f, 0.9f); //  SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
                     color.a = 0.5f;
                     lineRenderers[skelVis.colorIndex].material.SetColor("_Color", color);
                 }
@@ -1464,6 +1494,7 @@ public class akplay : MonoBehaviour {
     {
         vis.score = 0;
 
+        const float jointSize = 0.08f;
         for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
         {
             vis.joints[j].transform.parent = cameraVis.transform;
@@ -1471,23 +1502,28 @@ public class akplay : MonoBehaviour {
             vis.score += (int)skeleton.joints[j].confidence_level;
         }
 
-        // Iterate over all bones, skipping pelvis
-        for (int b = 1; b < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; b++)
+        int boneI = 0;
+        foreach (var connection in jointConnections)
         {
-            var bone = vis.bones[b - 1];
-            var jointAPos = vis.joints[b].transform.position;
-            var jointBPos = vis.joints[(int)jointConnections[(k4abt_joint_id_t)b]].transform.position;
+            var bone = vis.bones[boneI];
+            var jointAPos = vis.joints[(int)connection.Key].transform.position;
+            var jointBPos = vis.joints[(int)connection.Value].transform.position;
             var avgPosition = jointAPos + jointBPos;
             avgPosition.Scale(new Vector3(0.5f, 0.5f, 0.5f));
 
             bone.transform.position = avgPosition;
             bone.transform.up = jointBPos - jointAPos;
-            bone.transform.localScale = new Vector3(0.1f, (jointBPos - jointAPos).magnitude / 2.0f, 0.1f);
+            float boneSize = 0.016f;
+            bone.transform.localScale = new Vector3(
+                boneSize,
+                Mathf.Max((jointBPos - jointAPos).magnitude / 2.0f - jointSize, 0.01f),
+                boneSize);
+            boneI += 1;
         }
 
         var head = vis.joints[(int)k4abt_joint_id_t.K4ABT_JOINT_HEAD];
         vis.humanMarker.transform.position = head.transform.position;
-        vis.humanMarker.transform.position = vis.humanMarker.transform.position + new Vector3(0, 0.5f, 0);
+        vis.humanMarker.transform.position = vis.humanMarker.transform.position + new Vector3(0, 0.4f, 0);
 
         
         // Debug.Log("score: " + vis.score);

@@ -34,8 +34,9 @@ Shader "Custom/AK_pointCloud"
 
 			Pass
 			{
-				//Tags{"Queue"="Overlay"}
-				//ZWrite On
+				Tags{"RenderType"="Opaque"
+				"Queue"="1000"}
+				ZWrite On
 				//ZTest Always
 
 				Cull Off
