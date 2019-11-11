@@ -167,11 +167,11 @@ public class Pusher : MonoBehaviour {
         {
             if (rescale)
             {
-                bytes = resizedTex.EncodeToJPG();
+                bytes = resizedTex.EncodeToJPG(20);
             }
             else
             {
-                bytes = tex.EncodeToJPG();
+                bytes = tex.EncodeToJPG(20);
             }
             output = "data:image/jpg;base64," + System.Convert.ToBase64String(bytes);
         }
