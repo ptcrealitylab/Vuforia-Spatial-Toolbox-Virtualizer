@@ -18,7 +18,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin115";
+    const string dllName = "AKPlugin116";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -71,6 +71,9 @@ public class akplay : MonoBehaviour {
 
     [DllImport(dllName, EntryPoint = "cleanUp")]
     public static extern int cleanUp();
+
+    [DllImport(dllName, EntryPoint = "setPrimaryTrackerIndex")]
+    public static extern void setPrimaryTrackerIndex(int primaryTrackerIndex);
 
     [DllImport(dllName, EntryPoint = "setConfiguration")]
     public static extern void setConfiguration(int cameraIndex, int color_format, int color_resolution, int depth_mode, int camera_fps, bool synchronized_images_only, int depth_delay_off_color_usec, int wired_sync_mode, int subordinate_delay_of_master_usec, bool disable_streaming_indicator);
@@ -639,6 +642,7 @@ public class akplay : MonoBehaviour {
         }
 
         // superDebug("DEATH COMES: " + TestKinect_main());
+        setPrimaryTrackerIndex(3);
 
         int numCameras = enumerateDevices();
         for (int i = 0; i < numCameras; i++)
