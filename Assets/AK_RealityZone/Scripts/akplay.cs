@@ -541,6 +541,7 @@ public class akplay : MonoBehaviour {
         }
 
         public static readonly UnityEngine.Color[] markerColors = {
+          /* pastels
             new UnityEngine.Color(0x4e / 255.0f, 0x79 / 255.0f, 0xa7 / 255.0f, 1),
             new UnityEngine.Color(0xf2 / 255.0f, 0x8e / 255.0f, 0x2c / 255.0f, 1),
             new UnityEngine.Color(0xe1 / 255.0f, 0x57 / 255.0f, 0x59 / 255.0f, 1),
@@ -551,6 +552,19 @@ public class akplay : MonoBehaviour {
             new UnityEngine.Color(0xff / 255.0f, 0x9d / 255.0f, 0xa7 / 255.0f, 1),
             new UnityEngine.Color(0x9c / 255.0f, 0x75 / 255.0f, 0x5f / 255.0f, 1),
             new UnityEngine.Color(0xba / 255.0f, 0xb0 / 255.0f, 0xab / 255.0f, 1)
+          */
+          // Blues
+          new UnityEngine.Color(0.27059f, 0.53725f, 1, 1),
+          new UnityEngine.Color(0.24314f, 0.56863f, 1, 1),
+          new UnityEngine.Color(0.21569f, 0.60000f, 1, 1),
+          new UnityEngine.Color(0.18824f, 0.63137f, 1, 1),
+          new UnityEngine.Color(0.16471f, 0.67059f, 1, 1),
+          new UnityEngine.Color(0.13725f, 0.71373f, 1, 1),
+          new UnityEngine.Color(0.10980f, 0.75686f, 1, 1),
+          new UnityEngine.Color(0.08235f, 0.80392f, 1, 1),
+          new UnityEngine.Color(0.05490f, 0.85490f, 1, 1),
+          new UnityEngine.Color(0.02745f, 0.90980f, 1, 1),
+          new UnityEngine.Color(0.00000f, 0.96863f, 1, 1),
         };
 
         public bool coalesced()
@@ -1462,7 +1476,8 @@ public class akplay : MonoBehaviour {
                 {
                     var lrGO = GameObject.Instantiate(lineRendererPrefab);
                     lineRenderers[skelVis.colorIndex] = lrGO.GetComponent<LineRenderer>();
-                    var color = UnityEngine.Color.HSVToRGB(skelVis.colorIndex * 0.37f % 1.0f, 0.9f, 0.9f); //  SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
+                    var color = SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
+                    // UnityEngine.Color.HSVToRGB(skelVis.colorIndex * 0.37f % 1.0f, 0.9f, 0.9f); vibrant rainbow
                     color.a = 0.5f;
                     lineRenderers[skelVis.colorIndex].material.SetColor("_Color", color);
                 }
