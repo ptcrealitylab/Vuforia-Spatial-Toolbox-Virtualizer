@@ -2305,7 +2305,7 @@ MonoBehaviour:
   resHeight: 320
   cam: {fileID: 89880992}
   debugCube: {fileID: 0}
-  resolutionFactor: 0.8
+  resolutionFactor: 1
   scaleFactor: 1
   emergencyDebugCube: {fileID: 1889643611}
   emergencyDebugCube2: {fileID: 1826550612}
@@ -3716,14 +3716,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2110464627}
-  m_LocalRotation: {x: -0.05914975, y: 0.5151518, z: 0.044580415, w: 0.8538926}
-  m_LocalPosition: {x: 3.7, y: 0.78, z: 2.25}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 89880993}
   m_Father: {fileID: 0}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: -8.45, y: 62.14, z: 0.88}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2139639873
 GameObject:
   m_ObjectHideFlags: 0
