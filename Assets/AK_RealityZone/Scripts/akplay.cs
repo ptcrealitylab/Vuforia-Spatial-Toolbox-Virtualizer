@@ -557,7 +557,7 @@ public class akplay : MonoBehaviour {
             new UnityEngine.Color(0x9c / 255.0f, 0x75 / 255.0f, 0x5f / 255.0f, 1),
             new UnityEngine.Color(0xba / 255.0f, 0xb0 / 255.0f, 0xab / 255.0f, 1)
           */
-          // Blues
+          /* Blues
           new UnityEngine.Color(0.27059f, 0.53725f, 1, 1),
           new UnityEngine.Color(0.24314f, 0.56863f, 1, 1),
           new UnityEngine.Color(0.21569f, 0.60000f, 1, 1),
@@ -569,6 +569,38 @@ public class akplay : MonoBehaviour {
           new UnityEngine.Color(0.05490f, 0.85490f, 1, 1),
           new UnityEngine.Color(0.02745f, 0.90980f, 1, 1),
           new UnityEngine.Color(0.00000f, 0.96863f, 1, 1),
+          */
+          // Better blues
+          new UnityEngine.Color(0.70588f, 0.75686f, 1.00000f, 1),
+          new UnityEngine.Color(0.64314f, 0.70980f, 1.00000f, 1),
+          new UnityEngine.Color(0.58039f, 0.67451f, 1.00000f, 1),
+          new UnityEngine.Color(0.51765f, 0.65098f, 1.00000f, 1),
+          new UnityEngine.Color(0.45490f, 0.65098f, 1.00000f, 1),
+          new UnityEngine.Color(0.39216f, 0.67451f, 1.00000f, 1),
+          new UnityEngine.Color(0.32941f, 0.72157f, 1.00000f, 1),
+          new UnityEngine.Color(0.26667f, 0.78431f, 1.00000f, 1),
+          new UnityEngine.Color(0.20392f, 0.86275f, 1.00000f, 1),
+          new UnityEngine.Color(0.14118f, 0.93725f, 1.00000f, 1),
+          new UnityEngine.Color(0.07843f, 1.00000f, 0.99216f, 1),
+          new UnityEngine.Color(0.01569f, 1.00000f, 0.93725f, 1),
+          new UnityEngine.Color(0.00000f, 1.00000f, 0.90196f, 1),
+          new UnityEngine.Color(0.00000f, 1.00000f, 0.88235f, 1),
+          /* Red-yellows
+          new UnityEngine.Color(1.00000f, 0.36863f, 0.36863f, 1),
+          new UnityEngine.Color(1.00000f, 0.36471f, 0.31765f, 1),
+          new UnityEngine.Color(1.00000f, 0.36863f, 0.27059f, 1),
+          new UnityEngine.Color(1.00000f, 0.38039f, 0.21961f, 1),
+          new UnityEngine.Color(1.00000f, 0.40000f, 0.16863f, 1),
+          new UnityEngine.Color(1.00000f, 0.42353f, 0.12157f, 1),
+          new UnityEngine.Color(1.00000f, 0.45490f, 0.07059f, 1),
+          new UnityEngine.Color(1.00000f, 0.49412f, 0.01961f, 1),
+          new UnityEngine.Color(1.00000f, 0.55294f, 0.00000f, 1),
+          new UnityEngine.Color(1.00000f, 0.62353f, 0.00000f, 1),
+          new UnityEngine.Color(1.00000f, 0.69412f, 0.00000f, 1),
+          new UnityEngine.Color(1.00000f, 0.76078f, 0.00000f, 1),
+          new UnityEngine.Color(1.00000f, 0.83137f, 0.00000f, 1),
+          new UnityEngine.Color(1.00000f, 0.90196f, 0.00000f, 1),
+           */
         };
 
         public bool coalesced()
