@@ -2295,6 +2295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pusherOrigin: {fileID: 2110464627}
+  player: {fileID: 1640398110}
   cloner: {fileID: 0}
   gifRecorder: {fileID: 0}
   depthShader: {fileID: 4800000, guid: f7e343e22108d2644a12220ff405390c, type: 3}

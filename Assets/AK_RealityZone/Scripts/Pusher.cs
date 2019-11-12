@@ -16,6 +16,7 @@ public class Pusher : MonoBehaviour {
     private SocketManager Manager;
     public GameObject pusherOrigin;
 
+    public akplay player;
 
     //modules it needs to communicate with:
     public GameObject cloner;
@@ -383,7 +384,59 @@ public class Pusher : MonoBehaviour {
 
     void OnMessage(Socket socket, Packet packet, params object[] args)
     {
-        Debug.Log("received: " + packet);
+        /*
+        Debug.Log("received: " + packet + " with " + args[0].ToString());
+
+        JSONNode jn = JSON.Parse(args[0].ToString());
+        if (!jn || !jn.IsObject)
+        {
+            Debug.Log("but it's not an obj" + jn.ToString());
+            return;
+        }
+        if (jn["command"].IsString)
+        {
+            string command = jn["command"].Value;
+            Debug.Log("command " + command);
+            switch (command)
+            {
+                case "toggleVisualizations":
+                    player.ToggleVisualizations();
+                    break;
+                case "toggleTracking":
+                    player.ToggleTracking();
+                    break;
+                case "toggleLines":
+                    player.ToggleLines();
+                    break;
+                case "resetLines":
+                    player.ResetLines();
+                    break;
+            }
+        } else
+        {
+            Debug.Log("NTO ASDF ASTR");
+        }
+        */
+
+        string command = args[0].ToString();
+        Debug.Log("command " + command);
+        char[] quotes = { '"' };
+        switch (command.Trim(quotes))
+        {
+            case "toggleVisualizations":
+                Debug.Log("yes me toggle");
+                player.ToggleVisualizations();
+                break;
+            case "toggleTracking":
+                player.ToggleTracking();
+                break;
+            case "toggleLines":
+                player.ToggleLines();
+                break;
+            case "resetLines":
+                player.ResetLines();
+                break;
+        }
     }
 
     private void OnConnected(Socket socket, Packet packet, params object[] args)

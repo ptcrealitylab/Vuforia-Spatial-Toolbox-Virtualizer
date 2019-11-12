@@ -116,7 +116,8 @@ public class akplay : MonoBehaviour {
     private List<LineRenderer> defunctLineRenderers = new List<LineRenderer>();
 
 
-    private bool showTrackedBodies = true;
+    private bool showTrackedSkeletons = true;
+    private bool showTrackedLines = true;
 
     public bool camerasReady = false;
 
@@ -1172,40 +1173,22 @@ public class akplay : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            foreach (var defunctLine in defunctLineRenderers)
-            {
-                GameObject.Destroy(defunctLine.gameObject);
-            }
-            defunctLineRenderers.Clear();
+            ResetLines();
         }
 
         if (Input.GetKeyDown(KeyCode.S) && visualizationArray.Length > 0)
         {
-            var newActive = !visualizationArray[0].activeSelf;
-            foreach (var vis in visualizationArray)
-            {
-                vis.SetActive(newActive);
-            }
+            ToggleVisualizations();
         }
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            showTrackedBodies = !showTrackedBodies;
-            foreach (var entry in lineRenderers)
-            {
-                entry.Value.gameObject.SetActive(showTrackedBodies);
-            }
-            foreach (var lr in defunctLineRenderers)
-            {
-                lr.gameObject.SetActive(showTrackedBodies);
-            }
-            foreach (var svArray in skeletonVisArray)
-            {
-                foreach (var entry in svArray)
-                {
-                    entry.Value.SetActive(showTrackedBodies);
-                }
-            }
+            ToggleTracking();
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ToggleLines();
         }
 
         if ((Time.time-lastTime) > (1.0f / fps))
@@ -1492,10 +1475,13 @@ public class akplay : MonoBehaviour {
                 lr.SetPosition(lr.positionCount - 1, linePos);
                 activeLineRenderers[skelVis.colorIndex] = lr;
 
-                if (!showTrackedBodies)
+                if (!showTrackedLines)
                 {
-                    lr.gameObject.SetActive(showTrackedBodies);
-                    skelVis.SetActive(showTrackedBodies);
+                    lr.gameObject.SetActive(showTrackedLines);
+                }
+                if (!showTrackedSkeletons)
+                {
+                    skelVis.SetActive(showTrackedSkeletons);
                 }
             }
         }
@@ -1544,8 +1530,57 @@ public class akplay : MonoBehaviour {
         vis.humanMarker.transform.position = head.transform.position;
         vis.humanMarker.transform.position = vis.humanMarker.transform.position + new Vector3(0, 0.4f, 0);
 
-        
+
         // Debug.Log("score: " + vis.score);
+    }
+
+    public void ResetLines() {
+        foreach (var defunctLine in defunctLineRenderers)
+        {
+        GameObject.Destroy(defunctLine.gameObject);
+        }
+        defunctLineRenderers.Clear();
+    }
+
+    public void ToggleVisualizations()
+    {
+        var newActive = !visualizationArray[0].activeSelf;
+        foreach (var vis in visualizationArray)
+        {
+            vis.SetActive(newActive);
+        }
+    }
+
+    public void ToggleTracking()
+    {
+        showTrackedLines = showTrackedSkeletons;
+        ToggleSkeletons();
+        ToggleLines();
+    }
+
+    public void ToggleSkeletons()
+    {
+        showTrackedSkeletons = !showTrackedSkeletons;
+        foreach (var svArray in skeletonVisArray)
+        {
+            foreach (var entry in svArray)
+            {
+                entry.Value.SetActive(showTrackedSkeletons);
+            }
+        }
+    }
+
+    public void ToggleLines()
+    {
+        showTrackedLines = !showTrackedLines;
+        foreach (var entry in lineRenderers)
+        {
+            entry.Value.gameObject.SetActive(showTrackedLines);
+        }
+        foreach (var lr in defunctLineRenderers)
+        {
+            lr.gameObject.SetActive(showTrackedLines);
+        }
     }
 
     private void SendSkeletonData()
