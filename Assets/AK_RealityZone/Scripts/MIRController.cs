@@ -51,6 +51,10 @@ public class MIRController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!websocket.connected)
+        {
+            return;
+        }
 
         robotDummy.transform.localPosition = currentPos;
         robotDummy.transform.localRotation = currentOri;
