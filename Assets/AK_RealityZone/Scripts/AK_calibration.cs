@@ -42,6 +42,7 @@ public class AK_calibration : MonoBehaviour {
         for(int i = 0; i<AK_receiver.GetComponent<akplay>().camInfoList.Count; i++)
         {
             GameObject threshold = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            threshold.layer = LayerMask.NameToLayer("Debug");
             threshold.name = "threshold_" + i;
             threshold.transform.parent = gameObject.transform;
             threshold.transform.localScale = new Vector3(0.1f, 0.1f, 0.001f);
@@ -50,6 +51,7 @@ public class AK_calibration : MonoBehaviour {
             threshold_display_list.Add(threshold);
 
             GameObject checkerboard = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            checkerboard.layer = LayerMask.NameToLayer("Debug");
             checkerboard.name = "checkerboard_" + i;
             checkerboard.transform.parent = gameObject.transform;
             checkerboard.transform.localScale = new Vector3(0.1f, 0.1f, 0.001f);
@@ -247,6 +249,7 @@ public class AK_calibration : MonoBehaviour {
                 GameObject colorMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 //colorMarker.transform.localScale = new Vector3(0.1f, 0.1f, 0.2f);
                 //colorMarker.transform.parent = AK_receiver.transform;
+                colorMarker.layer = LayerMask.NameToLayer("Debug");
                 colorMarker.transform.position = camCenterUnity;
                 colorMarker.transform.rotation = Quaternion.LookRotation(forwardVectorUnity, upVectorUnity);
                 colorMarker.GetComponent<Renderer>().material.color = Color.blue;
@@ -257,7 +260,7 @@ public class AK_calibration : MonoBehaviour {
                 Quaternion rotationDepth = Quaternion.LookRotation(forwardDepth, upDepth);
 
                 GameObject depthMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                
+                depthMarker.layer = LayerMask.NameToLayer("Debug");
                 depthMarker.transform.parent = colorMarker.transform;
                 //depthMarker.transform.localScale = AK_receiver.GetComponent<akplay>().camInfoList[i].color_extrinsics.lossyScale;
                 

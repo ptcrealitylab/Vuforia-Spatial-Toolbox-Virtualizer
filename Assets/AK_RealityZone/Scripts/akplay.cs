@@ -1221,7 +1221,7 @@ public class akplay : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            ResetLines();
+            //ResetLines();
         }
 
         if (Input.GetKeyDown(KeyCode.S) && visualizationArray.Length > 0)
@@ -1234,7 +1234,12 @@ public class akplay : MonoBehaviour {
             ToggleTracking();
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            ToggleLines();
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
         {
             ToggleLines();
         }
@@ -1512,8 +1517,8 @@ public class akplay : MonoBehaviour {
                     var lrGO = GameObject.Instantiate(lineRendererPrefab);
                     lineRenderers[skelVis.colorIndex] = lrGO.GetComponent<LineRenderer>();
                     // var color = SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
-                    var hue = 200 - (skelVis.colorIndex * 6.7f % 50.0f);
-                    var color = UnityEngine.Color.HSVToRGB(hue / 360.0f, 0.9f, 0.9f);
+                    var hue = 140 + (skelVis.colorIndex * 6.7f % 30.0f);
+                    var color = UnityEngine.Color.HSVToRGB(hue / 360.0f, 0.8f, 1.0f);
                     color.a = 0.5f;
                     lineRenderers[skelVis.colorIndex].material.SetColor("_Color", color);
                 }
@@ -1591,7 +1596,10 @@ public class akplay : MonoBehaviour {
         vis.humanMarker.transform.position = head.transform.position;
         vis.humanMarker.transform.position = vis.humanMarker.transform.position + new Vector3(0, 0.4f, 0);
 
-
+        for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
+        {
+            vis.joints[j].transform.parent = null;
+        }
         // Debug.Log("score: " + vis.score);
     }
 
@@ -1607,6 +1615,11 @@ public class akplay : MonoBehaviour {
     public void ToggleVisualizations()
     {
         var newActive = !visualizationArray[0].activeSelf;
+        SetShowVisualizations(newActive);
+    }
+
+    public void SetShowVisualizations(bool newActive)
+    {
         foreach (var vis in visualizationArray)
         {
             vis.SetActive(newActive);
@@ -1622,7 +1635,12 @@ public class akplay : MonoBehaviour {
 
     public void ToggleSkeletons()
     {
-        showTrackedSkeletons = !showTrackedSkeletons;
+        SetShowSkeletons(!showTrackedSkeletons);
+    }
+
+    public void SetShowSkeletons(bool newShowTrackedSkeletons)
+    {
+        showTrackedSkeletons = newShowTrackedSkeletons;
         foreach (var svArray in skeletonVisArray)
         {
             foreach (var entry in svArray)
@@ -1634,7 +1652,12 @@ public class akplay : MonoBehaviour {
 
     public void ToggleLines()
     {
-        showTrackedLines = !showTrackedLines;
+        SetShowLines(!showTrackedLines);
+    }
+
+    public void SetShowLines(bool newShow)
+    {
+        showTrackedLines = newShow;
         foreach (var entry in lineRenderers)
         {
             entry.Value.gameObject.SetActive(showTrackedLines);

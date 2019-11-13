@@ -17,6 +17,7 @@ public class Pusher : MonoBehaviour {
     public GameObject pusherOrigin;
 
     public akplay player;
+    public ShadingController shadingController;
 
     //modules it needs to communicate with:
     public GameObject cloner;
@@ -30,6 +31,9 @@ public class Pusher : MonoBehaviour {
     private Task pushTask = Task.CompletedTask;
 
     public bool connected = false;
+
+    private bool inDemoMode = false;
+
     //public Vector3 debugVector;
     // Use this for initialization
     void Start () {
@@ -77,7 +81,10 @@ public class Pusher : MonoBehaviour {
     public float fps = 1.0f;
     // Update is called once per frame
     void Update () {
-
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ToggleDemoMode();
+        }
 		if(Time.time - lastTime > 1.0f/fps)
         {
             lastTime = Time.time;
@@ -424,7 +431,6 @@ public class Pusher : MonoBehaviour {
         switch (command.Trim(quotes))
         {
             case "toggleVisualizations":
-                Debug.Log("yes me toggle");
                 player.ToggleVisualizations();
                 break;
             case "toggleTracking":
@@ -433,10 +439,25 @@ public class Pusher : MonoBehaviour {
             case "toggleLines":
                 player.ToggleLines();
                 break;
+            case "toggleDemoMode":
+                ToggleDemoMode();
+                break;
+            case "toggleXRayView":
+                shadingController.ToggleShading();
+                break;
             case "resetLines":
                 player.ResetLines();
                 break;
         }
+    }
+
+    private void ToggleDemoMode()
+    {
+        inDemoMode = !inDemoMode;
+        player.SetShowSkeletons(true);
+        player.SetShowLines(inDemoMode);
+        player.SetShowVisualizations(!inDemoMode);
+        shadingController.SwitchShading(!inDemoMode);
     }
 
     private void OnConnected(Socket socket, Packet packet, params object[] args)

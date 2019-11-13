@@ -24,18 +24,23 @@ public class ShadingController : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.M))
         {
-            SwitchShading();
+            ToggleShading();
         }
-        
     }
 
-    private void SwitchShading()
+    public void ToggleShading()
+    {
+        var selectShader1 = renderers[0].materials[0].shader == shader1;
+        SwitchShading(!selectShader1);
+    }
+
+    public void SwitchShading(bool selectShader1)
     {
         foreach (Renderer r in renderers)
         {
-            if (r.materials[0].shader == shader1)
+            if (!selectShader1)
             {
                 foreach(Material m in r.materials)
                 {
