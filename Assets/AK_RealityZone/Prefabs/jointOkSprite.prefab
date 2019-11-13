@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212107066164456722}
   - component: {fileID: 331337921930252818}
   - component: {fileID: 114336894153255582}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: jointOkSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

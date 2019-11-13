@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212068758558888234}
   - component: {fileID: 331724573220781348}
   - component: {fileID: 114837184092932186}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: humanMarkerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}

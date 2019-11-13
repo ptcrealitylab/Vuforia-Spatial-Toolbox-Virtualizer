@@ -788,6 +788,7 @@ public class akplay : MonoBehaviour {
 
 
             ci.colorCube.name = "ColorCube_" + i;
+            ci.colorCube.layer = LayerMask.NameToLayer("Debug");
             ci.colorCube.transform.parent = gameObject.transform;
             ci.colorCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.001f);
             ci.colorCube.transform.localPosition = new Vector3(i * step, 0.0f, 0.0f);
@@ -798,6 +799,7 @@ public class akplay : MonoBehaviour {
             //camInfoList[i].colorCube.GetComponent<Renderer>().material.mainTexture = camInfoList[i].colorTexture;
 
             ci.depthCube.name = "DepthCube_" + i;
+            ci.depthCube.layer = LayerMask.NameToLayer("Debug");
             ci.depthCube.transform.parent = gameObject.transform;
             ci.depthCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.001f);
             ci.depthCube.transform.localPosition = new Vector3(i * step, -step, 0.0f);
@@ -806,6 +808,7 @@ public class akplay : MonoBehaviour {
             ci.depthCube.GetComponent<Renderer>().material.SetFloat("_Distance", 0.1f);
 
             ci.distortionMapCube.name = "undistortedDepthCube_" + i;
+            ci.distortionMapCube.layer = LayerMask.NameToLayer("Debug");
             ci.distortionMapCube.transform.parent = gameObject.transform;
             ci.distortionMapCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.001f);
             ci.distortionMapCube.transform.localPosition = new Vector3(i * step, -2 * step, 0.0f);
