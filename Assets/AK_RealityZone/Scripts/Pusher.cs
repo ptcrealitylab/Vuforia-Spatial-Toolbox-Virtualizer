@@ -138,6 +138,7 @@ public class Pusher : MonoBehaviour {
     {
         //RenderTexture rt = new RenderTexture(resWidth, resHeight, 24, RenderTextureFormat.Depth);
         //Debug.Log("capturing screen at: " + resWidth + " " + resHeight);
+        cam.GetComponent<Camera>().targetTexture = rt;
         cam.GetComponent<Camera>().Render();
         RenderTexture.active = rt;
         tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
@@ -169,17 +170,19 @@ public class Pusher : MonoBehaviour {
         //debugCube.GetComponent<Renderer>().material.mainTexture = tex;
 
         RenderTexture.active = null; // JC: added to avoid errors
+        cam.GetComponent<Camera>().targetTexture = null;
+
         byte[] bytes;
         string output;
         if (useJPG)
         {
             if (rescale)
             {
-                bytes = resizedTex.EncodeToJPG(20);
+                bytes = resizedTex.EncodeToJPG(80);
             }
             else
             {
-                bytes = tex.EncodeToJPG(20);
+                bytes = tex.EncodeToJPG(80);
             }
             output = "data:image/jpg;base64," + System.Convert.ToBase64String(bytes);
         }
@@ -207,6 +210,7 @@ public class Pusher : MonoBehaviour {
 
     string getDepthScreenshot()
     {
+        cam.GetComponent<Camera>().targetTexture = rt;
         cam.GetComponent<Camera>().Render();
         RenderTexture.active = rt;
         tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
@@ -221,6 +225,8 @@ public class Pusher : MonoBehaviour {
         }
 
         RenderTexture.active = null; // JC: added to avoid errors
+        cam.GetComponent<Camera>().targetTexture = null;
+
         byte[] bytes;
         string output;
         if (useJPG)

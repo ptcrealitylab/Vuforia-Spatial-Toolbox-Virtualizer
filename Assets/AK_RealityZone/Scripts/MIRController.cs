@@ -94,7 +94,7 @@ public class MIRController : MonoBehaviour
 
     public void SetActive(bool active)
     {
-        gameObject.SetActive(active);
+        line.enabled = active;
     }
 
     private struct Point

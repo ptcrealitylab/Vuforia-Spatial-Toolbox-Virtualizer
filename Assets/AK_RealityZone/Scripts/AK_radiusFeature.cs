@@ -676,6 +676,7 @@ public class AK_radiusFeature : MonoBehaviour {
         for (int i = 0; i < AK_receiver.GetComponent<akplay>().camInfoList.Count; i++)
         {
             GameObject result_display = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            result_display.layer = LayerMask.NameToLayer("Debug");
             result_display.name = "threshold_" + i;
             result_display.transform.parent = gameObject.transform;
             result_display.transform.localScale = new Vector3(0.1f, 0.1f, 0.001f);
@@ -1577,6 +1578,7 @@ public class AK_radiusFeature : MonoBehaviour {
         for (int i = 0; i<startSample.Count; i++)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.layer = LayerMask.NameToLayer("Debug");
             sphere.transform.position = startSample[i];
             sphere.transform.localScale = new Vector3(icp_sphere_size, icp_sphere_size, icp_sphere_size);
             sphere.GetComponent<Renderer>().material.color = Color.blue;
@@ -1587,6 +1589,7 @@ public class AK_radiusFeature : MonoBehaviour {
         for (int i = 0; i < stopSample.Count; i++)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.layer = LayerMask.NameToLayer("Debug");
             sphere.transform.position = stopSample[i];
             sphere.transform.localScale = new Vector3(icp_sphere_size, icp_sphere_size, icp_sphere_size);
             sphere.GetComponent<Renderer>().material.color = Color.yellow;
@@ -1598,6 +1601,7 @@ public class AK_radiusFeature : MonoBehaviour {
         for (int i = 0; i < stopSample.Count; i++)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.layer = LayerMask.NameToLayer("Debug");
             sphere.transform.position = projectedStopPoints[i];
             sphere.transform.localScale = new Vector3(icp_sphere_size, icp_sphere_size, icp_sphere_size);
             sphere.GetComponent<Renderer>().material.color = Color.green;

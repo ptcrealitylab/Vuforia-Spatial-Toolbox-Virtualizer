@@ -366,7 +366,10 @@ Shader "Custom/AK_pointCloud"
 				fixed4 frag(PS_INPUT i) : SV_Target
 				{
 					float4 color_uv = float4(i.color_uv.x, i.color_uv.y, 0, 0);
-					return float4(tex2Dlod(_ColorTex, color_uv).rgb, 0.5f);
+					float3 rgb = tex2Dlod(_ColorTex, color_uv).rgb;
+					// float gray = (rgb.r + rgb.b + rgb.g) / 3;
+					// return float4(gray, gray, gray, 0.1f);
+					return float4(rgb, 0.5f);
 				}
 				ENDCG
 			}
