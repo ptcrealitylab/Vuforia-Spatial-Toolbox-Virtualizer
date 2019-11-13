@@ -433,6 +433,9 @@ public class Pusher : MonoBehaviour {
             case "toggleVisualizations":
                 player.ToggleVisualizations();
                 break;
+            case "toggleSkeletons":
+                player.ToggleSkeletons();
+                break;
             case "toggleTracking":
                 player.ToggleTracking();
                 break;
