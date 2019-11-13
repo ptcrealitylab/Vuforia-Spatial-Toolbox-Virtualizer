@@ -1508,8 +1508,9 @@ public class akplay : MonoBehaviour {
                 {
                     var lrGO = GameObject.Instantiate(lineRendererPrefab);
                     lineRenderers[skelVis.colorIndex] = lrGO.GetComponent<LineRenderer>();
-                    var color = SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
-                    // UnityEngine.Color.HSVToRGB(skelVis.colorIndex * 0.37f % 1.0f, 0.9f, 0.9f); vibrant rainbow
+                    // var color = SkeletonVis.markerColors[skelVis.colorIndex % SkeletonVis.markerColors.Length];
+                    var hue = 200 - (skelVis.colorIndex * 6.7f % 50.0f);
+                    var color = UnityEngine.Color.HSVToRGB(hue / 360.0f, 0.9f, 0.9f);
                     color.a = 0.5f;
                     lineRenderers[skelVis.colorIndex].material.SetColor("_Color", color);
                 }
