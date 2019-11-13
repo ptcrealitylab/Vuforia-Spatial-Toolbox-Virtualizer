@@ -111,6 +111,8 @@ public class akplay : MonoBehaviour {
     public GameObject humanMarkerPrefab;
     public Shader AK_pointCloudShader;
     public Pusher pusher;
+    public MIRController mirController;
+
     public GameObject lineRendererPrefab;
     private Dictionary<uint, LineRenderer> lineRenderers = new Dictionary<uint, LineRenderer>();
     private List<LineRenderer> defunctLineRenderers = new List<LineRenderer>();
@@ -220,11 +222,22 @@ public class akplay : MonoBehaviour {
         {k4abt_joint_id_t.K4ABT_JOINT_EAR_LEFT, true },
         {k4abt_joint_id_t.K4ABT_JOINT_EYE_RIGHT, true },
         {k4abt_joint_id_t.K4ABT_JOINT_EAR_RIGHT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_PELVIS, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_FOOT_LEFT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_FOOT_RIGHT, true },
+
+        {k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_THUMB_LEFT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_LEFT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_THUMB_RIGHT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_RIGHT, true },
+        {k4abt_joint_id_t.K4ABT_JOINT_SPINE_NAVEL, true },
     };
 
     public static readonly Dictionary<k4abt_joint_id_t, k4abt_joint_id_t> jointConnections = new Dictionary<k4abt_joint_id_t, k4abt_joint_id_t>() {
         { k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT },
-        { k4abt_joint_id_t.K4ABT_JOINT_THUMB_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT},
+        // { k4abt_joint_id_t.K4ABT_JOINT_THUMB_LEFT, k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT},
         { k4abt_joint_id_t.K4ABT_JOINT_HAND_LEFT, k4abt_joint_id_t.K4ABT_JOINT_WRIST_LEFT },
         { k4abt_joint_id_t.K4ABT_JOINT_WRIST_LEFT, k4abt_joint_id_t.K4ABT_JOINT_ELBOW_LEFT },
         { k4abt_joint_id_t.K4ABT_JOINT_ELBOW_LEFT, k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT },
@@ -233,7 +246,7 @@ public class akplay : MonoBehaviour {
         { k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_LEFT, k4abt_joint_id_t.K4ABT_JOINT_NECK },
 
         { k4abt_joint_id_t.K4ABT_JOINT_HANDTIP_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT },
-        { k4abt_joint_id_t.K4ABT_JOINT_THUMB_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT},
+        // { k4abt_joint_id_t.K4ABT_JOINT_THUMB_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT},
         { k4abt_joint_id_t.K4ABT_JOINT_HAND_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_WRIST_RIGHT },
         { k4abt_joint_id_t.K4ABT_JOINT_WRIST_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_ELBOW_RIGHT },
         { k4abt_joint_id_t.K4ABT_JOINT_ELBOW_RIGHT, k4abt_joint_id_t.K4ABT_JOINT_SHOULDER_RIGHT },
@@ -1531,7 +1544,7 @@ public class akplay : MonoBehaviour {
     {
         vis.score = 0;
 
-        const float jointSize = 0.08f;
+        const float jointSize = 0.02f;
         for (int j = 0; j < (int)k4abt_joint_id_t.K4ABT_JOINT_COUNT; j++)
         {
             vis.joints[j].transform.parent = cameraVis.transform;
@@ -1542,18 +1555,30 @@ public class akplay : MonoBehaviour {
         int boneI = 0;
         foreach (var connection in jointConnections)
         {
+            float correction = jointSize * 2;
             var bone = vis.bones[boneI];
             var jointAPos = vis.joints[(int)connection.Key].transform.position;
             var jointBPos = vis.joints[(int)connection.Value].transform.position;
             var avgPosition = jointAPos + jointBPos;
             avgPosition.Scale(new Vector3(0.5f, 0.5f, 0.5f));
+            var diff = jointBPos - jointAPos;
 
+            if (boringJoints.ContainsKey(connection.Key))
+            {
+                correction -= jointSize;
+                avgPosition -= diff.normalized * jointSize;
+            }
+            if (boringJoints.ContainsKey(connection.Value))
+            {
+                correction -= jointSize;
+                avgPosition += diff.normalized * jointSize;
+            }
             bone.transform.position = avgPosition;
-            bone.transform.up = jointBPos - jointAPos;
+            bone.transform.up = diff;
             float boneSize = 0.016f;
             bone.transform.localScale = new Vector3(
                 boneSize,
-                Mathf.Max((jointBPos - jointAPos).magnitude / 2.0f - jointSize, 0.01f),
+                Mathf.Max((jointBPos - jointAPos).magnitude / 2.0f - correction, 0.01f),
                 boneSize);
             boneI += 1;
         }
@@ -1572,6 +1597,7 @@ public class akplay : MonoBehaviour {
         GameObject.Destroy(defunctLine.gameObject);
         }
         defunctLineRenderers.Clear();
+        mirController.Clear();
     }
 
     public void ToggleVisualizations()
@@ -1613,6 +1639,7 @@ public class akplay : MonoBehaviour {
         {
             lr.gameObject.SetActive(showTrackedLines);
         }
+        mirController.SetActive(showTrackedLines);
     }
 
     private void SendSkeletonData()

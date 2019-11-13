@@ -2971,6 +2971,7 @@ MonoBehaviour:
     type: 2}
   AK_pointCloudShader: {fileID: 4800000, guid: 7116e3d659d91fe45b4946933e9f5658, type: 3}
   pusher: {fileID: 0}
+  mirController: {fileID: 56543028}
   lineRendererPrefab: {fileID: 1901491786921336, guid: b6193354009069b40bd8f220711506c6,
     type: 2}
   camerasReady: 0

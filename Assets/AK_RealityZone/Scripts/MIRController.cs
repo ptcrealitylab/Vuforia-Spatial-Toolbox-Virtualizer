@@ -86,6 +86,17 @@ public class MIRController : MonoBehaviour
         current = true;
     }
 
+    public void Clear()
+    {
+        motionPoints.Clear();
+        line.positionCount = 0;
+    }
+
+    public void SetActive(bool active)
+    {
+        gameObject.SetActive(active);
+    }
+
     private struct Point
     {
         public Vector3 position;
