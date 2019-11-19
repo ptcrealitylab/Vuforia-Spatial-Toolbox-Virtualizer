@@ -369,7 +369,7 @@ Shader "Custom/AK_pointCloud"
 					float3 rgb = tex2Dlod(_ColorTex, color_uv).rgb;
 					// float gray = (rgb.r + rgb.b + rgb.g) / 3;
 					// return float4(gray, gray, gray, 0.1f);
-					return float4(rgb, 0.5f);
+					return float4(rgb, 0.99f);
 				}
 				ENDCG
 			}
