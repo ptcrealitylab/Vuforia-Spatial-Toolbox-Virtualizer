@@ -6,15 +6,12 @@ public class FlyAround : MonoBehaviour
 {
     private float theta = 0;
     private float dTheta = 0.12f;
-    private float r = 3;
-    private float y = 3;
+    private float r = 1.8f;
+    private float y = 2.5f;
     public GameObject scannerCenter;
     // Use this for initialization
     void Start()
     {
-        var diff = gameObject.transform.position - scannerCenter.transform.position;
-        diff.y = 0;
-        r = diff.magnitude;
     }
 
     // Update is called once per frame
@@ -23,7 +20,7 @@ public class FlyAround : MonoBehaviour
         theta += dTheta * Time.deltaTime;
         Vector3 newPos = scannerCenter.transform.position;
         newPos.x += Mathf.Cos(theta) * r;
-        newPos.y = gameObject.transform.position.y;
+        newPos.y = y; // gameObject.transform.position.y;
         newPos.z += Mathf.Sin(theta) * r;
         gameObject.transform.position = newPos;
         var diff = gameObject.transform.position - scannerCenter.transform.position;

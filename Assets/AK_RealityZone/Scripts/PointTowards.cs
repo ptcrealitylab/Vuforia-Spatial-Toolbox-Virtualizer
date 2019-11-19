@@ -10,8 +10,7 @@ public class PointTowards : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        gameObject.transform.rotation = target.transform.rotation;
-		
+	void OnRenderObject() {
+        gameObject.transform.rotation = Camera.current.transform.rotation;
 	}
 }
