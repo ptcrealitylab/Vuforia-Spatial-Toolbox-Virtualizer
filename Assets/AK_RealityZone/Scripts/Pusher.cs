@@ -41,9 +41,6 @@ public class Pusher : MonoBehaviour {
         emergencyTex = new Texture2D(2, 2);
 
         rt = new RenderTexture(resWidth, resHeight, 32);
-        cam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
-        cam.GetComponent<Camera>().targetTexture = rt;
-        cam.GetComponent<Camera>().SetTargetBuffers(rt.colorBuffer, rt.depthBuffer);
 
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
@@ -124,7 +121,7 @@ public class Pusher : MonoBehaviour {
     Texture2D resizedTex = null;
     public GameObject debugCube;
 
-    float factor = 1.0f;
+    float factor = 1f;
     public float resolutionFactor = 2.0f;
     public float scaleFactor = 1.0f;
 
@@ -140,6 +137,7 @@ public class Pusher : MonoBehaviour {
         //Debug.Log("capturing screen at: " + resWidth + " " + resHeight);
         cam.GetComponent<Camera>().targetTexture = rt;
         cam.GetComponent<Camera>().Render();
+        cam.GetComponent<Camera>().targetTexture = null;
         RenderTexture.active = rt;
         tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
         tex.Apply();
@@ -163,7 +161,7 @@ public class Pusher : MonoBehaviour {
             tex.ResizePro((int)(resWidth * resolutionFactor), (int)(resHeight * resolutionFactor), out resizedTex, false);
 
             //TextureScale.Bilinear(tex, (int)(resWidth/resolutionFactor), (int)(resHeight/resolutionFactor));
-            emergencyDebugCube.GetComponent<Renderer>().material.mainTexture = resizedTex;
+            //emergencyDebugCube.GetComponent<Renderer>().material.mainTexture = resizedTex;
 
         }
 
@@ -178,6 +176,8 @@ public class Pusher : MonoBehaviour {
         {
             if (rescale)
             {
+                //WebP.Error err;
+                //bytes = Texture2DExt.EncodeToWebP(resizedTex, 80, out err);
                 bytes = resizedTex.EncodeToJPG(80);
             }
             else
@@ -212,6 +212,7 @@ public class Pusher : MonoBehaviour {
     {
         cam.GetComponent<Camera>().targetTexture = rt;
         cam.GetComponent<Camera>().Render();
+        cam.GetComponent<Camera>().targetTexture = null;
         RenderTexture.active = rt;
         tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
         tex.Apply();
@@ -500,11 +501,6 @@ public class Pusher : MonoBehaviour {
         cam.GetComponent<Camera>().aspect = (float)resWidth / (float)resHeight;
         Destroy(rt);
         rt = new RenderTexture(resWidth, resHeight, 32);
-        cam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
-        cam.GetComponent<Camera>().targetTexture = rt;
-        cam.GetComponent<Camera>().SetTargetBuffers(rt.colorBuffer, rt.depthBuffer);
-
-
     }
 
     public void SendSkeleton(string skeletonObject)
