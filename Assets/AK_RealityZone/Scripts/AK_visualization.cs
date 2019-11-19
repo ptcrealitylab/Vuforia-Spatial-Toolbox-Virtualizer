@@ -118,6 +118,10 @@ public class AK_visualization : MonoBehaviour {
 
     void OnRenderObject()
     {
+        if ((Camera.current.cullingMask & (1 << gameObject.layer)) == 0)
+        {
+            return;
+        }
         if (mat != null)
         {
             //Debug.Log("assigning mat stuff!");
