@@ -1,11 +1,14 @@
 ﻿//server bridge for the reality zone
 //written by Hisham Bedri, Reality Lab, 2019
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using UnityEngine;
 using BestHTTP.SocketIO;
 using SimpleJSON;
+using WebP;
 //using VacuumShaders.TextureAdjustments;
 using VacuumShaders.TextureExtensions;
 using System.Threading.Tasks;
@@ -28,8 +31,10 @@ public class Pusher : MonoBehaviour {
 
     private RenderTexture rt;
     public bool sendColorOnly = false;
-    private Task pushTask = Task.CompletedTask;
+    private Task emitTask = Task.CompletedTask;
 
+    private BlockingCollection<Tuple<string, string>> messageQueue = new BlockingCollection<Tuple<string, string>>();
+    public bool imageQueued = false;
     public bool connected = false;
 
     private bool inDemoMode = false;
@@ -65,9 +70,11 @@ public class Pusher : MonoBehaviour {
         Manager.Socket.On("clearTwins_server_system", On_clearTwins_server_system);
         Manager.Socket.On("zoneInteractionMessage_server_system", On_zoneInteractionMessage_server_system);
 
-        Manager.Socket.On(SocketIOEventTypes.Error, (socket, packet, args) => Debug.LogError(string.Format("Error: {0}", args[0].ToString())));
+        Manager.Socket.On(SocketIOEventTypes.Error, (socket, packet, args) => Debug.LogError(string.Format("Error: {0} {1}", packet.ToString(), args[0].ToString())));
 
         Manager.Open();
+
+        StartEmitTask();
 
         //connected = true;
         tex = new Texture2D(resWidth, resHeight, TextureFormat.ARGB32, false);
@@ -85,22 +92,21 @@ public class Pusher : MonoBehaviour {
 		if(Time.time - lastTime > 1.0f/fps)
         {
             lastTime = Time.time;
-            if (connected && pushTask.IsCompleted)
+            if (connected && !imageQueued)
             {
                 string encodedBytes = getScreenshot();
                 string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
-
-                pushTask = Task.Run(() =>
+                
+                //send message!
+                if (sendColorOnly)
                 {
-                    //send message!
-                    if (sendColorOnly)
-                    {
-                        Manager.Socket.Emit("image", encodedBytes);
-                    } else
-                    {
-                        Manager.Socket.Emit("image", encodedBytes + ";_;" + encodedDepthBytes);
-                    }
-                });
+                    QueueEmit("image", encodedBytes);
+                }
+                else
+                {
+                    QueueEmit("image", encodedBytes + ";_;" + encodedDepthBytes);
+                }
+                imageQueued = true;
             }
         }
 
@@ -129,6 +135,23 @@ public class Pusher : MonoBehaviour {
     public GameObject emergencyDebugCube2;
 
     Texture2D emergencyTex;
+
+    private void StartEmitTask()
+    {
+        emitTask = Task.Run(() =>
+        {
+            // TODO maybe implement some kind of backpressure mechanism
+
+            while (true) {
+                var emitArgs = messageQueue.Take();
+                if (emitArgs.Item1 == "image")
+                {
+                    imageQueued = false;
+                }
+                Manager.Socket.Emit(emitArgs.Item1, emitArgs.Item2);
+            }
+        });
+    }
 
     public bool rescale = false;
     string getScreenshot()
@@ -269,7 +292,7 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            Manager.Socket.Emit("vuforiaImage_system_server", data);
+            QueueEmit("vuforiaImage_system_server", data);
         }
     }
 
@@ -290,7 +313,7 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            Manager.Socket.Emit("vuforiaModuleUpdate_system_server", data);
+            QueueEmit("vuforiaModuleUpdate_system_server", data);
         }
     }
 
@@ -322,7 +345,7 @@ public class Pusher : MonoBehaviour {
     GameObject findObject(string name)
     {
         GameObject foundObject = null;
-        Object[] objects = Resources.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject));
+        UnityEngine.Object[] objects = Resources.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject));
         for(int i = 0; i<objects.Length; i++)
         {
             if(objects[i].name == name)
@@ -390,7 +413,7 @@ public class Pusher : MonoBehaviour {
             JSONNode data = new JSONObject();
             data.Add("gifurl", location);
             string data_string = data.ToString();
-            Manager.Socket.Emit("realityZoneGif_system_server", data_string);
+            QueueEmit("realityZoneGif_system_server", data_string);
         }
     }
 
@@ -474,7 +497,7 @@ public class Pusher : MonoBehaviour {
     {
         //identify yourself as the station.
         Debug.Log("connected to server");
-        Manager.Socket.Emit("name", "station");
+        QueueEmit("name", "station");
         connected = true;
     }
 
@@ -483,7 +506,7 @@ public class Pusher : MonoBehaviour {
         connected = false;
         Debug.Log("server disconnected");
         //identify yourself as the station.
-        //Manager.Socket.Emit("name", "station");
+        //QueueEmit("name", "station");
     }
 
     void OnResolution(Socket socket, Packet packet, params object[] args)
@@ -491,6 +514,11 @@ public class Pusher : MonoBehaviour {
         Debug.Log("resolution received: " + packet);
         Debug.Log("args: " + args[0]);
         string[] parts = args[0].ToString().Split(',');
+        if (parts[0] == "null")
+        {
+            Debug.Log("make the real server talk first");
+            return;
+        }
         resWidth = (int)(float.Parse(parts[0])/factor);
         resHeight = (int)(float.Parse(parts[1])/factor);
         //resWidth = 1920;
@@ -505,10 +533,17 @@ public class Pusher : MonoBehaviour {
 
     public void SendSkeleton(string skeletonObject)
     {
-        if (connected)
+        if (!connected)
         {
-            Manager.Socket.Emit("realityZoneSkeleton", skeletonObject);
+            return;
         }
+
+        QueueEmit("realityZoneSkeleton", skeletonObject);
+    }
+
+    private void QueueEmit(string topic, string message)
+    {
+        messageQueue.Add(Tuple.Create(topic, message));
     }
 
     void OnPhoneResolution(Socket socket, Packet packet, params object[] args)
