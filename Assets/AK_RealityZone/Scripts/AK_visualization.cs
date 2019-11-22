@@ -13,7 +13,10 @@ public class AK_visualization : MonoBehaviour {
 
     //public Material AK_pointCloudMat;
     public Shader AK_pointCloudShader;
-    public Material mat;
+    // Map from camera instance id to pointcloud shader material
+    // Note that each camera gets its own material due to UNITY_MATRIX_VP
+    // being computed per-material instead of per-render
+    public Dictionary<int, Material> matForCamera = new Dictionary<int, Material>();
 
 
     public struct cameraInfoStruct
@@ -44,7 +47,10 @@ public class AK_visualization : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        mat = new Material(AK_pointCloudShader);
+        foreach (Camera cam in Camera.allCameras)
+        {
+            matForCamera.Add(cam.GetInstanceID(), new Material(AK_pointCloudShader));
+        }
         //mat = new Material(Shader.Find("Standard"));
     }
 
@@ -77,43 +83,50 @@ public class AK_visualization : MonoBehaviour {
             // Copy your texture ref to the render texture
             Graphics.Blit(XYMap, resized_distortion_tex);
 
-            mat.SetTexture("_DepthTex", resized_depth_tex);
-            mat.SetTexture("_DistortionMapTex", resized_distortion_tex);
-
+            foreach (Material mat in matForCamera.Values)
+            {
+                mat.SetTexture("_DepthTex", resized_depth_tex);
+                mat.SetTexture("_DistortionMapTex", resized_distortion_tex);
+            }
         }
         else
         {
-            mat.SetTexture("_DepthTex", depthTex);
-            mat.SetTexture("_DistortionMapTex", XYMap);
+            foreach (Material mat in matForCamera.Values)
+            {
+                mat.SetTexture("_DepthTex", depthTex);
+                mat.SetTexture("_DistortionMapTex", XYMap);
+            }
         }
 
 
-
-        mat.SetFloat("_Size", size);
-        mat.SetTexture("_ColorTex", colorTex);
-
-
-
+        foreach (Material mat in matForCamera.Values)
+        {
+            mat.SetFloat("_Size", size);
+            mat.SetTexture("_ColorTex", colorTex);
 
 
-        mat.SetMatrix("_color_extrinsics", cameraInfo.color_extrinsics);
-        mat.SetFloat("_color_cx", cameraInfo.color_cx);
-        mat.SetFloat("_color_cy", cameraInfo.color_cy);
-        mat.SetFloat("_color_fx", cameraInfo.color_fx);
-        mat.SetFloat("_color_fy", cameraInfo.color_fy);
-        mat.SetFloat("_color_k1", cameraInfo.color_k1);
-        mat.SetFloat("_color_k2", cameraInfo.color_k2);
-        mat.SetFloat("_color_k3", cameraInfo.color_k3);
-        mat.SetFloat("_color_k4", cameraInfo.color_k4);
-        mat.SetFloat("_color_k5", cameraInfo.color_k5);
-        mat.SetFloat("_color_k6", cameraInfo.color_k6);
-        //Debug.Log(gameObject + " setting size: " + size);
-        //Debug.Log(gameObject + " setting ks: " + cameraInfo.color_k1 + " " + cameraInfo.color_k2 + " " + cameraInfo.color_k3 + " " + cameraInfo.color_k4 + " " + cameraInfo.color_k5 + " " + cameraInfo.color_k6);
-        mat.SetFloat("_color_codx", cameraInfo.color_codx);
-        mat.SetFloat("_color_cody", cameraInfo.color_cody);
-        mat.SetFloat("_color_p1", cameraInfo.color_p1);
-        mat.SetFloat("_color_p2", cameraInfo.color_p2);
-        mat.SetFloat("_color_metric_radius", cameraInfo.color_metric_radius);
+
+
+
+            mat.SetMatrix("_color_extrinsics", cameraInfo.color_extrinsics);
+            mat.SetFloat("_color_cx", cameraInfo.color_cx);
+            mat.SetFloat("_color_cy", cameraInfo.color_cy);
+            mat.SetFloat("_color_fx", cameraInfo.color_fx);
+            mat.SetFloat("_color_fy", cameraInfo.color_fy);
+            mat.SetFloat("_color_k1", cameraInfo.color_k1);
+            mat.SetFloat("_color_k2", cameraInfo.color_k2);
+            mat.SetFloat("_color_k3", cameraInfo.color_k3);
+            mat.SetFloat("_color_k4", cameraInfo.color_k4);
+            mat.SetFloat("_color_k5", cameraInfo.color_k5);
+            mat.SetFloat("_color_k6", cameraInfo.color_k6);
+            //Debug.Log(gameObject + " setting size: " + size);
+            //Debug.Log(gameObject + " setting ks: " + cameraInfo.color_k1 + " " + cameraInfo.color_k2 + " " + cameraInfo.color_k3 + " " + cameraInfo.color_k4 + " " + cameraInfo.color_k5 + " " + cameraInfo.color_k6);
+            mat.SetFloat("_color_codx", cameraInfo.color_codx);
+            mat.SetFloat("_color_cody", cameraInfo.color_cody);
+            mat.SetFloat("_color_p1", cameraInfo.color_p1);
+            mat.SetFloat("_color_p2", cameraInfo.color_p2);
+            mat.SetFloat("_color_metric_radius", cameraInfo.color_metric_radius);
+        }
     }
 
     void OnRenderObject()
@@ -122,8 +135,9 @@ public class AK_visualization : MonoBehaviour {
         {
             return;
         }
-        if (mat != null)
+        if (matForCamera.ContainsKey(Camera.current.GetInstanceID()))
         {
+            Material mat = matForCamera[Camera.current.GetInstanceID()];
             //Debug.Log("assigning mat stuff!");
             //Debug.Log("color texture size: " + colorTex.width + " " + colorTex.height);
 
