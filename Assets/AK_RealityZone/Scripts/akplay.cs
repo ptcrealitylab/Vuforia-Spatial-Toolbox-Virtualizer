@@ -9,6 +9,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using AOT;
+using SimpleJSON;
 using System.Threading;
 
 //using OpenCVForUnity;
@@ -123,6 +124,9 @@ public class akplay : MonoBehaviour {
 
     public bool camerasReady = false;
 
+    public bool broadcastSkeletonData = false;
+
+    public int primaryTrackerIndex = 3;
 
     //these enums are for configuration and match the definition in k4atypes.h
     //descriptions are copy-pasted from there
@@ -688,7 +692,7 @@ public class akplay : MonoBehaviour {
         }
 
         // superDebug("DEATH COMES: " + TestKinect_main());
-        setPrimaryTrackerIndex(3);
+        setPrimaryTrackerIndex(primaryTrackerIndex);
 
         int numCameras = enumerateDevices();
         for (int i = 0; i < numCameras; i++)
@@ -1394,8 +1398,10 @@ public class akplay : MonoBehaviour {
             skeletonVisArray[i].Remove(id);
         }
 
-        // SendSkeletonData();
-        // Debug.Log(camInfoList[i].skeletonFloats);
+        if (broadcastSkeletonData)
+        {
+            SendSkeletonData();
+        }
     }
 
     private const float COALESCE_RANGE = 0.75f * 0.75f;
@@ -1675,51 +1681,28 @@ public class akplay : MonoBehaviour {
         {
             return;
         }
-        // return [[sk0, sk1], [sk0, sk1]]
-        // sk0 = {joints: [j0, j1]}
-        // j0 = {x, y, z}
 
-        StringBuilder sb = new StringBuilder("[");
-        for (int camI = 0; camI < skeletonVisArray.Length; camI++)
+        Dictionary<uint, SkeletonVis> skelVisses = skeletonVisArray[primaryTrackerIndex];
+        JSONArray skeletons = new JSONArray();
+        foreach (var entry in skelVisses)
         {
-            // Sends over the visualization's coordinates for each camera since those have been transformed into world space
-            SkeletonVis[] skelVisualizations = new SkeletonVis[skeletonVisArray[camI].Count];
-            skeletonVisArray[camI].Values.CopyTo(skelVisualizations, 0);
-
-            sb.Append("[");
-            for (int visI = 0; visI < skelVisualizations.Length; visI++)
+            uint id = entry.Key;
+            SkeletonVis sv = entry.Value;
+            JSONObject skeleton = new JSONObject();
+            skeleton.Add("id", new JSONNumber(id));
+            JSONArray joints = new JSONArray();
+            foreach (var jointGO in sv.joints)
             {
-                var skeleton = skelVisualizations[visI];
-                sb.Append("{");
-                sb.AppendFormat("\"id\":{0},", skeleton.id);
-                sb.Append("\"joints\":[");
-
-                for (int j = 0; j < skeleton.joints.Length; j++)
-                {
-                    var joint = skeleton.joints[j];
-                    sb.AppendFormat("{{\"x\":{0},\"y\":{1},\"z\":{2}}}",
-                        joint.transform.position.x,
-                        joint.transform.position.y,
-                        joint.transform.position.z);
-                    if (j < skeleton.joints.Length - 1)
-                    {
-                        sb.Append(",");
-                    }
-                }
-                sb.Append("]}");
-                if (visI < skelVisualizations.Length - 1)
-                {
-                    sb.Append(",");
-                }
+                JSONObject joint = new JSONObject();
+                joint.Add("x", new JSONNumber(jointGO.transform.position.x));
+                joint.Add("y", new JSONNumber(jointGO.transform.position.y));
+                joint.Add("z", new JSONNumber(jointGO.transform.position.z));
+                joints.Add(joint);
             }
-            sb.Append("]");
-            if (camI < skeletonVisArray.Length - 1)
-            {
-                sb.Append(",");
-            }
+            skeleton.Add("joints", joints);
+            skeletons.Add(skeleton);
         }
-        sb.Append("]");
-        pusher.SendSkeleton(sb.ToString());
+        pusher.SendSkeleton(skeletons.ToString());
     }
 
     private void OnApplicationQuit()
