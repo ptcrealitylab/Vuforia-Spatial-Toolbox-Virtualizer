@@ -111,7 +111,7 @@ public class akplay : MonoBehaviour {
     public GameObject bonePrefab;
     public GameObject humanMarkerPrefab;
     public Shader AK_pointCloudShader;
-    public Pusher pusher;
+    public ObjectPositionSender objectPositionSender;
     public MIRController mirController;
 
     public GameObject lineRendererPrefab;
@@ -1677,7 +1677,7 @@ public class akplay : MonoBehaviour {
 
     private void SendSkeletonData()
     {
-        if (!pusher)
+        if (!objectPositionSender)
         {
             return;
         }
@@ -1702,7 +1702,7 @@ public class akplay : MonoBehaviour {
             skeleton.Add("joints", joints);
             skeletons.Add(skeleton);
         }
-        pusher.SendSkeleton(skeletons.ToString());
+        objectPositionSender.SendSkeleton(skeletons);
     }
 
     private void OnApplicationQuit()
