@@ -51,6 +51,9 @@ public class ObjectPositionSender : MonoBehaviour {
             return;
         }
 
+        Manager.Socket.Emit(skeletons.ToString());
+        /** The following code would use a fancier API for generic positioning instead
+         of just sending raw skeleton data
         foreach (var skeleton in skeletons.Values)
         {
             string topLevelKey = "human" + skeleton["id"].ToString();
@@ -72,5 +75,6 @@ public class ObjectPositionSender : MonoBehaviour {
                 Manager.Socket.Emit("/update/object/position", updateMsg.ToString());
             }
         }
+        */
     }
 }
