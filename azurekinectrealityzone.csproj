@@ -242,6 +242,9 @@
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>Assets/AK_RealityZone/Scripts/Connections/websocket-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="VacuumShaders.TextureAdjustments">
       <HintPath>Assets/VacuumShaders/Texture Adjustments/Scripts/VacuumShaders.TextureAdjustments.dll</HintPath>
     </Reference>

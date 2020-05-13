@@ -32,7 +32,7 @@ public class WSConnection : MonoBehaviour
     private Vector2 _currentRobotPosition = Vector2.zero;
     private Vector3 _currentAngularVel = Vector3.zero;
     private Vector3 _currentLinearVel = Vector3.zero;
-
+    
     public bool connected = false;
 
     // Use this for initialization
@@ -212,13 +212,15 @@ public class WSConnection : MonoBehaviour
     void Update()
     {
 
-        if (rotate){
+        if (rotate)
+        {
             Debug.Log("Rotate at: " + Time.time);
             //MoveCommand(Vector3.zero, new Vector3(angularVelocity, angularVelocity, angularVelocity));
             MoveCommand(Vector3.zero, new Vector3(angularVelocity, angularVelocity, angularVelocity));
         }
 
-        if (translate){
+        if (translate)
+        {
             Debug.Log("Move at: " + Time.time);
             MoveCommand(new Vector3(linearVelocity, linearVelocity, linearVelocity), Vector3.zero);
         }

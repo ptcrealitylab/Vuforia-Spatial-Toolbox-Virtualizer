@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   subscribe_pose: 1
-  host: ws://10.10.10.112
+  host: ws://10.10.10.119
   port: 9090
   connected: 0
 --- !u!1 &89880992
@@ -403,7 +403,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 4294966271
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -2438,9 +2438,9 @@ MonoBehaviour:
   cloner: {fileID: 0}
   gifRecorder: {fileID: 0}
   depthShader: {fileID: 4800000, guid: f7e343e22108d2644a12220ff405390c, type: 3}
-  sendColorOnly: 0
-  connected: 0
-  fps: 60
+  sendColorOnly: 1
+  connected: 1
+  fps: 30
   resWidth: 480
   resHeight: 320
   cam: {fileID: 89880992}
@@ -2760,7 +2760,7 @@ Transform:
   m_LocalScale: {x: 0.04602307, y: 0.046023116, z: 0.046023116}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1390217247
 GameObject:
@@ -3772,7 +3772,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.4, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1992318081
 GameObject:
