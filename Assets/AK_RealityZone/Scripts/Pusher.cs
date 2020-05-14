@@ -111,38 +111,6 @@ public class Pusher : MonoBehaviour {
             lastTime = Time.time;
             if (connected && pushTask.IsCompleted)
             {
-                foreach (KeyValuePair<string, CameraInformation> entry in cameraInfo)
-                {
-//                    pushTask = Task.Run(() =>
-//                    {
-                        // set camera position and rotation to the cameraInfo
-
-                        // Vector3 cameraPosition = entry.Value.position;
-                        // Quaternion cameraRotation = entry.Value.rotation;
-
-                        cam.transform.localPosition = entry.Value.position;
-                        cam.transform.localRotation = entry.Value.rotation;
-
-                        Debug.Log(entry.Value.position);
-
-                        // send the screenshot to the corresponding editorId (the key)
-                        string editorId = entry.Key;
-
-                        string encodedBytes = getScreenshot();
-                        string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
-
-                        //send message!
-                        if (sendColorOnly)
-                        {
-                            Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
-                        }
-                        else
-                        {
-                            Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
-                        }
-//                    });
-                }
-                /*
                 string encodedBytes = getScreenshot();
                 string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
 
@@ -157,7 +125,6 @@ public class Pusher : MonoBehaviour {
                         socket.Emit("image", new JSONObject(encodedBytes + ";_;" + encodedDepthBytes));
                     }
                 });
-                */
             }
         }
 
@@ -674,21 +641,6 @@ public class Pusher : MonoBehaviour {
     public GameObject upPoint;
     public GameObject forwardPoint;
 
-    public struct CameraInformation
-    {
-        public CameraInformation(Vector3 _position, Quaternion _rotation)
-        {
-            position = _position;
-            rotation = _rotation;
-        }
-
-        public Vector3 position;
-        public Quaternion rotation;
-    }
-
-    // maps editorIds to (position, rotation) structs
-    Dictionary<string, CameraInformation> cameraInfo = new Dictionary<string, CameraInformation>();
-
     //this is the one being used.
     void OnPoseVuforiaDesktop(SocketIOEvent e)
     {
@@ -696,13 +648,6 @@ public class Pusher : MonoBehaviour {
         string jsonPacket = args[0].ToString();
         Debug.Log("received: " + jsonPacket);
         JSONNode jn = JSON.Parse(jsonPacket);
-
-        string editorId = jn["editorId"];
-        if (!cameraInfo.ContainsKey(editorId))
-        {
-            Debug.Log("Pose from new editor (" + editorId + ")");
-            // cameraInfo.Add(editorId, new CameraInformation(new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 1)));
-        }
 
         JSONArray mvarray = jn["modelViewMatrix"].AsArray;
         //JSONArray parray = jn["projectionMatrix"].AsArray;
@@ -788,25 +733,8 @@ public class Pusher : MonoBehaviour {
 
             //cam.transform.localPosition = new Vector3(camPos.x * (scaleFactor / 1000.0f * 2.0f), camPos.y * (scaleFactor / 1000.0f * 2.0f), scaleFactor * camPos.z / 1000.0f * 2.0f);
             //cam.transform.localPosition = new Vector3(camPos.x  / 1000.0f, camPos.y / 1000.0f, scaleFactor * camPos.z / 1000.0f * 2.0f);
-
-            /*
             cam.transform.localPosition = new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f);
             cam.transform.localRotation = camRotation;
-            */
-
-            if (cameraInfo.ContainsKey(editorId))
-            {
-                cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec));
-            } else
-            {
-                cameraInfo.Add(editorId, new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec)));
-            }
-
-            /*
-            CameraInformation thisInfo = cameraInfo[editorId];
-            thisInfo.position = new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f);
-            thisInfo.rotation = Quaternion.LookRotation(forwardVec, upVec);
-            */
         }
         else
         {
@@ -856,33 +784,11 @@ public class Pusher : MonoBehaviour {
 
             //cam.transform.localPosition = new Vector3(camPos.x * (scaleFactor / 1000.0f * 2.0f), camPos.y * (scaleFactor / 1000.0f * 2.0f), scaleFactor * camPos.z / 1000.0f * 2.0f);
             //cam.transform.localPosition = new Vector3(camPos.x  / 1000.0f, camPos.y / 1000.0f, scaleFactor * camPos.z / 1000.0f * 2.0f);
-
-            /*
             cam.transform.localPosition = new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f);
             cam.transform.localRotation = camRotation;
-            */
-
-            cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec));
-
-            /*
-            if (cameraInfo.ContainsKey(editorId))
-            {
-                cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec));
-            }
-            else
-            {
-                cameraInfo.Add(editorId, new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec)));
-            }
-            */
-
-            /*
-            CameraInformation thisInfo = cameraInfo[editorId];
-            thisInfo.position = new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f);
-            thisInfo.rotation = Quaternion.LookRotation(forwardVec, upVec);
-            */
         }
 
-
+        
 
 
 
