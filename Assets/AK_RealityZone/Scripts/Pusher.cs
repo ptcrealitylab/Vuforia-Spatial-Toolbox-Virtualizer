@@ -111,6 +111,7 @@ public class Pusher : MonoBehaviour {
             lastTime = Time.time;
             if (connected && pushTask.IsCompleted)
             {
+                Debug.Log(cameraInfo.Count);
                 foreach (KeyValuePair<string, CameraInformation> entry in cameraInfo)
                 {
 //                    pushTask = Task.Run(() =>
@@ -127,6 +128,8 @@ public class Pusher : MonoBehaviour {
 
                         // send the screenshot to the corresponding editorId (the key)
                         string editorId = entry.Key;
+                        string thisSocketId = editorToSocketId[editorId];
+                        Socket thisSocket = connectedSockets[thisSocketId];
 
                         string encodedBytes = getScreenshot();
                         string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
@@ -134,14 +137,19 @@ public class Pusher : MonoBehaviour {
                         //send message!
                         if (sendColorOnly)
                         {
-                            Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
+                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId);
+                            // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
                         }
                         else
                         {
-                            Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
+                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
+                            // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
                         }
-//                    });
+                    //                    });
                 }
+
+                cameraInfo.Clear();
+
                 /*
                 string encodedBytes = getScreenshot();
                 string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
@@ -486,6 +494,13 @@ public class Pusher : MonoBehaviour {
         Debug.Log("server disconnected");
         //identify yourself as the station.
         //Manager.Socket.Emit("name", "station");
+        // remove socket from uuid -> socket map
+        // connectedSockets[socket.Id] = editorId;
+        connectedSockets.Remove(socket.Id);
+        string editorId = socketToEditorId[socket.Id];
+        socketToEditorId.Remove(socket.Id);
+        editorToSocketId.Remove(editorId);
+        // cameraInfo.Remove(editorId); // TODO: print cameraInfo.length to figure out why it's not speeding up...
     }
 
     void OnResolution(SocketIOEvent e)
@@ -689,6 +704,10 @@ public class Pusher : MonoBehaviour {
     // maps editorIds to (position, rotation) structs
     Dictionary<string, CameraInformation> cameraInfo = new Dictionary<string, CameraInformation>();
 
+    Dictionary<string, Socket> connectedSockets = new Dictionary<string, Socket>();
+    Dictionary<string, string> socketToEditorId = new Dictionary<string, string>();
+    Dictionary<string, string> editorToSocketId = new Dictionary<string, string>();
+
     //this is the one being used.
     void OnPoseVuforiaDesktop(SocketIOEvent e)
     {
@@ -698,10 +717,13 @@ public class Pusher : MonoBehaviour {
         JSONNode jn = JSON.Parse(jsonPacket);
 
         string editorId = jn["editorId"];
-        if (!cameraInfo.ContainsKey(editorId))
+        if (!editorToSocketId.ContainsKey(editorId))
         {
             Debug.Log("Pose from new editor (" + editorId + ")");
-            // cameraInfo.Add(editorId, new CameraInformation(new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 1)));
+
+            socketToEditorId[socket.Id] = editorId;
+            editorToSocketId[editorId] = socket.Id;
+            connectedSockets[socket.Id] = socket;
         }
 
         JSONArray mvarray = jn["modelViewMatrix"].AsArray;
@@ -794,13 +816,7 @@ public class Pusher : MonoBehaviour {
             cam.transform.localRotation = camRotation;
             */
 
-            if (cameraInfo.ContainsKey(editorId))
-            {
-                cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec));
-            } else
-            {
-                cameraInfo.Add(editorId, new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec)));
-            }
+            cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec));
 
             /*
             CameraInformation thisInfo = cameraInfo[editorId];
