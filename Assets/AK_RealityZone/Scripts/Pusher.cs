@@ -131,18 +131,20 @@ public class Pusher : MonoBehaviour {
                         string thisSocketId = editorToSocketId[editorId];
                         Socket thisSocket = connectedSockets[thisSocketId];
 
+                        Debug.Log("editor " + editorId + " is using socket " + thisSocketId);
+
                         string encodedBytes = getScreenshot();
                         string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
 
                         //send message!
                         if (sendColorOnly)
                         {
-                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId);
+                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + cameraInfo.Count); // count gives the rescale factor client needs to apply
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
                         }
                         else
                         {
-                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
+                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + cameraInfo.Count + ";_;" + encodedDepthBytes);
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
                         }
                     //                    });
@@ -177,6 +179,24 @@ public class Pusher : MonoBehaviour {
         }
 	}
 
+    int getAdjustedResWidth()
+    {
+        if (cameraInfo.Count == 0)
+        {
+            return resWidth;
+        }
+        return (int)Mathf.Round(resWidth / cameraInfo.Count);
+    }
+
+    int getAdjustedResHeight()
+    {
+        if (cameraInfo.Count == 0)
+        {
+            return resHeight;
+        }
+        return (int)Mathf.Round(resHeight / cameraInfo.Count);
+    }
+
     public int resWidth = 480;
     public int resHeight = 320;
     int phoneResWidth = 714;
@@ -194,8 +214,11 @@ public class Pusher : MonoBehaviour {
 
     Texture2D emergencyTex;
 
+    public bool rescale = true;
     string getScreenshot()
     {
+        int scaledResWidth = getAdjustedResWidth();
+        int scaledResHeight = getAdjustedResHeight();
         //RenderTexture rt = new RenderTexture(resWidth, resHeight, 24, RenderTextureFormat.Depth);
         //Debug.Log("capturing screen at: " + resWidth + " " + resHeight);
         cam.GetComponent<Camera>().targetTexture = rt;
@@ -207,6 +230,26 @@ public class Pusher : MonoBehaviour {
 
         //emergencyTex = tex;
         //emergencyDebugCube2.GetComponent<Renderer>().material.mainTexture = tex;
+
+        if (rescale) {
+            //TextureScale.Bilinear(tex, 512, 256);
+            /*
+            Adjust_Resize resizeEffect = new Adjust_Resize();
+            resizeEffect.width = (int)(resWidth / resolutionFactor);
+            resizeEffect.height = (int)(resHeight / resolutionFactor);
+            TextureAdjustments.RenderAll(tex, ref tex, resizeEffect);
+            */
+
+            //tex.ResizePro((int)(resWidth * resolutionFactor), (int)(resHeight * resolutionFactor));
+            //Texture2D resizedTex = null;
+
+
+            tex.ResizePro((int)(scaledResWidth * resolutionFactor), (int)(scaledResHeight * resolutionFactor), out resizedTex, false);
+
+            //TextureScale.Bilinear(tex, (int)(resWidth/resolutionFactor), (int)(resHeight/resolutionFactor));
+            //emergencyDebugCube.GetComponent<Renderer>().material.mainTexture = resizedTex;
+
+        }
 
         //debugCube.GetComponent<Renderer>().material.mainTexture = tex;
 
@@ -485,6 +528,7 @@ public class Pusher : MonoBehaviour {
         //identify yourself as the station.
         Debug.Log("connected to server");
         socket.Emit("name", new JSONObject("station"));
+
         connected = true;
     }
 
