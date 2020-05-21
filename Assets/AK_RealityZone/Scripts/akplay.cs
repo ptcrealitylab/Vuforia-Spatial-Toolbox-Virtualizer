@@ -1702,6 +1702,23 @@ public class akplay : MonoBehaviour {
             skeleton.AddField("joints", joints);
             skeletons.Add(skeleton);
         }
+
+        if (mirController.Connected())
+        {
+            JSONObject skeleton = new JSONObject();
+            skeleton.Add("id", "mir");
+            JSONArray joints = new JSONArray();
+
+            JSONObject joint = new JSONObject();
+            joint.Add("x", new JSONNumber(mirController.currentPos.x));
+            joint.Add("y", new JSONNumber(mirController.currentPos.y));
+            joint.Add("z", new JSONNumber(mirController.currentPos.z));
+            joints.Add(joint);
+
+            skeleton.Add("joints", joints);
+            skeletons.Add(skeleton);
+        }
+
         objectPositionSender.SendSkeleton(skeletons);
     }
 

@@ -13,7 +13,7 @@ public class MIRController : MonoBehaviour
     private List<Point> motionPoints;
 
     private Vector3 lastPos;
-    private Vector3 currentPos;
+    public Vector3 currentPos;
     private Quaternion currentOri;
 
     private bool current = true;
@@ -101,6 +101,10 @@ public class MIRController : MonoBehaviour
     public void SetActive(bool active)
     {
         line.enabled = active;
+    }
+
+    public bool Connected() {
+      return websocket.connected;
     }
 
     private struct Point
