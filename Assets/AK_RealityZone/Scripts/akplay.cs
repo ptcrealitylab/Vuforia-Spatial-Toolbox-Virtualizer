@@ -1713,6 +1713,10 @@ public class akplay : MonoBehaviour {
             joint.Add("x", new JSONNumber(mirController.currentPos.x));
             joint.Add("y", new JSONNumber(mirController.currentPos.y));
             joint.Add("z", new JSONNumber(mirController.currentPos.z));
+            joint.Add("qw", new JSONNumber(mirController.currentOri.w));
+            joint.Add("qx", new JSONNumber(mirController.currentOri.x));
+            joint.Add("qy", new JSONNumber(mirController.currentOri.y));
+            joint.Add("qz", new JSONNumber(mirController.currentOri.z));
             joints.Add(joint);
 
             skeleton.Add("joints", joints);

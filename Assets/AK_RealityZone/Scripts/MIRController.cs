@@ -14,7 +14,7 @@ public class MIRController : MonoBehaviour
 
     private Vector3 lastPos;
     public Vector3 currentPos;
-    private Quaternion currentOri;
+    public Quaternion currentOri;
 
     private bool current = true;
 
