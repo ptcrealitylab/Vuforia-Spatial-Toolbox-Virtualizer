@@ -139,12 +139,12 @@ public class Pusher : MonoBehaviour {
                         //send message!
                         if (sendColorOnly)
                         {
-                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + cameraInfo.Count); // count gives the rescale factor client needs to apply
+                            thisSocket.Emit("image", encodedBytes + ";_;" + ";_;" + editorId + ";_;" + cameraInfo.Count); // count gives the rescale factor client needs to apply
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
                         }
                         else
                         {
-                            thisSocket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + cameraInfo.Count + ";_;" + encodedDepthBytes);
+                            thisSocket.Emit("image", encodedBytes + ";_;" + encodedDepthBytes + ";_;" + editorId + ";_;" + cameraInfo.Count);
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
                         }
                     //                    });
