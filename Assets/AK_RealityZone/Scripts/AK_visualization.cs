@@ -19,7 +19,6 @@ public class AK_visualization : MonoBehaviour {
     // being computed per-material instead of per-render
     public Dictionary<int, Material> matForCamera = new Dictionary<int, Material>();
 
-
     public struct cameraInfoStruct
     {
         public Matrix4x4 color_extrinsics;
@@ -51,7 +50,7 @@ public class AK_visualization : MonoBehaviour {
         matDefault = new Material(AK_pointCloudShader);
         foreach (Camera cam in Camera.allCameras)
         {
-            matForCamera.Add(cam.GetInstanceID(), matDefault);
+            matForCamera.Add(cam.GetInstanceID(), matDefault); // cam.GetInstanceID(), new Material(AK_pointCloudShader));
         }
         //mat = new Material(Shader.Find("Standard"));
     }
@@ -135,7 +134,8 @@ public class AK_visualization : MonoBehaviour {
     {
         if ((Camera.current.cullingMask & (1 << gameObject.layer)) == 0)
         {
-            return;
+            Debug.Log("Would have been culled");
+            // return;
         }
         Material mat = matDefault;
 
