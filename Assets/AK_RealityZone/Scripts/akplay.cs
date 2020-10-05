@@ -19,7 +19,7 @@ public class akplay : MonoBehaviour {
 
     public bool verbose = false;
 
-    const string dllName = "AKPlugin116";
+    const string dllName = "AKPlugin119";
 
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
@@ -1407,6 +1407,10 @@ public class akplay : MonoBehaviour {
     private const float COALESCE_RANGE = 0.75f * 0.75f;
 
     private void HideExtraSkeletonVisualizations() {
+        if (skeletonVisArray == null)
+        {
+            return;
+        }
         // For each skeletonVis check other camera's skeletonVis joints for
         // intersection and hide all with lower score
         // After each check mark all considered skeletons as coalesced
