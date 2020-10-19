@@ -140,7 +140,6 @@ MonoBehaviour:
   depthTex: {fileID: 0}
   XYMap: {fileID: 0}
   AK_pointCloudShader: {fileID: 4800000, guid: 7116e3d659d91fe45b4946933e9f5658, type: 3}
-  mat: {fileID: 2100000, guid: 4ea7b085c748e0d489af79f96df393b2, type: 2}
-  size: 0.12
+  size: 0.06
   enhanced_depth_sampling: 0
   multiplier: 1
