@@ -13,6 +13,7 @@ public class AK_visualization : MonoBehaviour {
 
     //public Material AK_pointCloudMat;
     public Shader AK_pointCloudShader;
+    private Material matDefault;
     // Map from camera instance id to pointcloud shader material
     // Note that each camera gets its own material due to UNITY_MATRIX_VP
     // being computed per-material instead of per-render
@@ -47,9 +48,10 @@ public class AK_visualization : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        matDefault = new Material(AK_pointCloudShader);
         foreach (Camera cam in Camera.allCameras)
         {
-            matForCamera.Add(cam.GetInstanceID(), new Material(AK_pointCloudShader));
+            matForCamera.Add(cam.GetInstanceID(), matDefault);
         }
         //mat = new Material(Shader.Find("Standard"));
     }
@@ -135,29 +137,32 @@ public class AK_visualization : MonoBehaviour {
         {
             return;
         }
+        Material mat = matDefault;
+
         if (matForCamera.ContainsKey(Camera.current.GetInstanceID()))
         {
-            Material mat = matForCamera[Camera.current.GetInstanceID()];
-            //Debug.Log("assigning mat stuff!");
-            //Debug.Log("color texture size: " + colorTex.width + " " + colorTex.height);
-
-            //mat.SetTexture("_MainTex", colorTex);
-
-            int numberPoints = 0;
-            if (enhanced_depth_sampling)
-            {
-                numberPoints = resized_distortion_tex.width * resized_distortion_tex.height;
-            }
-            else
-            {
-                numberPoints = depthTex.width * depthTex.height;
-            }
-
-
-            //int numberPoints = 100;
-            mat.SetMatrix("_Position", transform.localToWorldMatrix);
-            mat.SetPass(0);
-            Graphics.DrawProcedural(MeshTopology.Points, numberPoints, 1);
+            mat = matForCamera[Camera.current.GetInstanceID()];
         }
+
+        //Debug.Log("assigning mat stuff!");
+        //Debug.Log("color texture size: " + colorTex.width + " " + colorTex.height);
+
+        //mat.SetTexture("_MainTex", colorTex);
+
+        int numberPoints = 0;
+        if (enhanced_depth_sampling)
+        {
+            numberPoints = resized_distortion_tex.width * resized_distortion_tex.height;
+        }
+        else
+        {
+            numberPoints = depthTex.width * depthTex.height;
+        }
+
+
+        //int numberPoints = 100;
+        mat.SetMatrix("_Position", transform.localToWorldMatrix);
+        mat.SetPass(0);
+        Graphics.DrawProcedural(MeshTopology.Points, numberPoints, 1);
     }
 }
