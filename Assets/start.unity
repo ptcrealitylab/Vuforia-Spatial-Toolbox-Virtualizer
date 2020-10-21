@@ -501,64 +501,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 101885686}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1001 &110860710
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 10.18
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.63
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 6.47
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.52164596
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.48116
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.47851261
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.5171037
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_RootOrder
-      value: 21
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -89.574005
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 192.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 400314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -467.032
-      objectReference: {fileID: 0}
-    - target: {fileID: 100314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-  m_IsPrefabParent: 0
 --- !u!1 &152646580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1600,29 +1542,13 @@ RectTransform:
   m_Children:
   - {fileID: 1863345598}
   m_Father: {fileID: 0}
-  m_RootOrder: 23
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &726831378 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100314, guid: b8c6a00a49f90b348accab5b537e2321, type: 3}
-  m_PrefabInternal: {fileID: 110860710}
---- !u!114 &726831379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 726831378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 950da3fb78592084faedea83c1fb710e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  renderers: []
 --- !u!1 &851726861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2064,7 +1990,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 24
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &989580111
 GameObject:
@@ -2451,7 +2377,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1944b4019266fa642a535caea2914455, type: 3}
       propertyPath: m_RootOrder
-      value: 22
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1944b4019266fa642a535caea2914455, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -2507,7 +2433,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pusherOrigin: {fileID: 2110464627}
   player: {fileID: 1640398110}
-  shadingController: {fileID: 726831379}
+  shadingController: {fileID: 0}
   cloner: {fileID: 0}
   gifRecorder: {fileID: 0}
   depthShader: {fileID: 4800000, guid: f7e343e22108d2644a12220ff405390c, type: 3}
