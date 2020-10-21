@@ -1225,7 +1225,7 @@ public class akplay : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            //ResetLines();
+            ResetLines();
         }
 
         if (Input.GetKeyDown(KeyCode.S) && visualizationArray.Length > 0)
