@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using BestHTTP.SocketIO;
 using SimpleJSON;
-//using VacuumShaders.TextureAdjustments;
-using VacuumShaders.TextureExtensions;
 using System.Threading.Tasks;
 
 public class Pusher : MonoBehaviour {
@@ -118,7 +116,6 @@ public class Pusher : MonoBehaviour {
     int phoneResHeight = 413;
     public GameObject cam;
     Texture2D tex;
-    Texture2D resizedTex = null;
     public GameObject debugCube;
 
     float factor = 1f;
@@ -130,7 +127,6 @@ public class Pusher : MonoBehaviour {
 
     Texture2D emergencyTex;
 
-    public bool rescale = false;
     string getScreenshot()
     {
         //RenderTexture rt = new RenderTexture(resWidth, resHeight, 24, RenderTextureFormat.Depth);
@@ -145,26 +141,6 @@ public class Pusher : MonoBehaviour {
         //emergencyTex = tex;
         //emergencyDebugCube2.GetComponent<Renderer>().material.mainTexture = tex;
 
-        if (rescale) {
-            //TextureScale.Bilinear(tex, 512, 256);
-            /*
-            Adjust_Resize resizeEffect = new Adjust_Resize();
-            resizeEffect.width = (int)(resWidth / resolutionFactor);
-            resizeEffect.height = (int)(resHeight / resolutionFactor);
-            TextureAdjustments.RenderAll(tex, ref tex, resizeEffect);
-            */
-
-            //tex.ResizePro((int)(resWidth * resolutionFactor), (int)(resHeight * resolutionFactor));
-            //Texture2D resizedTex = null;
-
-
-            tex.ResizePro((int)(resWidth * resolutionFactor), (int)(resHeight * resolutionFactor), out resizedTex, false);
-
-            //TextureScale.Bilinear(tex, (int)(resWidth/resolutionFactor), (int)(resHeight/resolutionFactor));
-            //emergencyDebugCube.GetComponent<Renderer>().material.mainTexture = resizedTex;
-
-        }
-
         //debugCube.GetComponent<Renderer>().material.mainTexture = tex;
 
         RenderTexture.active = null; // JC: added to avoid errors
@@ -174,28 +150,12 @@ public class Pusher : MonoBehaviour {
         string output;
         if (useJPG)
         {
-            if (rescale)
-            {
-                //WebP.Error err;
-                //bytes = Texture2DExt.EncodeToWebP(resizedTex, 80, out err);
-                bytes = resizedTex.EncodeToJPG(80);
-            }
-            else
-            {
-                bytes = tex.EncodeToJPG(80);
-            }
+            bytes = tex.EncodeToJPG(80);
             output = "data:image/jpg;base64," + System.Convert.ToBase64String(bytes);
         }
         else
         {
-            if (rescale)
-            {
-                bytes = resizedTex.EncodeToPNG();
-            }
-            else
-            {
-                bytes = tex.EncodeToPNG();
-            }
+            bytes = tex.EncodeToPNG();
             output = output = "data:image/png;base64," + System.Convert.ToBase64String(bytes);
         }
         //byte[] bytes = tex.EncodeToJPG();
@@ -220,11 +180,6 @@ public class Pusher : MonoBehaviour {
         tex.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
         tex.Apply();
 
-        if (rescale)
-        {
-            tex.ResizePro((int)(resWidth * resolutionFactor), (int)(resHeight * resolutionFactor), out resizedTex, false);
-        }
-
         RenderTexture.active = null; // JC: added to avoid errors
         cam.GetComponent<Camera>().targetTexture = null;
 
@@ -232,26 +187,12 @@ public class Pusher : MonoBehaviour {
         string output;
         if (useJPG)
         {
-            if (rescale)
-            {
-                bytes = resizedTex.EncodeToJPG();
-            }
-            else
-            {
-                bytes = tex.EncodeToJPG();
-            }
+            bytes = tex.EncodeToJPG();
             output = "data:image/jpg;base64," + System.Convert.ToBase64String(bytes);
         }
         else
         {
-            if (rescale)
-            {
-                bytes = resizedTex.EncodeToPNG();
-            }
-            else
-            {
-                bytes = tex.EncodeToPNG();
-            }
+            bytes = tex.EncodeToPNG();
             output = output = "data:image/png;base64," + System.Convert.ToBase64String(bytes);
         }
         return output;
