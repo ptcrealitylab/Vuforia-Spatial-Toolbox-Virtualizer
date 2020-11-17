@@ -63,7 +63,7 @@ public class VuforiaModule : MonoBehaviour {
 
         string visibleString = "\"{";
 
-        JSONObject ja = new JSONObject();
+        SimpleJSON.JSONObject ja = new SimpleJSON.JSONObject();
 
         for(int i = 0; i<realityEditorObjectVisualizerList.Count; i++)
         {
@@ -296,7 +296,7 @@ public class VuforiaModule : MonoBehaviour {
 
             //Debug.Log("temporary checksum value: " + pair.Value.temporaryChecksum + " nulloperator: " + (pair.Value.temporaryChecksum ?? "null") + " ==\"\"?" + (pair.Value.temporaryChecksum == ""));
 
-            JSONNode jo = new JSONObject();
+            JSONNode jo = new SimpleJSON.JSONObject();
             jo.Add("id", pair.Value.id ?? "");
             jo.Add("ip", pair.Value.ip ?? "");
             jo.Add("temporaryChecksum", pair.Value.temporaryChecksum ?? "");
@@ -589,7 +589,7 @@ public class VuforiaModule : MonoBehaviour {
 
         sw.Reset();
         sw.Start();
-        JSONNode vuforiaRequest = new JSONObject();
+        JSONNode vuforiaRequest = new SimpleJSON.JSONObject();
         vuforiaRequest.Add("imageData", image_data);
         vuforiaRequest.Add("imageWidth", colorFreeze.width);
         vuforiaRequest.Add("imageHeight", colorFreeze.height);

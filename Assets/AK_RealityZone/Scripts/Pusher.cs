@@ -4,14 +4,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BestHTTP.SocketIO;
+// using BestHTTP.SocketIO;
+using SocketIO;
 using SimpleJSON;
 using System.Threading.Tasks;
 
 public class Pusher : MonoBehaviour {
 
 
-    private SocketManager Manager;
+    private SocketIOComponent socket;
     public GameObject pusherOrigin;
 
     public akplay player;
@@ -35,11 +36,36 @@ public class Pusher : MonoBehaviour {
     //public Vector3 debugVector;
     // Use this for initialization
     void Start () {
+        socket = GetComponent(typeof(SocketIOComponent)) as SocketIOComponent;
         depthMat = new Material(depthShader);
         emergencyTex = new Texture2D(2, 2);
 
         rt = new RenderTexture(resWidth, resHeight, 32);
 
+        socket.url = "ws://127.0.0.1:3020/socket.io/?EIO=4&transport=websocket";
+        socket.autoConnect = false;
+        socket.On("open", OnConnected);
+        socket.On("connect", OnConnected);
+        socket.On("close", OnDisconnected);
+        socket.On("disconnect", OnDisconnected);
+        socket.On("message", OnMessage);
+        socket.On("resolution", OnResolution);
+        socket.On("resolutionPhone", OnPhoneResolution);
+        socket.On("pose", OnPose);
+        socket.On("poseVuforia", OnPoseVuforia);
+        socket.On("poseVuforiaDesktop", OnPoseVuforiaDesktop);
+
+        socket.On("vuforiaResult_server_system", On_vuforiaResult_server_system);
+        socket.On("realityEditorObject_server_system", On_realityEditorObject_server_system);
+
+        socket.On("startRecording_server_system", On_startRecording_server_system);
+        socket.On("stopRecording_server_system", On_stopRecording_server_system);
+        socket.On("twin_server_system", On_twin_server_system);
+        socket.On("clearTwins_server_system", On_clearTwins_server_system);
+        socket.On("zoneInteractionMessage_server_system", On_zoneInteractionMessage_server_system);
+
+        socket.Connect();
+        /*
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
 
@@ -66,7 +92,7 @@ public class Pusher : MonoBehaviour {
         Manager.Socket.On(SocketIOEventTypes.Error, (socket, packet, args) => Debug.LogError(string.Format("Error: {0}", args[0].ToString())));
 
         Manager.Open();
-
+        */
         //connected = true;
         tex = new Texture2D(resWidth, resHeight, TextureFormat.ARGB32, false);
     }
@@ -93,10 +119,10 @@ public class Pusher : MonoBehaviour {
                     //send message!
                     if (sendColorOnly)
                     {
-                        Manager.Socket.Emit("image", encodedBytes);
+                        socket.Emit("image", new JSONObject(encodedBytes));
                     } else
                     {
-                        Manager.Socket.Emit("image", encodedBytes + ";_;" + encodedDepthBytes);
+                        socket.Emit("image", new JSONObject(encodedBytes + ";_;" + encodedDepthBytes));
                     }
                 });
             }
@@ -201,7 +227,7 @@ public class Pusher : MonoBehaviour {
     void OnDestroy()
     {
         // Leaving this sample, close the socket
-        Manager.Close();
+        socket.Close();
     }
 
 
@@ -210,19 +236,21 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            Manager.Socket.Emit("vuforiaImage_system_server", data);
+            socket.Emit("vuforiaImage_system_server", new JSONObject(data));
         }
     }
 
-    void On_vuforiaResult_server_system(Socket socket, Packet packet, params object[] args)
+    void On_vuforiaResult_server_system(SocketIOEvent e)
     {
+        var args = e.data;
         string jsonPacket = args[0].ToString();
         //GameObject.Find("VuforiaModule").GetComponent<VuforiaModule>().vuforiaResponse(jsonPacket);
 
     }
 
-    void On_realityEditorObject_server_system(Socket socket, Packet packet, params object[] args)
+    void On_realityEditorObject_server_system(SocketIOEvent e)
     {
+        var args = e.data;
         string jsonPacket = args[0].ToString();
         //GameObject.Find("VuforiaModule").GetComponent<VuforiaModule>().realityEditorObject(jsonPacket);
     }
@@ -231,29 +259,29 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            Manager.Socket.Emit("vuforiaModuleUpdate_system_server", data);
+            socket.Emit("vuforiaModuleUpdate_system_server", new JSONObject(data));
         }
     }
 
-    public void On_startRecording_server_system(Socket socket, Packet packet, params object[] args)
+    public void On_startRecording_server_system(SocketIOEvent e)
     {
         Debug.Log("received start recording message from server");
         gifRecorder.GetComponent<GifRecorder>().startRecording();
     }
 
-    public void On_stopRecording_server_system(Socket socket, Packet packet, params object[] args)
+    public void On_stopRecording_server_system(SocketIOEvent e)
     {
         Debug.Log("received stop recording message from server");
         gifRecorder.GetComponent<GifRecorder>().stopRecording();
     }
 
-    public void On_twin_server_system(Socket socket, Packet packet, params object[] args)
+    public void On_twin_server_system(SocketIOEvent e)
     {
         Debug.Log("received twin message from server");
         //cloner.GetComponent<Cloner>().clone();
     }
 
-    public void On_clearTwins_server_system(Socket socket, Packet packet, params object[] args)
+    public void On_clearTwins_server_system(SocketIOEvent e)
     {
         Debug.Log("received clear message from server");
         //cloner.GetComponent<Cloner>().clear();
@@ -275,12 +303,12 @@ public class Pusher : MonoBehaviour {
     }
 
 
-    public void On_zoneInteractionMessage_server_system(Socket socket, Packet packet, params object[] args)
+    public void On_zoneInteractionMessage_server_system(SocketIOEvent e)
     {
+        var args = e.data;
         Debug.Log("received interaction message from server");
-        Debug.Log("args length: " + args.Length);
         Debug.Log("args: " + args);
-        Debug.Log("packet: " + packet.ToString());
+        Debug.Log("packet: " + e);
         //unpack it:
         string jsonPacket = args[0].ToString();
         JSONNode jn = JSON.Parse(jsonPacket);
@@ -328,16 +356,16 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            JSONNode data = new JSONObject();
-            data.Add("gifurl", location);
+            var data = new JSONObject();
+            data.AddField("gifurl", location);
             string data_string = data.ToString();
-            Manager.Socket.Emit("realityZoneGif_system_server", data_string);
+            socket.Emit("realityZoneGif_system_server", new JSONObject(data_string));
         }
     }
 
 
 
-    void OnMessage(Socket socket, Packet packet, params object[] args)
+    void OnMessage(SocketIOEvent e)
     {
         /*
         Debug.Log("received: " + packet + " with " + args[0].ToString());
@@ -372,7 +400,7 @@ public class Pusher : MonoBehaviour {
             Debug.Log("NTO ASDF ASTR");
         }
         */
-
+        var args = e.data;
         string command = args[0].ToString();
         Debug.Log("command " + command);
         char[] quotes = { '"' };
@@ -411,15 +439,15 @@ public class Pusher : MonoBehaviour {
         shadingController.SwitchShading(!inDemoMode);
     }
 
-    private void OnConnected(Socket socket, Packet packet, params object[] args)
+    private void OnConnected(SocketIOEvent e)
     {
         //identify yourself as the station.
         Debug.Log("connected to server");
-        Manager.Socket.Emit("name", "station");
+        socket.Emit("name", new JSONObject("station"));
         connected = true;
     }
 
-    private void OnDisconnected(Socket socket, Packet packet, params object[] args)
+    private void OnDisconnected(SocketIOEvent e)
     {
         connected = false;
         Debug.Log("server disconnected");
@@ -427,9 +455,10 @@ public class Pusher : MonoBehaviour {
         //Manager.Socket.Emit("name", "station");
     }
 
-    void OnResolution(Socket socket, Packet packet, params object[] args)
+    void OnResolution(SocketIOEvent e)
     {
-        Debug.Log("resolution received: " + packet);
+        var args = e.data;
+        Debug.Log("resolution received: " + e);
         Debug.Log("args: " + args[0]);
         string[] parts = args[0].ToString().Split(',');
         resWidth = (int)(float.Parse(parts[0])/factor);
@@ -448,32 +477,34 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            Manager.Socket.Emit("realityZoneSkeleton", skeletonObject);
+            socket.Emit("realityZoneSkeleton", new JSONObject(skeletonObject));
         }
     }
 
-    void OnPhoneResolution(Socket socket, Packet packet, params object[] args)
+    void OnPhoneResolution(SocketIOEvent e)
     {
-        Debug.Log("phone resolution received: " + packet);
+        var args = e.data;
+        Debug.Log("phone resolution received: " + e);
         string[] parts = args[0].ToString().Split(',');
         //phoneResWidth = (int)(float.Parse(parts[0]) / factor);
         //phoneResHeight = (int)(float.Parse(parts[1]) / factor);
     }
 
-    void OnPose(Socket socket, Packet packet, params object[] args)
+    void OnPose(SocketIOEvent e)
     {
-        Debug.Log("onpose received: " + packet.ToString());
-        //Debug.Log("args: " + args[0]);
+        var args = e.data;
+        Debug.Log("onpose received: " + e);
+        Debug.Log("args: " + args[0]);
 
 
-        Vector3 position = new Vector3(float.Parse(((List<object>)args[0])[0].ToString()),
-                                        float.Parse(((List<object>)args[0])[1].ToString()),
-                                        float.Parse(((List<object>)args[0])[2].ToString()));
+        Vector3 position = new Vector3(float.Parse(args[0][0].ToString()),
+                                        float.Parse(args[0][1].ToString()),
+                                        float.Parse(args[0][2].ToString()));
 
-        Quaternion orientation = new Quaternion(float.Parse(((List<object>)args[0])[3].ToString()),
-                                        float.Parse(((List<object>)args[0])[4].ToString()),
-                                        float.Parse(((List<object>)args[0])[5].ToString()),
-                                        float.Parse(((List<object>)args[0])[6].ToString()));
+        Quaternion orientation = new Quaternion(float.Parse(args[0][3].ToString()),
+                                        float.Parse(args[0][4].ToString()),
+                                        float.Parse(args[0][5].ToString()),
+                                        float.Parse(args[0][6].ToString()));
 
         cam.transform.position = position;
         cam.transform.rotation = orientation;
@@ -611,11 +642,11 @@ public class Pusher : MonoBehaviour {
     public GameObject forwardPoint;
 
     //this is the one being used.
-    void OnPoseVuforiaDesktop(Socket socket, Packet packet, params object[] args)
+    void OnPoseVuforiaDesktop(SocketIOEvent e)
     {
-
+        var args = e.data;
         string jsonPacket = args[0].ToString();
-        //Debug.Log("received: " + jsonPacket);
+        Debug.Log("received: " + jsonPacket);
         JSONNode jn = JSON.Parse(jsonPacket);
 
         JSONArray mvarray = jn["modelViewMatrix"].AsArray;
@@ -814,7 +845,7 @@ public class Pusher : MonoBehaviour {
     }
 
 
-    void OnPoseVuforia(Socket socket, Packet packet, params object[] args)
+    void OnPoseVuforia(SocketIOEvent e)
     {
         //Debug.Log("onpose vuforia: ");
         if (udpVersion)
@@ -829,9 +860,10 @@ public class Pusher : MonoBehaviour {
         }
         Debug.Log(output);
         */
-        
+
         //Debug.Log("pose received: " + packet.ToString());
         //Debug.Log("length of args: " + args.Length);
+        var args = e.data;
         //Debug.Log("args of 0: " + args[0]);
         //string jsonPacket = packet.ToString();
         string jsonPacket = args[0].ToString();

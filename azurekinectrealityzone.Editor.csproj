@@ -284,9 +284,6 @@
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/15.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>Assets/AK_RealityZone/Scripts/Connections/websocket-sharp.dll</HintPath>
-    </Reference>
     <Reference Include="VacuumShaders">
       <HintPath>Assets/VacuumShaders/Editor/VacuumShaders.dll</HintPath>
     </Reference>
@@ -324,6 +321,7 @@
   <ItemGroup>
     <Compile Include="Assets\OpenCVForUnity\Editor\OpenCVForUnityIOSBuildPostprocessor.cs" />
     <Compile Include="Assets\OpenCVForUnity\Editor\OpenCVForUnityMenuItem.cs" />
+    <Compile Include="Assets\SocketIO\JSONObject\Editor\JSONChecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AKPlugin_result.txt" />
@@ -359,6 +357,8 @@
     <None Include="Assets\OpenCVForUnity\StreamingAssets\text\trained_classifierNM1.xml" />
     <None Include="Assets\OpenCVForUnity\StreamingAssets\text\trained_classifierNM2.xml" />
     <None Include="Assets\OpenCVForUnity\StreamingAssets\text\trained_classifier_erGrouping.xml" />
+    <None Include="Assets\SocketIO\JSONObject\readme.txt" />
+    <None Include="Assets\SocketIO\Readme.txt" />
     <None Include="Assets\Third-Party-Notices.txt" />
     <None Include="Assets\VacuumShaders\Texture Adjustments\Doc\Video Tutorial.txt" />
     <None Include="Assets\VacuumShaders\Texture Adjustments\Shaders\Adjustments_BlurDirectional.shader" />

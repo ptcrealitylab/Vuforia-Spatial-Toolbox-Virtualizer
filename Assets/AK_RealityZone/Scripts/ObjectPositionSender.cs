@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
-using BestHTTP.SocketIO;
-using SimpleJSON;
+using SocketIO;
 
 public class ObjectPositionSender : MonoBehaviour {
-    private SocketManager Manager;
+    private SocketIOComponent socket;
     private bool connected;
     public string objectServerUrl = "http://127.0.0.1:8080";
 
     void Start()
     {
+        // socket = GetComponent(typeof(SocketIOComponent)) as SocketIOComponent;
+        /*
         SocketOptions options = new SocketOptions();
         options.AutoConnect = false;
 
@@ -19,6 +20,7 @@ public class ObjectPositionSender : MonoBehaviour {
         Manager.Socket.On(SocketIOEventTypes.Error, (socket, packet, args) => Debug.LogError(string.Format("Error: {0}", args[0].ToString())));
 
         Manager.Open();
+        */
     }
 
     void Update()
@@ -28,30 +30,30 @@ public class ObjectPositionSender : MonoBehaviour {
 
     void OnDestroy()
     {
-        Manager.Close();
+        // socket.Close();
     }
 
-    private void OnConnected(Socket socket, Packet packet, params object[] args)
+    private void OnConnected(SocketIOEvent e)
     {
         //identify yourself as the station.
         Debug.Log("connected to server");
         connected = true;
     }
 
-    private void OnDisconnected(Socket socket, Packet packet, params object[] args)
+    private void OnDisconnected(SocketIOEvent e)
     {
         connected = false;
         Debug.Log("server disconnected");
     }
 
-    public void SendSkeleton(JSONArray skeletons)
+    public void SendSkeleton(JSONObject skeletons)
     {
         if (!connected)
         {
             return;
         }
 
-        Manager.Socket.Emit(skeletons.ToString());
+        // socket.Emit(skeletons.ToString());
         /** The following code would use a fancier API for generic positioning instead
          of just sending raw skeleton data
         foreach (var skeleton in skeletons.Values)

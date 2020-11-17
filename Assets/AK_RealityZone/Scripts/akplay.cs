@@ -9,7 +9,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using AOT;
-using SimpleJSON;
+using SocketIO;
 using System.Threading;
 
 //using OpenCVForUnity;
@@ -1683,23 +1683,23 @@ public class akplay : MonoBehaviour {
         }
 
         Dictionary<uint, SkeletonVis> skelVisses = skeletonVisArray[primaryTrackerIndex];
-        JSONArray skeletons = new JSONArray();
+        JSONObject skeletons = JSONObject.arr;
         foreach (var entry in skelVisses)
         {
             uint id = entry.Key;
             SkeletonVis sv = entry.Value;
             JSONObject skeleton = new JSONObject();
-            skeleton.Add("id", new JSONNumber(id));
-            JSONArray joints = new JSONArray();
+            skeleton.AddField("id", id);
+            JSONObject joints = JSONObject.arr;
             foreach (var jointGO in sv.joints)
             {
                 JSONObject joint = new JSONObject();
-                joint.Add("x", new JSONNumber(jointGO.transform.position.x));
-                joint.Add("y", new JSONNumber(jointGO.transform.position.y));
-                joint.Add("z", new JSONNumber(jointGO.transform.position.z));
+                joint.AddField("x", jointGO.transform.position.x);
+                joint.AddField("y", jointGO.transform.position.y);
+                joint.AddField("z", jointGO.transform.position.z);
                 joints.Add(joint);
             }
-            skeleton.Add("joints", joints);
+            skeleton.AddField("joints", joints);
             skeletons.Add(skeleton);
         }
         objectPositionSender.SendSkeleton(skeletons);
