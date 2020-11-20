@@ -3203,8 +3203,8 @@ MonoBehaviour:
   lineRendererPrefab: {fileID: 1901491786921336, guid: b6193354009069b40bd8f220711506c6,
     type: 2}
   camerasReady: 0
-  broadcastSkeletonData: 0
-  primaryTrackerIndex: 3
+  broadcastSkeletonData: 1
+  primaryTrackerIndex: 1
   color_resolution: 2
   depth_mode: 2
   fps_mode: 1
