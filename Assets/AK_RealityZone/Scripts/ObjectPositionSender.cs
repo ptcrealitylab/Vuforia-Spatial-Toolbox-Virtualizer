@@ -36,14 +36,14 @@ public class ObjectPositionSender : MonoBehaviour {
     private void OnConnected(SocketIOEvent e)
     {
         //identify yourself as the station.
-        Debug.Log("connected to server");
+        Debug.Log("OPS connected to server");
         connected = true;
     }
 
     private void OnDisconnected(SocketIOEvent e)
     {
         connected = false;
-        Debug.Log("server disconnected");
+        Debug.Log("OPS server disconnected");
     }
 
     public void SendSkeleton(JSONObject skeletons)
@@ -54,6 +54,7 @@ public class ObjectPositionSender : MonoBehaviour {
         }
 
         // socket.Emit(skeletons.ToString());
+        // Manager.Socket.Emit("/update/humanPoses", skeletons.ToString());
         /** The following code would use a fancier API for generic positioning instead
          of just sending raw skeleton data
         foreach (var skeleton in skeletons.Values)

@@ -79,6 +79,7 @@ public class Pusher : MonoBehaviour {
         Manager.Socket.On("pose", OnPose);
         Manager.Socket.On("poseVuforia", OnPoseVuforia);
         Manager.Socket.On("poseVuforiaDesktop", OnPoseVuforiaDesktop);
+        Manager.Socket.On("cameraPosition", OnCameraPosition);
 
         Manager.Socket.On("vuforiaResult_server_system", On_vuforiaResult_server_system);
         Manager.Socket.On("realityEditorObject_server_system", On_realityEditorObject_server_system);
@@ -111,7 +112,7 @@ public class Pusher : MonoBehaviour {
             lastTime = Time.time;
             if (connected && pushTask.IsCompleted)
             {
-                Debug.Log(cameraInfo.Count);
+               // Debug.Log(cameraInfo.Count);
                 foreach (KeyValuePair<string, CameraInformation> entry in cameraInfo)
                 {
 //                    pushTask = Task.Run(() =>
@@ -752,7 +753,101 @@ public class Pusher : MonoBehaviour {
     Dictionary<string, string> socketToEditorId = new Dictionary<string, string>();
     Dictionary<string, string> editorToSocketId = new Dictionary<string, string>();
 
+/*
     //this is the one being used.
+    void OnCameraPosition(Socket socket, Packet packet, params object[] args)
+    {
+        string jsonPacket = args[0].ToString();
+        Debug.Log("received: " + jsonPacket);
+        JSONNode jn = JSON.Parse(jsonPacket);
+
+        string editorId = jn["editorId"];
+        if (!editorToSocketId.ContainsKey(editorId))
+        {
+            Debug.Log("Pose from new editor (" + editorId + ")");
+
+            socketToEditorId[socket.Id] = editorId;
+            editorToSocketId[editorId] = socket.Id;
+            connectedSockets[socket.Id] = socket;
+        }
+
+        JSONArray mvarray = jn["cameraPoseMatrix"].AsArray;
+        JSONArray parray = jn["projectionMatrix"].AsArray;
+
+        Matrix4x4 mvMatrix = new Matrix4x4();
+        mvMatrix.SetColumn(0, new Vector4(mvarray[0].AsFloat, mvarray[1].AsFloat, mvarray[2].AsFloat, mvarray[3].AsFloat));
+        mvMatrix.SetColumn(1, new Vector4(mvarray[4].AsFloat, mvarray[5].AsFloat, mvarray[6].AsFloat, mvarray[7].AsFloat));
+        mvMatrix.SetColumn(2, new Vector4(mvarray[8].AsFloat, mvarray[9].AsFloat, mvarray[10].AsFloat, mvarray[11].AsFloat));
+        mvMatrix.SetColumn(3, new Vector4(mvarray[12].AsFloat, mvarray[13].AsFloat, mvarray[14].AsFloat, mvarray[15].AsFloat));
+        //Debug.Log("mvMatrix: " + mvMatrix);
+
+
+        Matrix4x4 pMatrix = new Matrix4x4();
+        pMatrix.SetColumn(0, new Vector4(parray[0].AsFloat, parray[1].AsFloat, parray[2].AsFloat, parray[3].AsFloat));
+        pMatrix.SetColumn(1, new Vector4(parray[4].AsFloat, -parray[5].AsFloat, parray[6].AsFloat, parray[7].AsFloat));
+        //pMatrix.SetColumn(1, new Vector4(parray[4].AsFloat, parray[5].AsFloat, parray[6].AsFloat, parray[7].AsFloat));
+        pMatrix.SetColumn(2, new Vector4(parray[8].AsFloat, parray[9].AsFloat, parray[10].AsFloat, parray[11].AsFloat));
+        pMatrix.SetColumn(3, new Vector4(parray[12].AsFloat, parray[13].AsFloat, parray[14].AsFloat, parray[15].AsFloat));
+        lastProjectionMatrix = pMatrix;
+
+        float fov_y = 2.0f * Mathf.Atan(1.0f / pMatrix.m11) * 180.0f / Mathf.PI;
+        float fov_y_prime = 2.0f * Mathf.Atan(resHeight * fov_y / 2.0f * Mathf.Deg2Rad / phoneResHeight) * Mathf.Rad2Deg;
+        float aspect = (float)resWidth / (float)resHeight;
+
+        cam.GetComponent<Camera>().fieldOfView = fov_y;
+        //cam.GetComponent<Camera>().fieldOfView = fov_y_prime;
+        cam.GetComponent<Camera>().aspect = aspect;
+        calculated_fovy = fov_y;
+        calculated_aspect = aspect;
+        calculated_fovy_prime = fov_y_prime;
+
+
+        //Debug.Log("reality zone origin!");
+        // Matrix4x4 cameraToWorld = mvMatrix.inverse;
+        Matrix4x4 cameraToWorld = mvMatrix;
+        Vector4 lastColumn = cameraToWorld.GetColumn(3);
+
+        Vector3 camPos = cameraToWorld.MultiplyPoint(new Vector3(0, 0, 0));
+        camPos.x = -camPos.x;
+        camPos.y = -camPos.y;
+        camPos.z = -camPos.z;
+
+        Vector3 forwardPos = cameraToWorld.MultiplyPoint(new Vector3(0, 0, 1));
+        forwardPos.x = -forwardPos.x;
+        forwardPos.y = -forwardPos.y;
+        forwardPos.z = -forwardPos.z;
+
+        Vector3 upPos = cameraToWorld.MultiplyPoint(new Vector3(0, 1, 0));
+        upPos.x = -upPos.x;
+        upPos.y = -upPos.y;
+        upPos.z = -upPos.z;
+
+        Vector3 forwardVec = forwardPos - camPos;
+        Vector3 upVec = upPos - camPos;
+
+        upVec.x = -upVec.x;
+        upVec.y = -upVec.y;
+        upVec.z = -upVec.z;
+
+        forwardVec.x = -forwardVec.x;
+        forwardVec.y = -forwardVec.y;
+        forwardVec.z = -forwardVec.z;
+
+        forwardPoint.transform.localPosition = (forwardVec).normalized * 0.2f + camPos / 1000.0f;
+        forwardPoint.transform.forward = cam.transform.position - forwardPoint.transform.position;
+        upPoint.transform.localPosition = (upVec).normalized * 0.2f + camPos / 1000.0f;
+        upPoint.transform.forward = cam.transform.position - upPoint.transform.position;
+
+        Quaternion camRotation = Quaternion.LookRotation(forwardVec, upVec);
+
+        cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec));
+        
+        return;
+    }
+
+    void OnPoseVuforiaDesktop(Socket socket, Packet packet, params object[] args)
+>>>>>>> 0b4499c... Misc changes for scene graph update
+*/
     void OnPoseVuforiaDesktop(SocketIOEvent e)
     {
         var args = e.data;
@@ -770,7 +865,7 @@ public class Pusher : MonoBehaviour {
             connectedSockets[socket.Id] = socket;
         }
 
-        JSONArray mvarray = jn["modelViewMatrix"].AsArray;
+        JSONArray mvarray = jn["modelViewMatrix"].AsArray; // this is identical to cameraPoseMatrix in latest version
         //JSONArray parray = jn["projectionMatrix"].AsArray;
         JSONArray parray = jn["realProjectionMatrix"].AsArray;
 

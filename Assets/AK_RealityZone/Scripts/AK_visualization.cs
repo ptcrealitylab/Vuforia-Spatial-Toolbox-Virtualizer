@@ -50,6 +50,7 @@ public class AK_visualization : MonoBehaviour {
         matDefault = new Material(AK_pointCloudShader);
         foreach (Camera cam in Camera.allCameras)
         {
+            Debug.Log("Hello from camera: " + cam.GetInstanceID());
             matForCamera.Add(cam.GetInstanceID(), matDefault); // cam.GetInstanceID(), new Material(AK_pointCloudShader));
         }
         //mat = new Material(Shader.Find("Standard"));
