@@ -529,7 +529,6 @@ public class Pusher : MonoBehaviour {
         //identify yourself as the station.
         Debug.Log("connected to server");
         socket.Emit("name", new JSONObject("station"));
-
         connected = true;
     }
 
@@ -753,10 +752,10 @@ public class Pusher : MonoBehaviour {
     Dictionary<string, string> socketToEditorId = new Dictionary<string, string>();
     Dictionary<string, string> editorToSocketId = new Dictionary<string, string>();
 
-/*
     //this is the one being used.
-    void OnCameraPosition(Socket socket, Packet packet, params object[] args)
+    void OnCameraPosition(SocketIOEvent e)
     {
+        var args = e.data;
         string jsonPacket = args[0].ToString();
         Debug.Log("received: " + jsonPacket);
         JSONNode jn = JSON.Parse(jsonPacket);
@@ -774,18 +773,17 @@ public class Pusher : MonoBehaviour {
         JSONArray mvarray = jn["cameraPoseMatrix"].AsArray;
         JSONArray parray = jn["projectionMatrix"].AsArray;
 
+        // camera matrix (inverse view matrix), converted from toolbox format to Matrix4x4
         Matrix4x4 mvMatrix = new Matrix4x4();
         mvMatrix.SetColumn(0, new Vector4(mvarray[0].AsFloat, mvarray[1].AsFloat, mvarray[2].AsFloat, mvarray[3].AsFloat));
         mvMatrix.SetColumn(1, new Vector4(mvarray[4].AsFloat, mvarray[5].AsFloat, mvarray[6].AsFloat, mvarray[7].AsFloat));
         mvMatrix.SetColumn(2, new Vector4(mvarray[8].AsFloat, mvarray[9].AsFloat, mvarray[10].AsFloat, mvarray[11].AsFloat));
         mvMatrix.SetColumn(3, new Vector4(mvarray[12].AsFloat, mvarray[13].AsFloat, mvarray[14].AsFloat, mvarray[15].AsFloat));
-        //Debug.Log("mvMatrix: " + mvMatrix);
 
-
+        // projection matrix, converted from toolbox format to Matrix4x4.. we use the same projection matrix to match camera FoV and aspect ratio
         Matrix4x4 pMatrix = new Matrix4x4();
         pMatrix.SetColumn(0, new Vector4(parray[0].AsFloat, parray[1].AsFloat, parray[2].AsFloat, parray[3].AsFloat));
         pMatrix.SetColumn(1, new Vector4(parray[4].AsFloat, -parray[5].AsFloat, parray[6].AsFloat, parray[7].AsFloat));
-        //pMatrix.SetColumn(1, new Vector4(parray[4].AsFloat, parray[5].AsFloat, parray[6].AsFloat, parray[7].AsFloat));
         pMatrix.SetColumn(2, new Vector4(parray[8].AsFloat, parray[9].AsFloat, parray[10].AsFloat, parray[11].AsFloat));
         pMatrix.SetColumn(3, new Vector4(parray[12].AsFloat, parray[13].AsFloat, parray[14].AsFloat, parray[15].AsFloat));
         lastProjectionMatrix = pMatrix;
@@ -801,30 +799,20 @@ public class Pusher : MonoBehaviour {
         calculated_aspect = aspect;
         calculated_fovy_prime = fov_y_prime;
 
-
         //Debug.Log("reality zone origin!");
         // Matrix4x4 cameraToWorld = mvMatrix.inverse;
-        Matrix4x4 cameraToWorld = mvMatrix;
+        Matrix4x4 cameraToWorld = mvMatrix; // already inverse of view matrix so don't need to invert again
         Vector4 lastColumn = cameraToWorld.GetColumn(3);
 
+        // calculate forward and up vectors from toolbox's camera matrix so that we can set the unity camera to match it
         Vector3 camPos = cameraToWorld.MultiplyPoint(new Vector3(0, 0, 0));
-        camPos.x = -camPos.x;
-        camPos.y = -camPos.y;
-        camPos.z = -camPos.z;
-
         Vector3 forwardPos = cameraToWorld.MultiplyPoint(new Vector3(0, 0, 1));
-        forwardPos.x = -forwardPos.x;
-        forwardPos.y = -forwardPos.y;
-        forwardPos.z = -forwardPos.z;
-
         Vector3 upPos = cameraToWorld.MultiplyPoint(new Vector3(0, 1, 0));
-        upPos.x = -upPos.x;
-        upPos.y = -upPos.y;
-        upPos.z = -upPos.z;
 
         Vector3 forwardVec = forwardPos - camPos;
         Vector3 upVec = upPos - camPos;
 
+        // these need to be inverted for some reason.... maybe it's converting from right-handed (vuforia) to left-handed (unity)?
         upVec.x = -upVec.x;
         upVec.y = -upVec.y;
         upVec.z = -upVec.z;
@@ -840,14 +828,11 @@ public class Pusher : MonoBehaviour {
 
         Quaternion camRotation = Quaternion.LookRotation(forwardVec, upVec);
 
-        cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), Quaternion.LookRotation(forwardVec, upVec));
-        
-        return;
+        // divide by 1000 because toolbox uses mm not meters. store in cameraInfo list and render later so that multiple clients don't conflict
+        cameraInfo[editorId] = new CameraInformation(new Vector3(camPos.x / 1000.0f, camPos.y / 1000.0f, camPos.z / 1000.0f), camRotation);
+
     }
 
-    void OnPoseVuforiaDesktop(Socket socket, Packet packet, params object[] args)
->>>>>>> 0b4499c... Misc changes for scene graph update
-*/
     void OnPoseVuforiaDesktop(SocketIOEvent e)
     {
         var args = e.data;
