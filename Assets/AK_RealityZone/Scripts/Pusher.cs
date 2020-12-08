@@ -54,6 +54,7 @@ public class Pusher : MonoBehaviour {
         socket.On("pose", OnPose);
         socket.On("poseVuforia", OnPoseVuforia);
         socket.On("poseVuforiaDesktop", OnPoseVuforiaDesktop);
+        socket.On("cameraPosition", OnCameraPosition);
 
         socket.On("vuforiaResult_server_system", On_vuforiaResult_server_system);
         socket.On("realityEditorObject_server_system", On_realityEditorObject_server_system);
