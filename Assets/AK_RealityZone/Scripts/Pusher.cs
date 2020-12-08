@@ -130,10 +130,10 @@ public class Pusher : MonoBehaviour {
 
                         // send the screenshot to the corresponding editorId (the key)
                         string editorId = entry.Key;
-                        string thisSocketId = editorToSocketId[editorId];
-                        Socket thisSocket = connectedSockets[thisSocketId];
+                        // string thisSocketId = editorToSocketId[editorId];
+                        // Socket thisSocket = connectedSockets[thisSocketId];
 
-                        Debug.Log("editor " + editorId + " is using socket " + thisSocketId);
+                        // Debug.Log("editor " + editorId + " is using socket " + thisSocketId);
 
                         string encodedBytes = getScreenshot();
                         string encodedDepthBytes = sendColorOnly ? "" : getDepthScreenshot();
@@ -141,12 +141,12 @@ public class Pusher : MonoBehaviour {
                         //send message!
                         if (sendColorOnly)
                         {
-                            thisSocket.Emit("image", encodedBytes + ";_;" + ";_;" + editorId + ";_;" + cameraInfo.Count); // count gives the rescale factor client needs to apply
+                            socket.Emit("image", new JSONObject(encodedBytes + ";_;" + ";_;" + editorId + ";_;" + cameraInfo.Count)); // count gives the rescale factor client needs to apply
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
                         }
                         else
                         {
-                            thisSocket.Emit("image", encodedBytes + ";_;" + encodedDepthBytes + ";_;" + editorId + ";_;" + cameraInfo.Count);
+                            socket.Emit("image", new JSONObject(encodedBytes + ";_;" + encodedDepthBytes + ";_;" + editorId + ";_;" + cameraInfo.Count));
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
                         }
                     //                    });
@@ -232,26 +232,6 @@ public class Pusher : MonoBehaviour {
 
         //emergencyTex = tex;
         //emergencyDebugCube2.GetComponent<Renderer>().material.mainTexture = tex;
-
-        if (rescale) {
-            //TextureScale.Bilinear(tex, 512, 256);
-            /*
-            Adjust_Resize resizeEffect = new Adjust_Resize();
-            resizeEffect.width = (int)(resWidth / resolutionFactor);
-            resizeEffect.height = (int)(resHeight / resolutionFactor);
-            TextureAdjustments.RenderAll(tex, ref tex, resizeEffect);
-            */
-
-            //tex.ResizePro((int)(resWidth * resolutionFactor), (int)(resHeight * resolutionFactor));
-            //Texture2D resizedTex = null;
-
-
-            tex.ResizePro((int)(scaledResWidth * resolutionFactor), (int)(scaledResHeight * resolutionFactor), out resizedTex, false);
-
-            //TextureScale.Bilinear(tex, (int)(resWidth/resolutionFactor), (int)(resHeight/resolutionFactor));
-            //emergencyDebugCube.GetComponent<Renderer>().material.mainTexture = resizedTex;
-
-        }
 
         //debugCube.GetComponent<Renderer>().material.mainTexture = tex;
 
@@ -541,10 +521,12 @@ public class Pusher : MonoBehaviour {
         //Manager.Socket.Emit("name", "station");
         // remove socket from uuid -> socket map
         // connectedSockets[socket.Id] = editorId;
+        /* 
         connectedSockets.Remove(socket.Id);
         string editorId = socketToEditorId[socket.Id];
         socketToEditorId.Remove(socket.Id);
         editorToSocketId.Remove(editorId);
+        */
         // cameraInfo.Remove(editorId); // TODO: print cameraInfo.length to figure out why it's not speeding up...
     }
 
@@ -749,7 +731,7 @@ public class Pusher : MonoBehaviour {
     // maps editorIds to (position, rotation) structs
     Dictionary<string, CameraInformation> cameraInfo = new Dictionary<string, CameraInformation>();
 
-    Dictionary<string, Socket> connectedSockets = new Dictionary<string, Socket>();
+    // Dictionary<string, Socket> connectedSockets = new Dictionary<string, Socket>();
     Dictionary<string, string> socketToEditorId = new Dictionary<string, string>();
     Dictionary<string, string> editorToSocketId = new Dictionary<string, string>();
 
@@ -766,9 +748,12 @@ public class Pusher : MonoBehaviour {
         {
             Debug.Log("Pose from new editor (" + editorId + ")");
 
+            editorToSocketId[editorId] = "exists...";
+            /*
             socketToEditorId[socket.Id] = editorId;
             editorToSocketId[editorId] = socket.Id;
             connectedSockets[socket.Id] = socket;
+            */
         }
 
         JSONArray mvarray = jn["cameraPoseMatrix"].AsArray;
@@ -845,10 +830,12 @@ public class Pusher : MonoBehaviour {
         if (!editorToSocketId.ContainsKey(editorId))
         {
             Debug.Log("Pose from new editor (" + editorId + ")");
-
+            /*
             socketToEditorId[socket.Id] = editorId;
             editorToSocketId[editorId] = socket.Id;
             connectedSockets[socket.Id] = socket;
+            */
+            editorToSocketId[editorId] = "exists...";
         }
 
         JSONArray mvarray = jn["modelViewMatrix"].AsArray; // this is identical to cameraPoseMatrix in latest version
