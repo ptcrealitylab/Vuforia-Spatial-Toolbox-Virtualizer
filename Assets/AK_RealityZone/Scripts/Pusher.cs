@@ -405,7 +405,7 @@ public class Pusher : MonoBehaviour {
 
 
 
-            
+
             string moduleName = ja_module_state[i]["name"];
             bool moduleState = ja_module_state[i]["active"];
             GameObject module = findObject(moduleName);
@@ -416,7 +416,7 @@ public class Pusher : MonoBehaviour {
                 module.SetActive(moduleState);
             }
             //GameObject.Find(moduleName).SetActive(moduleState);
-            
+
         }
 
         JSONArray ja_action = jn["actionList"].AsArray;
@@ -431,7 +431,7 @@ public class Pusher : MonoBehaviour {
                 GameObject.Find(objectName).SendMessage(command);
             }
 
-            
+
         }
 
 
@@ -629,7 +629,7 @@ public class Pusher : MonoBehaviour {
         }
         //parse JSON:
         //Debug.Log("pusher received: " + text);
-        
+
         JSONNode jn = JSON.Parse(text);
         //Debug.Log("after prasing json: " + jn["matrix"]["model"]["newTurtletBjbb04jalux"][15].ToString());
         //Debug.Log(jn["matrix"]);
@@ -686,7 +686,7 @@ public class Pusher : MonoBehaviour {
         Vector3 camPosition = new Vector3(lastColumn.x, lastColumn.y, -lastColumn.z);
 
         Quaternion camRotation = Quaternion.LookRotation(forwardVec, upVec);
-        
+
 
         cam.transform.position = new Vector3(camPosition.x * (scaleFactor / 1000.0f), camPosition.y * (scaleFactor / 1000.0f), scaleFactor * camPosition.z / 1000.0f);
         //cam.transform.position = camPosition/(scaleFactor*1000.0f);
@@ -1045,11 +1045,11 @@ public class Pusher : MonoBehaviour {
         Vector3 forwardVec = forwardPos - camPos;
         Vector3 upVec = upPos - camPos;
 
-        
+
         camPos.x = -camPos.x;
         forwardVec.x = -forwardVec.x;
         upVec.x = -upVec.x;
-        
+
 
 
         //forwardVec.x = -forwardVec.x;
@@ -1067,10 +1067,10 @@ public class Pusher : MonoBehaviour {
         Quaternion camRotation = Quaternion.LookRotation(forwardVec, upVec);
         //cam.transform.position = new Vector3(camPosition.x * (scaleFactor / 1000.0f * 2.0f), camPosition.y * (scaleFactor / 1000.0f * 2.0f), scaleFactor * camPosition.z / 1000.0f *2.0f);
 
-        
+
         ////cam.transform.position = new Vector3(camPos.x * (scaleFactor / 1000.0f  * 2.0f), camPos.y * (scaleFactor / 1000.0f * 2.0f), scaleFactor * camPos.z / 1000.0f * 2.0f);
         ////cam.transform.rotation = camRotation;
-        
+
 
         cam.transform.localPosition = new Vector3(camPos.x * (scaleFactor / 1000.0f * 2.0f), camPos.y * (scaleFactor / 1000.0f * 2.0f), scaleFactor * camPos.z / 1000.0f * 2.0f);
         cam.transform.localRotation = camRotation;
@@ -1127,7 +1127,7 @@ public class Pusher : MonoBehaviour {
         pMatrix.SetColumn(2, new Vector4(parray[8].AsFloat, parray[9].AsFloat, parray[10].AsFloat, parray[11].AsFloat));
         pMatrix.SetColumn(3, new Vector4(parray[12].AsFloat, parray[13].AsFloat, parray[14].AsFloat, parray[15].AsFloat));
 
-        
+
 
         lastProjectionMatrix = pMatrix;
 
@@ -1151,7 +1151,7 @@ public class Pusher : MonoBehaviour {
 
         //float aspect = Mathf.Abs(pMatrix.m00/pMatrix.m11);
         float aspect = (float)resWidth / (float)resHeight;
-        
+
 
         //cam.GetComponent<Camera>().fieldOfView = fov_y;
         cam.GetComponent<Camera>().fieldOfView = fov_y_prime;
@@ -1208,7 +1208,7 @@ public class Pusher : MonoBehaviour {
 
         //debugVector = new Vector3();
         debugVector = upVec;
-        
+
         //Debug.Log("upvec: " + upVec);
 
         Quaternion camRotation = Quaternion.LookRotation(forwardVec, upVec);
