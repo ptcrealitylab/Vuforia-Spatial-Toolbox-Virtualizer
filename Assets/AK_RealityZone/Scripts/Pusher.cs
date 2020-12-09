@@ -141,12 +141,12 @@ public class Pusher : MonoBehaviour {
                         //send message!
                         if (sendColorOnly)
                         {
-                            socket.Emit("image", new JSONObject(encodedBytes + ";_;" + ";_;" + editorId + ";_;" + cameraInfo.Count)); // count gives the rescale factor client needs to apply
+                            socket.Emit("image", JSONObject.CreateStringObject(encodedBytes + ";_;" + ";_;" + editorId + ";_;" + cameraInfo.Count)); // count gives the rescale factor client needs to apply
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
                         }
                         else
                         {
-                            socket.Emit("image", new JSONObject(encodedBytes + ";_;" + encodedDepthBytes + ";_;" + editorId + ";_;" + cameraInfo.Count));
+                            socket.Emit("image", JSONObject.CreateStringObject(encodedBytes + ";_;" + encodedDepthBytes + ";_;" + editorId + ";_;" + cameraInfo.Count));
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
                         }
                     //                    });
@@ -292,6 +292,7 @@ public class Pusher : MonoBehaviour {
 
     void OnDestroy()
     {
+        Debug.Log("OnDestroy");
         // Leaving this sample, close the socket
         socket.Close();
     }
@@ -424,8 +425,7 @@ public class Pusher : MonoBehaviour {
         {
             var data = new JSONObject();
             data.AddField("gifurl", location);
-            string data_string = data.ToString();
-            socket.Emit("realityZoneGif_system_server", new JSONObject(data_string));
+            socket.Emit("realityZoneGif_system_server", data);
         }
     }
 
@@ -507,14 +507,22 @@ public class Pusher : MonoBehaviour {
 
     private void OnConnected(SocketIOEvent e)
     {
+        if (connected)
+        {
+            return;
+        }
         //identify yourself as the station.
         Debug.Log("connected to server");
-        socket.Emit("name", new JSONObject("station"));
+        socket.Emit("name", JSONObject.CreateStringObject("station"));
         connected = true;
     }
 
     private void OnDisconnected(SocketIOEvent e)
     {
+        if (!connected)
+        {
+            return;
+        }
         connected = false;
         Debug.Log("server disconnected");
         //identify yourself as the station.

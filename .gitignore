@@ -72,3 +72,17 @@ crashlytics-build.properties
 
 # keep the *.asset files from Library
 !/[Ll]ibrary/*.asset
+
+# Various bundles that are a bit too large for github
+/[Aa]ssets/OpenCVForUnity
+/[Aa]ssets/VacuumShaders
+/[Aa]ssets/Wireframe
+cublas64_100.dll
+cudart64_100.dll
+cudnn64_7.dll
+depthengine_1_0.dll
+dnn_model_2_0.onnx
+onnxruntime.dll
+vcomp140.dll
+
+AKPlugin_result.txt
