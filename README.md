@@ -14,8 +14,8 @@ this zip in Documents or an equivalent directory.
 Run checkout.sh in Git Bash. This generally looks like the following:
 
 ```bash
-~ > cd Documents/akrz-checkout
-akrz-checkout > ./checkout.sh
+cd Documents/akrz-checkout
+./checkout.sh
 ```
 
 After a brief git clone and a less-brief copying of some vendored dependencies,
