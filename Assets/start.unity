@@ -2402,7 +2402,6 @@ GameObject:
   - component: {fileID: 1308983892}
   - component: {fileID: 1308983893}
   - component: {fileID: 1308983894}
-  - component: {fileID: 1308983895}
   m_Layer: 0
   m_Name: ServerCommunication
   m_TagString: Untagged
@@ -2490,23 +2489,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectServerUrl: http://127.0.0.1:8080
---- !u!114 &1308983895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1308983891}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 961346d7e16a445ff93777573e78efd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  url: ws://127.0.0.1:3020/socket.io/?EIO=4&transport=websocket
-  autoConnect: 1
-  reconnectDelay: 5
-  ackExpirationTime: 1800
-  pingInterval: 25
-  pingTimeout: 60
 --- !u!1 &1333585292
 GameObject:
   m_ObjectHideFlags: 0
