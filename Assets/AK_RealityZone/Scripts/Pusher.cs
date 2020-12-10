@@ -5,14 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 // using BestHTTP.SocketIO;
-using SocketIO;
+using Dpoch.SocketIO;
 using SimpleJSON;
 using System.Threading.Tasks;
 
 public class Pusher : MonoBehaviour {
 
 
-    private SocketIOComponent socket;
+    private SocketIO socket;
     public GameObject pusherOrigin;
 
     public akplay player;
@@ -36,18 +36,16 @@ public class Pusher : MonoBehaviour {
     //public Vector3 debugVector;
     // Use this for initialization
     void Start () {
-        socket = GetComponent(typeof(SocketIOComponent)) as SocketIOComponent;
+        socket = new SocketIO("ws://127.0.0.1:3020/socket.io/?EIO=4&transport=websocket");
         depthMat = new Material(depthShader);
         emergencyTex = new Texture2D(2, 2);
 
         rt = new RenderTexture(resWidth, resHeight, 32);
 
-        socket.url = "ws://127.0.0.1:3020/socket.io/?EIO=4&transport=websocket";
-        socket.autoConnect = false;
-        socket.On("open", OnConnected);
-        socket.On("connect", OnConnected);
-        socket.On("close", OnDisconnected);
-        socket.On("disconnect", OnDisconnected);
+        socket.OnOpen += OnConnected;
+        // socket.OnConnect += OnConnected;
+        socket.OnClose += OnDisconnected;
+        // socket.On("disconnect", OnDisconnected);
         socket.On("message", OnMessage);
         socket.On("resolution", OnResolution);
         socket.On("resolutionPhone", OnPhoneResolution);
@@ -141,12 +139,12 @@ public class Pusher : MonoBehaviour {
                         //send message!
                         if (sendColorOnly)
                         {
-                            socket.Emit("image", JSONObject.CreateStringObject(encodedBytes + ";_;" + ";_;" + editorId + ";_;" + cameraInfo.Count)); // count gives the rescale factor client needs to apply
+                            socket.Emit("image", encodedBytes + ";_;" + ";_;" + editorId + ";_;" + cameraInfo.Count); // count gives the rescale factor client needs to apply
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId);
                         }
                         else
                         {
-                            socket.Emit("image", JSONObject.CreateStringObject(encodedBytes + ";_;" + encodedDepthBytes + ";_;" + editorId + ";_;" + cameraInfo.Count));
+                            socket.Emit("image", encodedBytes + ";_;" + encodedDepthBytes + ";_;" + editorId + ";_;" + cameraInfo.Count);
                             // Manager.Socket.Emit("image", encodedBytes + ";_;" + editorId + ";_;" + encodedDepthBytes);
                         }
                     //                    });
@@ -303,13 +301,13 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            socket.Emit("vuforiaImage_system_server", new JSONObject(data));
+            socket.Emit("vuforiaImage_system_server", data);
         }
     }
 
     void On_vuforiaResult_server_system(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         string jsonPacket = args[0].ToString();
         //GameObject.Find("VuforiaModule").GetComponent<VuforiaModule>().vuforiaResponse(jsonPacket);
 
@@ -317,7 +315,7 @@ public class Pusher : MonoBehaviour {
 
     void On_realityEditorObject_server_system(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         string jsonPacket = args[0].ToString();
         //GameObject.Find("VuforiaModule").GetComponent<VuforiaModule>().realityEditorObject(jsonPacket);
     }
@@ -326,7 +324,7 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            socket.Emit("vuforiaModuleUpdate_system_server", new JSONObject(data));
+            socket.Emit("vuforiaModuleUpdate_system_server", data);
         }
     }
 
@@ -372,7 +370,7 @@ public class Pusher : MonoBehaviour {
 
     public void On_zoneInteractionMessage_server_system(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         Debug.Log("received interaction message from server");
         Debug.Log("args: " + args);
         Debug.Log("packet: " + e);
@@ -424,7 +422,7 @@ public class Pusher : MonoBehaviour {
         if (connected)
         {
             var data = new JSONObject();
-            data.AddField("gifurl", location);
+            data.Add("gifurl", location);
             socket.Emit("realityZoneGif_system_server", data);
         }
     }
@@ -466,7 +464,7 @@ public class Pusher : MonoBehaviour {
             Debug.Log("NTO ASDF ASTR");
         }
         */
-        var args = e.data;
+        var args = e.Data;
         string command = args[0].ToString();
         Debug.Log("command " + command);
         char[] quotes = { '"' };
@@ -505,26 +503,27 @@ public class Pusher : MonoBehaviour {
         shadingController.SwitchShading(!inDemoMode);
     }
 
-    private void OnConnected(SocketIOEvent e)
+    private void OnConnected()
     {
         if (connected)
         {
-            return;
+            // return;
         }
         //identify yourself as the station.
         Debug.Log("connected to server");
-        socket.Emit("name", JSONObject.CreateStringObject("station"));
+        socket.Emit("name", "station");
         connected = true;
     }
 
-    private void OnDisconnected(SocketIOEvent e)
+    private void OnDisconnected()
     {
         if (!connected)
         {
-            return;
+            // return;
         }
         connected = false;
         Debug.Log("server disconnected");
+        socket.Connect();
         //identify yourself as the station.
         //Manager.Socket.Emit("name", "station");
         // remove socket from uuid -> socket map
@@ -540,7 +539,7 @@ public class Pusher : MonoBehaviour {
 
     void OnResolution(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         Debug.Log("resolution received: " + e);
         Debug.Log("args: " + args[0]);
         string[] parts = args[0].ToString().Split(',');
@@ -560,13 +559,13 @@ public class Pusher : MonoBehaviour {
     {
         if (connected)
         {
-            socket.Emit("realityZoneSkeleton", new JSONObject(skeletonObject));
+            socket.Emit("realityZoneSkeleton", skeletonObject);
         }
     }
 
     void OnPhoneResolution(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         Debug.Log("phone resolution received: " + e);
         string[] parts = args[0].ToString().Split(',');
         //phoneResWidth = (int)(float.Parse(parts[0]) / factor);
@@ -575,7 +574,7 @@ public class Pusher : MonoBehaviour {
 
     void OnPose(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         Debug.Log("onpose received: " + e);
         Debug.Log("args: " + args[0]);
 
@@ -746,7 +745,7 @@ public class Pusher : MonoBehaviour {
     //this is the one being used.
     void OnCameraPosition(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         string jsonPacket = args[0].ToString();
         Debug.Log("received: " + jsonPacket);
         JSONNode jn = JSON.Parse(jsonPacket);
@@ -829,7 +828,7 @@ public class Pusher : MonoBehaviour {
 
     void OnPoseVuforiaDesktop(SocketIOEvent e)
     {
-        var args = e.data;
+        var args = e.Data;
         string jsonPacket = args[0].ToString();
         Debug.Log("received: " + jsonPacket);
         JSONNode jn = JSON.Parse(jsonPacket);
@@ -1093,7 +1092,7 @@ public class Pusher : MonoBehaviour {
 
         //Debug.Log("pose received: " + packet.ToString());
         //Debug.Log("length of args: " + args.Length);
-        var args = e.data;
+        var args = e.Data;
         //Debug.Log("args of 0: " + args[0]);
         //string jsonPacket = packet.ToString();
         string jsonPacket = args[0].ToString();

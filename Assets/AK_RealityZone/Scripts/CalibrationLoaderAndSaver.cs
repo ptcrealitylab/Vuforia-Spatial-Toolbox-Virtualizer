@@ -19,18 +19,18 @@ public class CalibrationLoaderAndSaver : MonoBehaviour {
 
     public void saveCalibration()
     {
-        JSONObject ja = JSONObject.arr;
+        JSONArray ja = new JSONArray();
         for(int cc = 0; cc<camInfoList.Count; cc++)
         {
             JSONObject jn = new JSONObject();
-            jn.AddField("serial", camInfoList[cc].serial);
-            jn.AddField("position_x", camInfoList[cc].visualization.transform.position.x);
-            jn.AddField("position_y", camInfoList[cc].visualization.transform.position.y);
-            jn.AddField("position_z", camInfoList[cc].visualization.transform.position.z);
-            jn.AddField("quaternion_x", camInfoList[cc].visualization.transform.rotation.x);
-            jn.AddField("quaternion_y", camInfoList[cc].visualization.transform.rotation.y);
-            jn.AddField("quaternion_z", camInfoList[cc].visualization.transform.rotation.z);
-            jn.AddField("quaternion_w", camInfoList[cc].visualization.transform.rotation.w);
+            jn.Add("serial", camInfoList[cc].serial);
+            jn.Add("position_x", camInfoList[cc].visualization.transform.position.x);
+            jn.Add("position_y", camInfoList[cc].visualization.transform.position.y);
+            jn.Add("position_z", camInfoList[cc].visualization.transform.position.z);
+            jn.Add("quaternion_x", camInfoList[cc].visualization.transform.rotation.x);
+            jn.Add("quaternion_y", camInfoList[cc].visualization.transform.rotation.y);
+            jn.Add("quaternion_z", camInfoList[cc].visualization.transform.rotation.z);
+            jn.Add("quaternion_w", camInfoList[cc].visualization.transform.rotation.w);
             ja.Add(jn);
         }
         string path = Application.dataPath + "/" + calibrationFileName;

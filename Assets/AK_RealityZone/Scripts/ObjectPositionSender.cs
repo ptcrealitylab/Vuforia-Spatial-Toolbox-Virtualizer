@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
-using SocketIO;
+using SimpleJSON;
+using Dpoch.SocketIO;
 
 public class ObjectPositionSender : MonoBehaviour {
-    private SocketIOComponent socket;
+    private SocketIO socket;
     private bool connected;
     public string objectServerUrl = "http://127.0.0.1:8080";
 
@@ -46,7 +47,7 @@ public class ObjectPositionSender : MonoBehaviour {
         Debug.Log("OPS server disconnected");
     }
 
-    public void SendSkeleton(JSONObject skeletons)
+    public void SendSkeleton(JSONArray skeletons)
     {
         if (!connected)
         {

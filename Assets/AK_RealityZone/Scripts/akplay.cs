@@ -5,11 +5,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using SimpleJSON;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using AOT;
-using SocketIO;
+// using SocketIO;
 using System.Threading;
 
 //using OpenCVForUnity;
@@ -1687,43 +1688,43 @@ public class akplay : MonoBehaviour {
         }
 
         Dictionary<uint, SkeletonVis> skelVisses = skeletonVisArray[primaryTrackerIndex];
-        JSONObject skeletons = JSONObject.arr;
+        JSONArray skeletons = new JSONArray();
         foreach (var entry in skelVisses)
         {
             uint id = entry.Key;
             SkeletonVis sv = entry.Value;
             JSONObject skeleton = new JSONObject();
-            skeleton.AddField("id", id);
-            JSONObject joints = JSONObject.arr;
+            skeleton.Add("id", id);
+            JSONArray joints = new JSONArray();
             foreach (var jointGO in sv.joints)
             {
                 JSONObject joint = new JSONObject();
-                joint.AddField("x", jointGO.transform.position.x);
-                joint.AddField("y", jointGO.transform.position.y);
-                joint.AddField("z", jointGO.transform.position.z);
+                joint.Add("x", jointGO.transform.position.x);
+                joint.Add("y", jointGO.transform.position.y);
+                joint.Add("z", jointGO.transform.position.z);
                 joints.Add(joint);
             }
-            skeleton.AddField("joints", joints);
+            skeleton.Add("joints", joints);
             skeletons.Add(skeleton);
         }
 
         if (mirController.Connected())
         {
             JSONObject skeleton = new JSONObject();
-            skeleton.AddField("id", "mir");
-            JSONObject joints = JSONObject.arr;
+            skeleton.Add("id", "mir");
+            JSONArray joints = new JSONArray();
 
             JSONObject joint = new JSONObject();
-            joint.AddField("x", mirController.currentPos.x);
-            joint.AddField("y", mirController.currentPos.y);
-            joint.AddField("z", mirController.currentPos.z);
-            joint.AddField("qw", mirController.currentOri.w);
-            joint.AddField("qx", mirController.currentOri.x);
-            joint.AddField("qy", mirController.currentOri.y);
-            joint.AddField("qz", mirController.currentOri.z);
+            joint.Add("x", mirController.currentPos.x);
+            joint.Add("y", mirController.currentPos.y);
+            joint.Add("z", mirController.currentPos.z);
+            joint.Add("qw", mirController.currentOri.w);
+            joint.Add("qx", mirController.currentOri.x);
+            joint.Add("qy", mirController.currentOri.y);
+            joint.Add("qz", mirController.currentOri.z);
             joints.Add(joint);
 
-            skeleton.AddField("joints", joints);
+            skeleton.Add("joints", joints);
             skeletons.Add(skeleton);
         }
 
