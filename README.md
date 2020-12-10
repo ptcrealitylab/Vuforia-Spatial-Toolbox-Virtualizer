@@ -27,6 +27,8 @@ you should have the following directory layout.
 
 Open the project in Unity. It should look like this:
 
+![open in unity](doc/open-akrz-in-unity.png)
+
 If the start scene doesn't open by default, open it here:
 
 ![start scene location](doc/start-scene-in-unity.png)
