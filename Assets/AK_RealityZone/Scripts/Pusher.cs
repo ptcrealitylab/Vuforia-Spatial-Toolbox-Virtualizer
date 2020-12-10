@@ -45,6 +45,7 @@ public class Pusher : MonoBehaviour {
         socket.OnOpen += OnConnected;
         // socket.OnConnect += OnConnected;
         socket.OnClose += OnDisconnected;
+        socket.OnError += (err) => Debug.Log("Socket Error: " + err);
         // socket.On("disconnect", OnDisconnected);
         socket.On("message", OnMessage);
         socket.On("resolution", OnResolution);
@@ -124,7 +125,7 @@ public class Pusher : MonoBehaviour {
                         cam.transform.localPosition = entry.Value.position;
                         cam.transform.localRotation = entry.Value.rotation;
 
-                        Debug.Log(entry.Value.position);
+                        // Debug.Log(entry.Value.position);
 
                         // send the screenshot to the corresponding editorId (the key)
                         string editorId = entry.Key;
@@ -747,7 +748,7 @@ public class Pusher : MonoBehaviour {
     {
         var args = e.Data;
         string jsonPacket = args[0].ToString();
-        Debug.Log("received: " + jsonPacket);
+        // Debug.Log("received: " + jsonPacket);
         JSONNode jn = JSON.Parse(jsonPacket);
 
         string editorId = jn["editorId"];
