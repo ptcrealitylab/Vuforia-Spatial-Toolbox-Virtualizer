@@ -35,8 +35,14 @@ If the start scene doesn't open by default, open it here:
 
 Clicking the run button should pop up with uncalibrated cameras. To get an
 initial calibration click the Autocalibrate button then manually refine the
-camera positions if desired. Click "Save Calibration" to save this new
+camera positions if desired.
+
+![autocalibrate button](doc/autocalibrate-button.png)
+
+Click "Save Calibration" to save this new
 calibration.
+
+![save calibration button](doc/save-calibration-button.png)
 
 ## Connecting to an edge server
 
