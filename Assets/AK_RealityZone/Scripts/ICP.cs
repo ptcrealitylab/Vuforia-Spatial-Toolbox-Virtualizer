@@ -1,4 +1,12 @@
-﻿//ICP class for unity
+﻿/**
+ * Copyright (c) 2019 Hisham Bedri
+ * Copyright (c) 2019-2020 James Hobin
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+//ICP class for unity
 //written by Hisham Bedri, Reality Lab, 2019
 
 using System.Collections;

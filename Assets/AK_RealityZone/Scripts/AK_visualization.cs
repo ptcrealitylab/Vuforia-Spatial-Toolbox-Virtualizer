@@ -1,4 +1,12 @@
-﻿//point cloud for the azure kinect, heavily influenced by the Zed pointcloud shader
+﻿/**
+ * Copyright (c) 2019 Hisham Bedri
+ * Copyright (c) 2019-2020 James Hobin
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+//point cloud for the azure kinect, heavily influenced by the Zed pointcloud shader
 //written by Hisham Bedri, Reality Lab, 2019
 
 using System.Collections;

@@ -1,4 +1,12 @@
-﻿//autocalibration for the azure kinect
+﻿/**
+ * Copyright (c) 2019 Hisham Bedri
+ * Copyright (c) 2019-2020 James Hobin
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+//autocalibration for the azure kinect
 //written by Hisham Bedri, Reality Lab, 2019
 
 
