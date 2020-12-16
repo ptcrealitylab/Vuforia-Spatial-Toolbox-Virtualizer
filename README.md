@@ -29,7 +29,7 @@ SDKs, you should have the following directory layout.
 Next, it's time to add OpenCVForUnity v2.4.2 to the project. This project is
 available [on its website](https://enoxsoftware.com/opencvforunity/). For
 testing purposes the free trial is enough. Add this asset through Unity's
-Assets > Import new package menu.
+Assets > Import package > Custom package menu.
 
 ## Starting the project in Unity
 
