@@ -86,3 +86,5 @@ onnxruntime.dll
 vcomp140.dll
 
 AKPlugin_result.txt
+
+*.swp
