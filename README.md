@@ -4,24 +4,33 @@
 Install [Git](https://git-scm.com/downloads) and/or [Github
 Desktop](https://desktop.github.com/). Install Unity 2017.4.10f1 from the
 [Unity download archive](https://unity3d.com/get-unity/download/archive).
+Install [Azure Kinect Development Kit
+v1.3.0](https://docs.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download)
+and [Azure Kinect Body Tracking SDK
+v0.9.4](https://docs.microsoft.com/en-us/azure/kinect-dk/body-sdk-download)
 
-## Downloading and setting up with akrz-checkout
+## Copying dependencies with checkout.sh
 
-Download the latest akrz-checkout.zip from the [Releases
-page](https://github.com/ptcrealitylab/AzureKinectRealityZone/releases). Unpack
-this zip in Documents or an equivalent directory.
-
-Run checkout.sh in Git Bash. This generally looks like the following:
+Run this repository's script checkout.sh in Git Bash. This generally looks like
+the following:
 
 ```bash
-cd Documents/akrz-checkout
+cd Documents/GitHub/repos/AzureKinectRealityZone
 ./checkout.sh
 ```
 
-After a brief git clone and a less-brief copying of some vendored dependencies,
-you should have the following directory layout.
+After a brief git clone and a less-brief copying of files from the Azure Kinect
+SDKs, you should have the following directory layout.
 
 ![akrz-checkout directory layout](doc/akrz-checkout-directory-layout.png)
+
+## Adding OpenCVForUnity
+
+Next, it's time to add OpenCVForUnity v2.3.5 to the project. This project is
+available [on its website](https://enoxsoftware.com/opencvforunity/). We
+recommend you pay for the full version but you can also download the trial.
+
+Unpack this asset to the Assets directory.
 
 ## Starting the project in Unity
 
