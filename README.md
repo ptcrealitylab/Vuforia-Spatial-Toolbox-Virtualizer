@@ -27,10 +27,9 @@ SDKs, you should have the following directory layout.
 ## Adding OpenCVForUnity
 
 Next, it's time to add OpenCVForUnity v2.3.5 to the project. This project is
-available [on its website](https://enoxsoftware.com/opencvforunity/). We
-recommend you pay for the full version but you can also download the trial.
-
-Unpack this asset to the Assets directory.
+available [on its website](https://enoxsoftware.com/opencvforunity/). For
+testing purposes the free trial is enough. Add this asset through Unity's
+Assets > Import new package menu.
 
 ## Starting the project in Unity
 
@@ -48,8 +47,7 @@ camera positions if desired.
 
 ![autocalibrate button](doc/autocalibrate-button.png)
 
-Click "Save Calibration" to save this new
-calibration.
+Click "Save Calibration" to save this new calibration.
 
 ![save calibration button](doc/save-calibration-button.png)
 
@@ -84,6 +82,7 @@ called with: station' messages below
 
 ## Viewing in browser
 
-Finally, open [localhost:8081](http://localhost:8081) and select your local IP from the top left menu to see the Reality Zone in action.
+Finally, open [localhost:8081](http://localhost:8081) and select your local IP
+from the top left menu to see the Reality Zone in action.
 
 ![browser view](doc/browser-view.png)
