@@ -88,3 +88,8 @@ vcomp140.dll
 AKPlugin_result.txt
 
 *.swp
+depthengine_2_0.dll
+k4a.dll
+k4abt.dll
+k4arecord.dll
+/[Aa]ssets/AKPlugin_result.txt
