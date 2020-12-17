@@ -3,10 +3,15 @@
 ## Read First
 The Vuforia Spatial Toolbox and Vuforia Spatial Edge Server make up a shared research platform for exploring spatial computing as a community. This research platform is not an out of the box production-ready enterprise solution. Please read the [MPL 2.0 license](LICENSE) before use.
 
-Join the conversations in our [discourse forum](https://forum.spatialtoolbox.vuforia.com) if you have questions, ideas want to collaborate or just say hi.
+Join the conversations in our [discourse
+forum](https://forum.spatialtoolbox.vuforia.com) if you have questions, ideas,
+want to collaborate, or to just say hi.
 
 
-## Installation prerequisites
+## Prerequisites
+
+Note that you must own 1-6 Microsoft Azure Kinect cameras to use this software.
+
 Install [Git](https://git-scm.com/downloads) and/or [Github
 Desktop](https://desktop.github.com/). Install Unity 2017.4.10f1 from the
 [Unity download archive](https://unity3d.com/get-unity/download/archive).
@@ -26,7 +31,10 @@ cd Documents/GitHub/repos/Virtualizer
 ```
 
 This should copy some dlls from the Azure Kinect SDKs, you should have some new
-dll files in the same directory as checkout.sh.
+dll files in the same directory as checkout.sh. The whole process should look
+like this:
+
+![checkout.sh run](doc/checkoutsh-after.png)
 
 ## Adding OpenCVForUnity
 
@@ -39,7 +47,7 @@ Assets > Import package > Custom package menu.
 
 Open the project in Unity. It should look like this:
 
-![open in unity](doc/open-akrz-in-unity.png)
+![open in unity](doc/open-virtualizer-in-unity.png)
 
 If the start scene doesn't open by default, open it here:
 
@@ -87,6 +95,6 @@ called with: station' messages below
 ## Viewing in browser
 
 Finally, open [localhost:8081](http://localhost:8081) and select your local IP
-from the top left menu to see the Reality Zone in action.
+from the top left menu to see the Virtualizer in action.
 
 ![browser view](doc/browser-view.png)
