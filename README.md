@@ -25,10 +25,8 @@ cd Documents/GitHub/repos/AzureKinectRealityZone
 ./checkout.sh
 ```
 
-After a brief git clone and a less-brief copying of files from the Azure Kinect
-SDKs, you should have the following directory layout.
-
-![akrz-checkout directory layout](doc/akrz-checkout-directory-layout.png)
+This should copy some dlls from the Azure Kinect SDKs, you should have some new
+dll files in the same directory as checkout.sh.
 
 ## Adding OpenCVForUnity
 
