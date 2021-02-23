@@ -20,6 +20,10 @@ v1.3.0](https://docs.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download)
 and [Azure Kinect Body Tracking SDK
 v0.9.4](https://docs.microsoft.com/en-us/azure/kinect-dk/body-sdk-download)
 
+If you encounter the error `DllNotFoundException` it will be necessary to also
+install Visual Studio Code 2017 and 2019 with support for C++ development. This
+covers missing dependencies on freshly installed copies of Windows.
+
 ## Copying dependencies with checkout.sh
 
 Run this repository's script checkout.sh in Git Bash. This generally looks like
