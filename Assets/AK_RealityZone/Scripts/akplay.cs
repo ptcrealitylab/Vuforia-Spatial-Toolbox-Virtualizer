@@ -33,6 +33,8 @@ public class akplay : MonoBehaviour {
     static string filePath;
     static ReaderWriterLock locker = new ReaderWriterLock();
 
+    private int lastDay = System.DateTime.Now.Day;
+
     //Plugin entry point
     #region
     [DllImport(dllName, EntryPoint = "enumerateDevices")]
@@ -1231,6 +1233,12 @@ public class akplay : MonoBehaviour {
     void Update () {
         //Debug.Log("************* setting cameras ready to true");
         camerasReady = true;
+
+        if (System.DateTime.Now.Day != lastDay)
+        {
+            lastDay = System.DateTime.Now.Day;
+            ResetLines();
+        }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
