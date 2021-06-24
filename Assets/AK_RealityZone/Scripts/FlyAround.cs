@@ -14,7 +14,7 @@ public class FlyAround : MonoBehaviour
 {
     private float theta = 0;
     private float dTheta = 0.12f;
-    private float r = 1.8f;
+    private float r = 2.1f;
     private float y = 2.5f;
     public GameObject scannerCenter;
     // Use this for initialization
