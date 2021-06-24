@@ -528,7 +528,7 @@ public class Pusher : MonoBehaviour {
     {
         if (!connected)
         {
-            // return;
+           return;
         }
         connected = false;
         Debug.Log("server disconnected");
