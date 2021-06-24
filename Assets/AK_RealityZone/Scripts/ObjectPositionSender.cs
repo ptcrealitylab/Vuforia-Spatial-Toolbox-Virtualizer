@@ -10,17 +10,19 @@ using UnityEngine;
 using SimpleJSON;
 using Dpoch.SocketIO;
 
-public class ObjectPositionSender : MonoBehaviour {
+public class ObjectPositionSender : MonoBehaviour
+{
     private SocketIO socket;
-    private bool connected;
+    public bool connected;
     public string objectServerUrl = "127.0.0.1:8080";
-
+    private float lastSend = 0;
     void Start()
     {
         socket = new SocketIO("ws://" + objectServerUrl + "/socket.io/?EIO=4&transport=websocket");
 
         socket.OnOpen += OnConnected;
         socket.OnClose += OnDisconnected;
+        socket.OnConnectFailed += () => Debug.Log("Socket failed to connect!");
         socket.OnError += (err) => Debug.Log("Socket Error: " + err);
 
         socket.Connect();
@@ -47,6 +49,7 @@ public class ObjectPositionSender : MonoBehaviour {
     {
         connected = false;
         Debug.Log("OPS server disconnected");
+        socket.Connect();
     }
 
     public void SendSkeleton(JSONArray skeletons)
@@ -56,13 +59,19 @@ public class ObjectPositionSender : MonoBehaviour {
             return;
         }
 
+        if (Time.time < lastSend + 0.1f)
+        {
+            return;
+        }
+
+        lastSend = Time.time;
+
         socket.Emit("/update/humanPoses", skeletons.ToString());
         /** The following code would use a fancier API for generic positioning instead
          of just sending raw skeleton data
         foreach (var skeleton in skeletons.Values)
         {
             string topLevelKey = "human" + skeleton["id"].ToString();
-
             foreach (var joint in skeleton["joints"])
             {
                 string objectKey = topLevelKey + "joint" + joint.Key;
