@@ -1698,7 +1698,7 @@ public class akplay : MonoBehaviour {
 
     private void SendSkeletonData()
     {
-        if (!objectPositionSender)
+        if (!objectPositionSender || primaryTrackerIndex >= skeletonVisArray.Length)
         {
             return;
         }
